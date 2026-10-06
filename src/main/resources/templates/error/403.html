@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/user-layout :: html}">
+<head>
+    <title>403 Không có quyền - SHOP GIÀY</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="empty-state">
+            <i class="bi bi-shield-lock text-danger"></i>
+            <h2>403</h2>
+            <h4>Bạn không có quyền truy cập trang này</h4>
+            <p>Vui lòng đăng nhập bằng tài khoản có quyền hợp lệ.</p>
+            <a th:href="@{/}" class="btn btn-primary mt-3">Về Trang chủ</a>
+        </div>
+    </div>
+</body>
+</html>

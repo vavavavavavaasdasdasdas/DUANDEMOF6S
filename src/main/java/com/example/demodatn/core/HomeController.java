@@ -1,0 +1,65 @@
+package com.example.demodatn.core;
+
+import com.example.demodatn.sanpham.Category;
+import com.example.demodatn.sanpham.CategoryRepository;
+import com.example.demodatn.sanpham.ProductDto;
+import com.example.demodatn.sanpham.ProductFilterService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Controller
+@RequiredArgsConstructor
+public class HomeController {
+
+    private static final int SECTION_SIZE = 8;
+
+    private final ProductFilterService productFilterService;
+    private final CategoryRepository categoryRepository;
+
+    /** Trang chu: 100% du lieu tu DB, gia qua PricingService (ben trong ProductFilterService). */
+    @GetMapping("/")
+    public String home(Model model) {
+        List<Category> brands = categoryRepository.findAll().stream()
+                .filter(c -> !Boolean.FALSE.equals(c.getStatus()))
+                .collect(Collectors.toList());
+
+        // Ban chay = tong quantity OrderDetail cua don khong CANCELLED; chi lay SP da ban > 0
+        List<ProductDto> bestSellers = productFilterService
+                .filterProducts(null, null, null, null, null, null, "best_seller", 0, SECTION_SIZE)
+                .getContent().stream().filter(p -> p.getTotalSold() > 0).collect(Collectors.toList());
+        boolean bestSellerFallback = bestSellers.isEmpty();
+
+        List<ProductDto> newest = productFilterService
+                .filterProducts(null, null, null, null, null, null, "newest", 0, SECTION_SIZE).getContent();
+        if (bestSellerFallback) {
+            bestSellers = newest; // chua co don hang -> dung san pham moi nhat
+        }
+
+        List<ProductDto> promotions = productFilterService
+                .filterProducts(null, null, null, null, null, true, "newest", 0, SECTION_SIZE).getContent();
+
+        // Hero: anh san pham that tu DB (uu tien san pham ban chay)
+        ProductDto heroProduct = bestSellers.stream()
+                .filter(p -> p.getImageUrl() != null && p.getImageUrl().startsWith("http"))
+                .findFirst()
+                .orElse(bestSellers.isEmpty() ? null : bestSellers.get(0));
+
+        model.addAttribute("brands", brands);
+        model.addAttribute("bestSellers", bestSellers);
+        model.addAttribute("bestSellerFallback", bestSellerFallback);
+        model.addAttribute("promotions", promotions);
+        model.addAttribute("newest", newest);
+        model.addAttribute("heroProduct", heroProduct);
+        return "user/home";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+}

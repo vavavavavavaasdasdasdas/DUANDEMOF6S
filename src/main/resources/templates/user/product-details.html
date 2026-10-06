@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/user-layout :: html}">
+<head>
+    <title th:text="${product.name} + ' - SHOP GIÀY'">Chi tiết sản phẩm</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="py-3">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/products}">Sản phẩm</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Tên sản phẩm</li>
+            </ol>
+        </nav>
+
+        <div class="row mb-5">
+            <!-- Product Image -->
+            <div class="col-md-6 mb-4 mb-md-0">
+                <div class="card border-0 shadow-sm">
+                    <img th:src="@{${product.imageUrl != null ? product.imageUrl : '/images/placeholder.jpg'}}" class="card-img-top img-fluid" alt="Product Image" style="object-fit: cover; max-height: 500px;">
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-md-6">
+                <h2 class="fw-bold mb-2" th:text="${product.name}">Tên sản phẩm</h2>
+                <div class="text-muted mb-3">Mã SP: <span th:text="${product.code}">SP001</span> | Danh mục: <span th:text="${product.category != null ? product.category.name : 'Chưa phân loại'}">Thể thao</span></div>
+                
+                <!-- Display Price from the first variant by default -->
+                <div class="price-display mb-4" th:if="${!variants.isEmpty()}" th:with="firstPrice=${variantPrices.get(variants[0].id)}">
+                    <h3 class="text-danger fw-bold d-inline-block" id="displayFinalPrice" th:text="${#numbers.formatDecimal(firstPrice.finalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</h3>
+                    <del class="text-muted ms-2 fs-5" id="displayOriginalPrice" th:if="${firstPrice.hasPromotion}" th:text="${#numbers.formatDecimal(firstPrice.originalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</del>
+                    <span class="badge bg-danger ms-2" id="displayDiscount" th:if="${firstPrice.hasPromotion}" th:text="'-' + ${firstPrice.discountPercentage} + '%'">-0%</span>
+                </div>
+
+                <form id="addToCartForm" th:action="@{/cart/add}" method="post">
+                    <!-- Size Selection (Buttons) -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold d-block">Chọn Size:</label>
+                        <div class="d-flex flex-wrap gap-2" id="size-container">
+                            <th:block th:each="v : ${variants}">
+                                <input type="radio" class="btn-check size-radio" name="variantId" th:id="'size-' + ${v.id}" th:value="${v.id}" 
+                                       th:disabled="${v.quantity <= 0}" 
+                                       th:data-qty="${v.quantity}"
+                                       th:data-finalprice="${variantPrices.get(v.id).finalPrice}"
+                                       th:data-origprice="${variantPrices.get(v.id).originalPrice}"
+                                       th:data-haspromo="${variantPrices.get(v.id).hasPromotion}"
+                                       th:data-discount="${variantPrices.get(v.id).discountPercentage}">
+                                <label class="btn btn-outline-primary" th:for="'size-' + ${v.id}" th:classappend="${v.quantity <= 0 ? 'disabled' : ''}" th:text="${v.size.sizeValue}">39</label>
+                            </th:block>
+                        </div>
+                        <div id="size-error" class="text-danger small mt-2 d-none">Vui lòng chọn size!</div>
+                    </div>
+
+                    <!-- Quantity & Stock -->
+                    <div class="mb-4 d-flex align-items-center">
+                        <label class="form-label fw-bold me-3 mb-0">Số lượng:</label>
+                        <div class="input-group" style="width: 140px;">
+                            <button class="btn btn-outline-secondary" type="button" id="btn-minus">-</button>
+                            <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" max="1" readonly>
+                            <button class="btn btn-outline-secondary" type="button" id="btn-plus">+</button>
+                        </div>
+                        <span class="ms-3 text-muted" id="stock-status">Vui lòng chọn size</span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-flex">
+                        <button type="button" class="btn btn-outline-primary btn-lg px-4" id="btn-add-cart">THÊM VÀO GIỎ</button>
+                        <button type="button" class="btn btn-primary btn-lg px-4" id="btn-buy-now">MUA NGAY</button>
+                    </div>
+                    
+                    <!-- Mobile Sticky Add to Cart -->
+                    <div class="d-block d-md-none fixed-bottom bg-white p-3 border-top shadow-lg z-3">
+                        <button type="button" class="btn btn-primary w-100 btn-lg" id="btn-mobile-buy">THÊM VÀO GIỎ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Description & Details -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active fw-bold" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab">Mô tả sản phẩm</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">Thông tin chi tiết</button>
+                    </li>
+                </ul>
+                <div class="tab-content p-4 border border-top-0 bg-white" id="productTabsContent">
+                    <div class="tab-pane fade show active" id="desc" role="tabpanel">
+                        <p th:text="${product.description}">Mô tả</p>
+                    </div>
+                    <div class="tab-pane fade" id="info" role="tabpanel">
+                        <ul>
+                            <li><strong>Thương hiệu:</strong> Đang cập nhật</li>
+                            <li><strong>Chất liệu:</strong> Đang cập nhật</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="row mb-5" th:if="${!relatedProducts.isEmpty()}">
+            <div class="col-12 mb-4">
+                <h4 class="fw-bold border-bottom pb-2">Sản phẩm liên quan</h4>
+            </div>
+            <div class="col-6 col-md-3 mb-4" th:each="rp : ${relatedProducts}">
+                <div class="card h-100 shadow-sm border-0 product-card">
+                    <a th:href="@{/products/{id}(id=${rp.id})}">
+                        <img th:src="@{${rp.imageUrl != null ? rp.imageUrl : '/images/placeholder.jpg'}}" class="card-img-top" alt="Hình ảnh">
+                    </a>
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title text-truncate">
+                            <a th:href="@{/products/{id}(id=${rp.id})}" class="text-decoration-none text-dark" th:text="${rp.name}">Tên SP</a>
+                        </h6>
+                        <div class="mt-auto" th:with="rpVariants=${@productService.getVariantsByProductId(rp.id)}">
+                            <th:block th:if="${!rpVariants.isEmpty()}">
+                                <th:block th:with="rpPriceInfo=${@pricingService.calculatePrice(rpVariants[0])}">
+                                    <div class="text-danger fw-bold" th:text="${#numbers.formatDecimal(rpPriceInfo.finalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</div>
+                                    <div th:if="${rpPriceInfo.hasPromotion}">
+                                        <del class="text-muted small" th:text="${#numbers.formatDecimal(rpPriceInfo.originalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></del>
+                                        <span class="badge bg-danger ms-1" th:text="'-' + ${rpPriceInfo.discountPercentage} + '%'"></span>
+                                    </div>
+                                </th:block>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const sizeRadios = document.querySelectorAll('.size-radio');
+                const qtyInput = document.getElementById('quantity');
+                const btnMinus = document.getElementById('btn-minus');
+                const btnPlus = document.getElementById('btn-plus');
+                const stockStatus = document.getElementById('stock-status');
+                const sizeError = document.getElementById('size-error');
+                
+                const displayFinalPrice = document.getElementById('displayFinalPrice');
+                const displayOriginalPrice = document.getElementById('displayOriginalPrice');
+                const displayDiscount = document.getElementById('displayDiscount');
+
+                let currentMaxQty = 0;
+
+                function formatCurrency(value) {
+                    return new Intl.NumberFormat('vi-VN').format(value) + ' ₫';
+                }
+
+                sizeRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        sizeError.classList.add('d-none');
+                        const qty = parseInt(this.dataset.qty);
+                        currentMaxQty = qty;
+                        qtyInput.value = 1;
+                        qtyInput.max = qty;
+                        
+                        if (qty > 0) {
+                            stockStatus.textContent = "Còn " + qty + " sản phẩm";
+                            stockStatus.className = "ms-3 text-success";
+                        } else {
+                            stockStatus.textContent = "Hết hàng";
+                            stockStatus.className = "ms-3 text-danger";
+                            qtyInput.value = 0;
+                        }
+                        
+                        // Update price
+                        const finalPrice = parseFloat(this.dataset.finalprice);
+                        const origPrice = parseFloat(this.dataset.origprice);
+                        const hasPromo = this.dataset.haspromo === 'true';
+                        const discount = this.dataset.discount;
+                        
+                        displayFinalPrice.textContent = formatCurrency(finalPrice);
+                        if (hasPromo) {
+                            if(displayOriginalPrice) {
+                                displayOriginalPrice.textContent = formatCurrency(origPrice);
+                                displayOriginalPrice.classList.remove('d-none');
+                            }
+                            if(displayDiscount) {
+                                displayDiscount.textContent = "-" + discount + "%";
+                                displayDiscount.classList.remove('d-none');
+                            }
+                        } else {
+                            if(displayOriginalPrice) displayOriginalPrice.classList.add('d-none');
+                            if(displayDiscount) displayDiscount.classList.add('d-none');
+                        }
+                    });
+                });
+
+                btnMinus.addEventListener('click', function() {
+                    let val = parseInt(qtyInput.value);
+                    if (val > 1) {
+                        qtyInput.value = val - 1;
+                    }
+                });
+
+                btnPlus.addEventListener('click', function() {
+                    let val = parseInt(qtyInput.value);
+                    if (val < currentMaxQty) {
+                        qtyInput.value = val + 1;
+                    }
+                });
+
+                function submitForm(isBuyNow) {
+                    let selected = false;
+                    sizeRadios.forEach(r => { if(r.checked) selected = true; });
+                    if (!selected) {
+                        sizeError.classList.remove('d-none');
+                        return;
+                    }
+                    
+                    const form = document.getElementById('addToCartForm');
+                    if (isBuyNow) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'buyNow';
+                        input.value = 'true';
+                        form.appendChild(input);
+                    }
+                    form.submit();
+                }
+
+                document.getElementById('btn-add-cart').addEventListener('click', () => submitForm(false));
+                document.getElementById('btn-buy-now').addEventListener('click', () => submitForm(true));
+                document.getElementById('btn-mobile-buy').addEventListener('click', () => submitForm(false));
+            });
+        </script>
+    </div>
+</body>
+</html>

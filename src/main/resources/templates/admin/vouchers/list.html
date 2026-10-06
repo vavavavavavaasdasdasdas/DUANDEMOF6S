@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý Mã Giảm Giá</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Danh sách Mã Giảm Giá</h2>
+    <a href="/admin/vouchers/create" class="btn btn-primary mb-3">Thêm mới</a>
+    <a href="/admin" class="btn btn-secondary mb-3">Quay lại Dashboard</a>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Mã</th>
+            <th>Tên</th>
+            <th>Loại</th>
+            <th>Giá trị giảm</th>
+            <th>Hạn sử dụng</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="v : ${vouchers}">
+            <td th:text="${v.code}"></td>
+            <td th:text="${v.name}"></td>
+            <td th:text="${v.discountType}"></td>
+            <td th:text="${v.discountValue}"></td>
+            <td th:text="${#temporals.format(v.endDate, 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="${v.status ? 'Hoạt động' : 'Đã khóa'}"></td>
+            <td>
+                <a th:href="@{/admin/vouchers/edit/{id}(id=${v.id})}" class="btn btn-sm btn-warning">Sửa</a>
+                <a th:href="@{/admin/vouchers/delete/{id}(id=${v.id})}" class="btn btn-sm btn-danger">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

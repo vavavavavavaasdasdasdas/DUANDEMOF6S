@@ -1,0 +1,56 @@
+package com.example.demodatn.nhanvien;
+
+import com.example.demodatn.khachhang.Customer;
+import com.example.demodatn.khachhang.CustomerRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public void register(RegisterRequest request) {
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalArgumentException("Mật khẩu xác nhận không khớp");
+        }
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username đã tồn tại");
+        }
+        if (customerRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email đã tồn tại");
+        }
+        if (customerRepository.findByPhone(request.getPhone()).isPresent()) {
+            throw new IllegalArgumentException("SĐT đã tồn tại");
+        }
+
+        Role userRole = roleRepository.findByName("ROLE_USER");
+        if (userRole == null) {
+            Role role = new Role();
+            role.setName("ROLE_USER");
+            userRole = roleRepository.save(role);
+        }
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(userRole);
+        user.setStatus(true);
+        userRepository.save(user);
+
+        Customer customer = new Customer();
+        customer.setCustomerCode("KH" + System.currentTimeMillis());
+        customer.setFullName(request.getFullName());
+        customer.setEmail(request.getEmail());
+        customer.setPhone(request.getPhone());
+        customer.setStatus(true);
+        customer.setUser(user);
+        customerRepository.save(customer);
+    }
+}

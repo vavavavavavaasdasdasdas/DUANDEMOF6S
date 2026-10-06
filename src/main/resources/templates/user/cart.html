@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/user-layout :: html}">
+<head>
+    <title>Giỏ Hàng | SHOP GIÀY</title>
+</head>
+<body>
+<div th:fragment="content" class="px-0">
+    <div class="container my-5">
+        <h3 class="fw-bold mb-4"><i class="bi bi-cart3 text-primary"></i> Giỏ Hàng Của Bạn</h3>
+
+        <div th:if="${#lists.isEmpty(cartItems)}" class="text-center py-5 bg-white shadow-sm rounded">
+            <i class="bi bi-cart-x text-muted" style="font-size: 5rem;"></i>
+            <h4 class="mt-3 text-secondary">Giỏ hàng trống</h4>
+            <p class="text-muted">Bạn chưa có sản phẩm nào trong giỏ hàng.</p>
+            <a href="/products" class="btn btn-primary px-4 rounded-pill mt-2">Tiếp Tục Mua Sắm</a>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(cartItems)}" class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Sản Phẩm</th>
+                                        <th>Đơn Giá</th>
+                                        <th style="width: 130px;">Số Lượng</th>
+                                        <th>Thành Tiền</th>
+                                        <th class="text-end pe-4">Thao Tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${cartItems}">
+                                        <td class="ps-4 py-3">
+                                            <div class="d-flex align-items-center">
+                                                <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/placeholder.svg'}" 
+                                                     alt="Image" class="rounded object-fit-cover shadow-sm me-3" 
+                                                     style="width: 70px; height: 70px;">
+                                                <div>
+                                                    <a th:href="@{/products/{id}(id=${item.productId})}" 
+                                                       class="text-decoration-none text-dark fw-bold" 
+                                                       th:text="${item.productName}">Name</a>
+                                                    <div class="small text-muted mt-1">Size: <span class="badge bg-secondary" th:text="${item.size}"></span></div>
+                                                    
+                                                    <div th:if="${item.warningMessage != null}" class="text-danger small mt-1 fw-bold">
+                                                        <i class="bi bi-exclamation-triangle-fill"></i> <span th:text="${item.warningMessage}"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div th:if="${item.hasPromotion}">
+                                                <span class="text-danger fw-bold d-block" th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                                <span class="text-muted text-decoration-line-through small" th:text="${#numbers.formatDecimal(item.originalPrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                            </div>
+                                            <div th:unless="${item.hasPromotion}">
+                                                <span class="fw-bold" th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control form-control-sm text-center cart-qty-input" 
+                                                   th:data-variant-id="${item.variantId}" 
+                                                   th:value="${item.quantity}" min="1" th:max="${item.maxQuantity}"
+                                                   th:disabled="${item.warningMessage != null and item.maxQuantity == 0}">
+                                        </td>
+                                        <td>
+                                            <span class="text-danger fw-bold" th:text="${#numbers.formatDecimal(item.total, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <button type="button" class="btn btn-outline-danger btn-sm rounded-circle cart-remove-btn" 
+                                                    th:data-variant-id="${item.variantId}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 sticky-top" style="top: 100px;">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold border-bottom pb-3 mb-3">Tổng Đơn Hàng</h5>
+                        
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Tạm tính:</span>
+                            <span class="fw-bold" th:text="${#numbers.formatDecimal(subTotal, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Phí giao hàng:</span>
+                            <span th:if="${shippingFee == 0}" class="text-success fw-bold">Miễn phí</span>
+                            <span th:unless="${shippingFee == 0}" class="fw-bold" th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                        </div>
+                        
+                        <div th:if="${shippingFee > 0}" class="alert alert-info small py-2 mb-3 text-center">
+                            Mua thêm <strong th:text="${#numbers.formatDecimal(freeShippingThreshold - subTotal, 0, 'COMMA', 0, 'POINT')} + ' đ'"></strong> để được Freeship!
+                        </div>
+
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between mb-4 align-items-center">
+                            <span class="fw-bold fs-5">Tổng cộng:</span>
+                            <span class="text-danger fw-bolder fs-4" th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                        </div>
+                        
+                        <div class="alert alert-warning small py-2 text-center">
+                            <i class="bi bi-ticket-perforated"></i> Nhập mã giảm giá ở bước thanh toán
+                        </div>
+                        
+                        <a href="/checkout" class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm"
+                           th:classappend="${hasWarning} ? 'disabled' : ''"
+                           th:attr="aria-disabled=${hasWarning}">
+                            <i class="bi bi-credit-card me-2"></i> THANH TOÁN
+                        </a>
+                        <a href="/products" class="btn btn-outline-secondary w-100 py-2 mt-3 fw-bold rounded-pill">
+                            Tiếp Tục Mua Hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const csrfToken = document.querySelector('meta[name="_csrf"]');
+            
+            // Handle quantity change
+            document.querySelectorAll('.cart-qty-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const variantId = this.dataset.variantId;
+                    const qty = parseInt(this.value);
+                    if(qty < 1 || isNaN(qty)) {
+                        this.value = 1;
+                        return;
+                    }
+                    
+                    const formData = new URLSearchParams();
+                    formData.append('variantId', variantId);
+                    formData.append('quantity', qty);
+                    if(csrfToken) formData.append('_csrf', csrfToken.content);
+
+                    fetch('/cart/update-ajax', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: formData.toString()
+                    }).then(res => res.json().then(data => ({status: res.status, body: data})))
+                    .then(res => {
+                        if(res.status === 200) {
+                            window.location.reload(); // Reload to update totals via server rendering
+                        } else {
+                            alert(res.body.error || 'Có lỗi xảy ra');
+                            window.location.reload(); // Revert back
+                        }
+                    });
+                });
+            });
+
+            // Handle remove
+            document.querySelectorAll('.cart-remove-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if(confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+                        const variantId = this.dataset.variantId;
+                        const formData = new URLSearchParams();
+                        formData.append('variantId', variantId);
+                        if(csrfToken) formData.append('_csrf', csrfToken.content);
+
+                        fetch('/cart/remove-ajax', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: formData.toString()
+                        }).then(res => {
+                            if(res.ok) window.location.reload();
+                            else alert('Xóa thất bại');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

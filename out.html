@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOP GIÀY</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Design System CSS -->
+    <link href="/css/design-system.css" rel="stylesheet">
+    
+    <!-- CSRF Meta Tags for AJAX -->
+    <meta name="_csrf" content="SJWKQ1kVsXuyYu4VUch97W4x2dxRhW9qNzkebirjy4bRmBS4e6fodDpx1B-fUo13YeVJjFkC9L1mtg1HUgkpVh-F_rLhoCfa"/>
+    <meta name="_csrf_header" content="X-CSRF-TOKEN"/>
+</head>
+<body>
+    
+    <!-- Header -->
+    <div>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-box-seam text-primary"></i> SHOES
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Sản phẩm</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Danh mục
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li>
+                                <a class="dropdown-item" href="/products?category=1">Nike</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/products?category=2">Adidas</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/products?category=3">Converse</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/products?category=4">Vans</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/products?category=5">Puma</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/products?category=6">New Balance</a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products?promotion=true">Khuyến mãi</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <form class="d-flex position-relative" action="/products" method="get">
+                        <input class="form-control rounded-pill ps-4" type="search" name="keyword" placeholder="Tìm kiếm..." aria-label="Search" style="width: 200px;">
+                        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"></i>
+                    </form>
+                    
+                    <a href="/cart" class="nav-link position-relative text-dark fs-5">
+                        <i class="bi bi-cart3"></i>
+                        <span class="cart-badge badge">0</span>
+                    </a>
+
+                    <div class="nav-item dropdown">
+                        <a class="nav-link fs-5 text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="/login">Đăng nhập</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/register">Đăng ký</a>
+                            </li>
+                            
+                            
+                            
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+    <!-- Main Content -->
+    <main class="container my-4" style="min-height: 60vh;">
+        <!-- Flash Messages -->
+        
+        
+        
+        <div>
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="py-3 bg-light mb-4">
+            <div class="container">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/">Trang chá»§</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Sáº£n pháº©m</li>
+                </ol>
+            </div>
+        </nav>
+
+        <div class="container mb-5">
+            <div class="row">
+                <!-- Mobile Filter Toggle -->
+                <div class="col-12 d-lg-none mb-3">
+                    <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#filterPanel">
+                        <i class="bi bi-funnel"></i> Bá»™ lá»c
+                    </button>
+                </div>
+
+                <!-- Filter Sidebar -->
+                <div class="col-lg-3">
+                    <div class="collapse d-lg-block" id="filterPanel">
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold mb-3">Bá»˜ Lá»ŒC</h5>
+                                <form id="filterForm" action="/products" method="get">
+                                    <input type="hidden" name="keyword" value="">
+                                    
+                                    <!-- Category -->
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold mb-2">Danh má»¥c</h6>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryId" id="cat-1" value="1" onchange="this.form.submit()">
+                                            <label class="form-check-label" for="cat-1">Nike</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryId" id="cat-2" value="2" onchange="this.form.submit()">
+                                            <label class="form-check-label" for="cat-2">Adidas</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryId" id="cat-3" value="3" onchange="this.form.submit()">
+                                            <label class="form-check-label" for="cat-3">Converse</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryId" id="cat-4" value="4" onchange="this.form.submit()">
+                                            <label class="form-check-label" for="cat-4">Vans</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryId" id="cat-5" value="5" onchange="this.form.submit()">
+                                            <label class="form-check-label" for="cat-5">Puma</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="categoryId" id="cat-6" value="6" onchange="this.form.submit()">
+                                            <label class="form-check-label" for="cat-6">New Balance</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Size -->
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold mb-2">Size</h6>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            
+                                                <input type="radio" class="btn-check" name="sizeId" id="sz-1" value="1" onchange="this.form.submit()">
+                                                <label class="btn btn-outline-secondary btn-sm" for="sz-1">36</label>
+                                            
+                                                <input type="radio" class="btn-check" name="sizeId" id="sz-2" value="2" onchange="this.form.submit()">
+                                                <label class="btn btn-outline-secondary btn-sm" for="sz-2">37</label>
+                                            
+                                                <input type="radio" class="btn-check" name="sizeId" id="sz-3" value="3" onchange="this.form.submit()">
+                                                <label class="btn btn-outline-secondary btn-sm" for="sz-3">38</label>
+                                            
+                                                <input type="radio" class="btn-check" name="sizeId" id="sz-4" value="4" onchange="this.form.submit()">
+                                                <label class="btn btn-outline-secondary btn-sm" for="sz-4">39</label>
+                                            
+                                                <input type="radio" class="btn-check" name="sizeId" id="sz-5" value="5" onchange="this.form.submit()">
+                                                <label class="btn btn-outline-secondary btn-sm" for="sz-5">40</label>
+                                            
+                                                <input type="radio" class="btn-check" name="sizeId" id="sz-6" value="6" onchange="this.form.submit()">
+                                                <label class="btn btn-outline-secondary btn-sm" for="sz-6">41</label>
+                                            
+                                                <input type="radio" class="btn-check" name="sizeId" id="sz-7" value="7" onchange="this.form.submit()">
+                                                <label class="btn btn-outline-secondary btn-sm" for="sz-7">42</label>
+                                            
+                                                <input type="radio" class="btn-check" name="sizeId" id="sz-8" value="8" onchange="this.form.submit()">
+                                                <label class="btn btn-outline-secondary btn-sm" for="sz-8">43</label>
+                                            
+                                        </div>
+                                    </div>
+
+                                    <!-- Price Range -->
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold mb-2">Khoáº£ng giÃ¡ (VNÄ)</h6>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <input type="number" class="form-control form-control-sm" name="minPrice" placeholder="Tá»ª" value="">
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="number" class="form-control form-control-sm" name="maxPrice" placeholder="Äáº¾N" value="">
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-sm w-100 mt-2">ÃP Dá»¤NG</button>
+                                    </div>
+                                    
+                                    <input type="hidden" name="sort" id="sortInput" value="newest">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product List -->
+                <div class="col-lg-9">
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+                        <h4 class="fw-bold mb-0">
+                            
+                            <span>Táº¥t cáº£ sáº£n pháº©m</span>
+                        </h4>
+                        
+                        <div class="d-flex align-items-center mt-2 mt-md-0">
+                            <label class="me-2 fw-bold text-nowrap">Sáº¯p xáº¿p:</label>
+                            <select class="form-select form-select-sm w-auto" onchange="document.getElementById('sortInput').value=this.value; document.getElementById('filterForm').submit();">
+                                <option value="newest" selected="selected">Má»›i nháº¥t</option>
+                                <option value="best_seller">BÃ¡n cháº¡y</option>
+                                <option value="price_asc">GiÃ¡ tÄƒng dáº§n</option>
+                                <option value="price_desc">GiÃ¡ giáº£m dáº§n</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    
+
+                    <!-- Products Grid -->
+                    <div class="row g-4">
+                        <div class="col-6 col-md-4">
+                            <div class="card h-100 shadow-sm border-0 product-card position-relative">
+                                <!-- SALE Badge -->
+                                
+
+                                <a href="/products/5">
+                                    <img src="/images/test.jpg" class="card-img-top" alt="HÃ¬nh áº£nh" style="object-fit: cover; height: 250px;">
+                                </a>
+                                
+                                <div class="card-body d-flex flex-column">
+                                    <h6 class="card-title text-truncate mb-1">
+                                        <a href="/products/5" class="text-decoration-none text-dark">Nike Dunk</a>
+                                    </h6>
+                                    
+                                    <div class="mt-auto mb-2">
+                                        <div class="text-danger fw-bold">3,000,000 â‚«</div>
+                                        
+                                    </div>
+
+                                    <!-- Stock Status -->
+                                    <div class="mb-3 small fw-bold">
+                                        
+                                        
+                                        <span class="text-success">CÃ²n hÃ ng</span>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2 d-md-flex mt-auto">
+                                        <a href="/products/5" class="btn btn-outline-secondary btn-sm flex-grow-1">XEM CHI TIáº¾T</a>
+                                        
+                                        <!-- Quick Add Dropdown / Popover -->
+                                        <div class="dropdown flex-grow-1">
+                                            <button class="btn btn-primary btn-sm w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                THÃŠM NHANH
+                                            </button>
+                                            <div class="dropdown-menu p-3 shadow-lg" style="width: 250px;">
+                                                <h6 class="dropdown-header px-0 text-dark fw-bold">Chá»n Size:</h6>
+                                                <form class="quick-add-form" onsubmit="event.preventDefault(); quickAddToCart(this);">
+                                                    <input type="hidden" name="quantity" value="1">
+                                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                                        
+                                                            <input type="radio" class="btn-check" name="variantId" id="qa-sz-9" value="9">
+                                                            <label class="btn btn-outline-primary btn-sm" for="qa-sz-9">39</label>
+                                                        
+                                                    </div>
+                                                    <button type="submit" class="btn btn-danger btn-sm w-100">ThÃªm vÃ o giá»</button>
+                                                    <div class="quick-add-error text-danger small mt-2 d-none">Vui lÃ²ng chá»n size</div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="card h-100 shadow-sm border-0 product-card position-relative">
+                                <!-- SALE Badge -->
+                                
+
+                                <a href="/products/4">
+                                    <img src="/images/test.jpg" class="card-img-top" alt="HÃ¬nh áº£nh" style="object-fit: cover; height: 250px;">
+                                </a>
+                                
+                                <div class="card-body d-flex flex-column">
+                                    <h6 class="card-title text-truncate mb-1">
+                                        <a href="/products/4" class="text-decoration-none text-dark">Nike Air Max</a>
+                                    </h6>
+                                    
+                                    <div class="mt-auto mb-2">
+                                        <div class="text-danger fw-bold">2,000,000 â‚«</div>
+                                        
+                                    </div>
+
+                                    <!-- Stock Status -->
+                                    <div class="mb-3 small fw-bold">
+                                        
+                                        
+                                        <span class="text-success">CÃ²n hÃ ng</span>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2 d-md-flex mt-auto">
+                                        <a href="/products/4" class="btn btn-outline-secondary btn-sm flex-grow-1">XEM CHI TIáº¾T</a>
+                                        
+                                        <!-- Quick Add Dropdown / Popover -->
+                                        <div class="dropdown flex-grow-1">
+                                            <button class="btn btn-primary btn-sm w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                THÃŠM NHANH
+                                            </button>
+                                            <div class="dropdown-menu p-3 shadow-lg" style="width: 250px;">
+                                                <h6 class="dropdown-header px-0 text-dark fw-bold">Chá»n Size:</h6>
+                                                <form class="quick-add-form" onsubmit="event.preventDefault(); quickAddToCart(this);">
+                                                    <input type="hidden" name="quantity" value="1">
+                                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                                        
+                                                            <input type="radio" class="btn-check" name="variantId" id="qa-sz-8" value="8">
+                                                            <label class="btn btn-outline-primary btn-sm" for="qa-sz-8">39</label>
+                                                        
+                                                    </div>
+                                                    <button type="submit" class="btn btn-danger btn-sm w-100">ThÃªm vÃ o giá»</button>
+                                                    <div class="quick-add-error text-danger small mt-2 d-none">Vui lÃ²ng chá»n size</div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav class="mt-5">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="/products?page=-1&amp;keyword=&amp;categoryId=&amp;sizeId=&amp;minPrice=&amp;maxPrice=&amp;sort=newest">TrÆ°á»›c</a>
+                            </li>
+                            
+                            <li class="page-item active">
+                                <a class="page-link" href="/products?page=0&amp;keyword=&amp;categoryId=&amp;sizeId=&amp;minPrice=&amp;maxPrice=&amp;sort=newest">1</a>
+                            </li>
+                            
+                            <li class="page-item">
+                                <a class="page-link" href="/products?page=1&amp;keyword=&amp;categoryId=&amp;sizeId=&amp;minPrice=&amp;maxPrice=&amp;sort=newest">2</a>
+                            </li>
+                            
+                            <li class="page-item">
+                                <a class="page-link" href="/products?page=2&amp;keyword=&amp;categoryId=&amp;sizeId=&amp;minPrice=&amp;maxPrice=&amp;sort=newest">3</a>
+                            </li>
+                            
+                            <li class="page-item">
+                                <a class="page-link" href="/products?page=1&amp;keyword=&amp;categoryId=&amp;sizeId=&amp;minPrice=&amp;maxPrice=&amp;sort=newest">Sau</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            function quickAddToCart(form) {
+                const variantInput = form.querySelector('input[name="variantId"]:checked');
+                const errorDiv = form.querySelector('.quick-add-error');
+                
+                if (!variantInput) {
+                    errorDiv.classList.remove('d-none');
+                    return;
+                }
+                errorDiv.classList.add('d-none');
+                
+                const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                const variantId = variantInput.value;
+                
+                const formData = new URLSearchParams();
+                formData.append('variantId', variantId);
+                formData.append('quantity', 1);
+                formData.append('_csrf', csrfToken);
+                
+                                fetch('/cart/add-ajax', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData.toString()
+                }).then(response => response.json().then(data => ({status: response.status, body: data})))
+                .then(res => {
+                    if (res.status === 200) {
+                        const badge = document.querySelector('.cart-badge');
+                        if (badge) {
+                            badge.textContent = res.body.totalQuantity;
+                        }
+                        alert(res.body.message);
+                        const dropdownBtn = form.closest('.dropdown').querySelector('[data-bs-toggle="dropdown"]');
+                        const dropdown = bootstrap.Dropdown.getInstance(dropdownBtn);
+                        if (dropdown) dropdown.hide();
+                    } else {
+                        alert(res.body.error || 'Có lỗi xảy ra');
+                    }
+                }).catch(err => {
+                    alert('Có lỗi mạng!');
+                });
+                });
+            }
+        </script>
+    </div>
+    </main>
+
+    <!-- Footer -->
+    <div class="footer mt-auto">
+    <div class="container">
+        <div class="row gy-4">
+            <div class="col-md-4">
+                <h5 class="mb-3"><i class="bi bi-box-seam"></i> SHOES</h5>
+                <p class="text-secondary">Website thương mại điện tử bán giày thể thao uy tín hàng đầu.</p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="mb-3">Chính sách</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="/policy">Chính sách bảo mật</a></li>
+                    <li class="mb-2"><a href="/policy">Chính sách đổi trả</a></li>
+                    <li class="mb-2"><a href="/policy">Giao hàng & thanh toán</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5 class="mb-3">Liên hệ</h5>
+                <ul class="list-unstyled text-secondary">
+                    <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>123 Đường Số 1, HCM</li>
+                    <li class="mb-2"><i class="bi bi-telephone me-2"></i>1900 1234</li>
+                    <li class="mb-2"><i class="bi bi-envelope me-2"></i>support@shoes.com</li>
+                </ul>
+            </div>
+            <div class="col-md-2">
+                <h5 class="mb-3">Mạng xã hội</h5>
+                <div class="d-flex gap-3">
+                    <a href="https://facebook.com" target="_blank" class="fs-4"><i class="bi bi-facebook"></i></a>
+                    <a href="https://instagram.com" target="_blank" class="fs-4"><i class="bi bi-instagram"></i></a>
+                    <a href="https://youtube.com" target="_blank" class="fs-4"><i class="bi bi-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr class="mt-4 mb-3 border-secondary">
+        <div class="text-center text-secondary small">
+            &copy; 2026 SHOES Store. All rights reserved.
+        </div>
+    </div>
+</div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
