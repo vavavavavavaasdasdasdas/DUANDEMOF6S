@@ -1,10 +1,6 @@
 package com.example.demodatn.banhang;
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khuyenmai.*;
-import com.example.demodatn.thongke.*;
+
+import com.example.demodatn.sanpham.ProductVariant;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +8,8 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "order_details")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDetail {
@@ -20,13 +17,20 @@ public class OrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "product_variant_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_variant_id", nullable = false)
     private ProductVariant productVariant;
+
+    // Snapshot fields
+    @Column(name = "product_name")
+    private String productName;
+
+    @Column(name = "size_name")
+    private String sizeName;
 
     @Column(nullable = false)
     private BigDecimal price;

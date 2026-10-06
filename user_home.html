@@ -14,7 +14,7 @@
     <link href="/css/design-system.css" rel="stylesheet">
     
     <!-- CSRF Meta Tags for AJAX -->
-    <meta name="_csrf" content="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+    <meta name="_csrf" content="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
     <meta name="_csrf_header" content="X-CSRF-TOKEN"/>
 </head>
 <body>
@@ -88,10 +88,12 @@
                             <li>
                                 <a class="dropdown-item" href="/orders"><i class="bi bi-bag-check"></i> Đơn hàng</a>
                             </li>
-                            
+                            <li>
+                                <a class="dropdown-item text-danger" href="/admin"><i class="bi bi-shield-lock"></i> Quản Trị</a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form action="/logout" method="post" class="d-inline"><input type="hidden" name="_csrf" value="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+                                <form action="/logout" method="post" class="d-inline"><input type="hidden" name="_csrf" value="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
                                     <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
                                 </form>
                             </li>
@@ -115,8 +117,8 @@
         <div class="container py-4">
             <div class="row align-items-center">
                 <div class="col-lg-6 text-lg-start text-center mb-4 mb-lg-0">
-                    <h1 class="display-4 fw-bolder mb-3">GIÀY THỂ THAO CHÍNH HÃNG</h1>
-                    <p class="lead mb-4">Phong cách của bạn – Bước đi của bạn.</p>
+                    <h1 class="display-4 fw-bolder mb-3">GIÃƒâ‚¬Y THÃ¡Â»â€š THAO CHÃƒÂNH HÃƒÆ’NG</h1>
+                    <p class="lead mb-4">Phong cÃƒÂ¡ch cÃ¡Â»Â§a bÃ¡ÂºÂ¡n Ã¢â‚¬â€œ BÃ†Â°Ã¡Â»â€ºc Ã„â€˜i cÃ¡Â»Â§a bÃ¡ÂºÂ¡n.</p>
                     <a href="/products" class="btn btn-light btn-lg px-5 fw-bold text-primary rounded-pill shadow">MUA NGAY</a>
                 </div>
                 <div class="col-lg-6">
@@ -128,10 +130,10 @@
         </div>
     </section>
 
-    <!-- Thương hiệu nổi bật -->
+    <!-- ThÃ†Â°Ã†Â¡ng hiÃ¡Â»â€¡u nÃ¡Â»â€¢i bÃ¡ÂºÂ­t -->
     <section class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <h3 class="fw-bold m-0"><i class="bi bi-tags text-primary"></i> Thương hiệu nổi bật</h3>
+            <h3 class="fw-bold m-0"><i class="bi bi-tags text-primary"></i> ThÃ†Â°Ã†Â¡ng hiÃ¡Â»â€¡u nÃ¡Â»â€¢i bÃ¡ÂºÂ­t</h3>
         </div>
         <div class="row row-cols-2 row-cols-md-4 g-4 text-center">
             <div class="col">
@@ -191,14 +193,13 @@
         </div>
     </section>
 
-    <!-- Sản phẩm bán chạy -->
+    <!-- SÃ¡ÂºÂ£n phÃ¡ÂºÂ©m bÃƒÂ¡n chÃ¡ÂºÂ¡y -->
     <section class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
             <h3 class="fw-bold m-0">
-                <i class="bi bi-fire text-danger"></i> Sản phẩm bán chạy
+                <i class="bi bi-fire text-danger"></i> Sáº£n pháº©m bÃ¡n cháº¡y
             </h3>
-            
-            <a href="/products?sort=best_seller" class="text-decoration-none">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+            <a href="/products?sort=best_seller" class="text-decoration-none">Xem táº¥t cáº£ <i class="bi bi-arrow-right"></i></a>
         </div>
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
             <div class="col">
@@ -235,7 +236,7 @@
                 Thêm nhanh
             </button>
             <div class="dropdown-menu p-3 shadow" style="min-width: 230px;">
-                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
                     <div class="fw-bold small mb-2">Chọn size:</div>
                     <div class="d-flex flex-wrap gap-2 mb-2">
                         
@@ -260,11 +261,11 @@
         </div>
     </section>
 
-    <!-- Khuyến mãi -->
+    <!-- KhuyÃ¡ÂºÂ¿n mÃƒÂ£i -->
     <section class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <h3 class="fw-bold m-0"><i class="bi bi-gift text-warning"></i> Đang Khuyến Mãi</h3>
-            <a href="/products?promotion=true" class="text-decoration-none">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+            <h3 class="fw-bold m-0"><i class="bi bi-gift text-warning"></i> Ã„Âang KhuyÃ¡ÂºÂ¿n MÃƒÂ£i</h3>
+            <a href="/products?promotion=true" class="text-decoration-none">Xem tÃ¡ÂºÂ¥t cÃ¡ÂºÂ£ <i class="bi bi-arrow-right"></i></a>
         </div>
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
             <div class="col">
@@ -301,7 +302,7 @@
                 Thêm nhanh
             </button>
             <div class="dropdown-menu p-3 shadow" style="min-width: 230px;">
-                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
                     <div class="fw-bold small mb-2">Chọn size:</div>
                     <div class="d-flex flex-wrap gap-2 mb-2">
                         
@@ -357,7 +358,7 @@
                 Thêm nhanh
             </button>
             <div class="dropdown-menu p-3 shadow" style="min-width: 230px;">
-                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
                     <div class="fw-bold small mb-2">Chọn size:</div>
                     <div class="d-flex flex-wrap gap-2 mb-2">
                         
@@ -382,11 +383,11 @@
         </div>
     </section>
 
-    <!-- Sản phẩm mới -->
+    <!-- SÃ¡ÂºÂ£n phÃ¡ÂºÂ©m mÃ¡Â»â€ºi -->
     <section class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-            <h3 class="fw-bold m-0"><i class="bi bi-stars text-info"></i> Sản phẩm mới</h3>
-            <a href="/products?sort=newest" class="text-decoration-none">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+            <h3 class="fw-bold m-0"><i class="bi bi-stars text-info"></i> SÃ¡ÂºÂ£n phÃ¡ÂºÂ©m mÃ¡Â»â€ºi</h3>
+            <a href="/products?sort=newest" class="text-decoration-none">Xem tÃ¡ÂºÂ¥t cÃ¡ÂºÂ£ <i class="bi bi-arrow-right"></i></a>
         </div>
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
             <div class="col">
@@ -423,7 +424,7 @@
                 Thêm nhanh
             </button>
             <div class="dropdown-menu p-3 shadow" style="min-width: 230px;">
-                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
                     <div class="fw-bold small mb-2">Chọn size:</div>
                     <div class="d-flex flex-wrap gap-2 mb-2">
                         
@@ -475,7 +476,7 @@
                 Thêm nhanh
             </button>
             <div class="dropdown-menu p-3 shadow" style="min-width: 230px;">
-                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
                     <div class="fw-bold small mb-2">Chọn size:</div>
                     <div class="d-flex flex-wrap gap-2 mb-2">
                         
@@ -527,7 +528,7 @@
                 Thêm nhanh
             </button>
             <div class="dropdown-menu p-3 shadow" style="min-width: 230px;">
-                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
                     <div class="fw-bold small mb-2">Chọn size:</div>
                     <div class="d-flex flex-wrap gap-2 mb-2">
                         
@@ -583,7 +584,7 @@
                 Thêm nhanh
             </button>
             <div class="dropdown-menu p-3 shadow" style="min-width: 230px;">
-                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
                     <div class="fw-bold small mb-2">Chọn size:</div>
                     <div class="d-flex flex-wrap gap-2 mb-2">
                         
@@ -639,7 +640,7 @@
                 Thêm nhanh
             </button>
             <div class="dropdown-menu p-3 shadow" style="min-width: 230px;">
-                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="E-RfQjUKGFG4E_nDcZ4_b9V1zCMTr2JXZSJnL2A_mSGyh3yUIIA5JAM-IWaVcJz0SLMLCbdE4Romy1Z6UUQCHVcJ-hmAtkn2"/>
+                <form class="quick-add-form" action="/cart/add" method="post"><input type="hidden" name="_csrf" value="bi7Q707WmabNpN6-J7olMqZ_lwbqN4mmk86ap4j4cL1wcDoeXUuzjC3k-J_gkubaRpcRC5NHuj_YU7iLq_arwrmcQ40RQgN9"/>
                     <div class="fw-bold small mb-2">Chọn size:</div>
                     <div class="d-flex flex-wrap gap-2 mb-2">
                         
@@ -664,29 +665,29 @@
         </div>
     </section>
 
-    <!-- Lý do chọn shop -->
+    <!-- LÃƒÂ½ do chÃ¡Â»Ân shop -->
     <section class="py-5 bg-white rounded shadow-sm text-center px-4 mb-2">
-        <h3 class="fw-bold mb-5">Tại sao nên chọn chúng tôi?</h3>
+        <h3 class="fw-bold mb-5">TÃ¡ÂºÂ¡i sao nÃƒÂªn chÃ¡Â»Ân chÃƒÂºng tÃƒÂ´i?</h3>
         <div class="row g-4">
             <div class="col-md-3">
                 <i class="bi bi-shield-check text-primary" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
-                <h5 class="fw-bold">Chính hãng 100%</h5>
-                <p class="text-muted small">Cam kết hàng thật, chất lượng đảm bảo.</p>
+                <h5 class="fw-bold">ChÃƒÂ­nh hÃƒÂ£ng 100%</h5>
+                <p class="text-muted small">Cam kÃ¡ÂºÂ¿t hÃƒÂ ng thÃ¡ÂºÂ­t, chÃ¡ÂºÂ¥t lÃ†Â°Ã¡Â»Â£ng Ã„â€˜Ã¡ÂºÂ£m bÃ¡ÂºÂ£o.</p>
             </div>
             <div class="col-md-3">
                 <i class="bi bi-arrow-repeat text-primary" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
-                <h5 class="fw-bold">Đổi trả dễ dàng</h5>
-                <p class="text-muted small">Đổi trả miễn phí trong vòng 7 ngày.</p>
+                <h5 class="fw-bold">Ã„ÂÃ¡Â»â€¢i trÃ¡ÂºÂ£ dÃ¡Â»â€¦ dÃƒÂ ng</h5>
+                <p class="text-muted small">Ã„ÂÃ¡Â»â€¢i trÃ¡ÂºÂ£ miÃ¡Â»â€¦n phÃƒÂ­ trong vÃƒÂ²ng 7 ngÃƒÂ y.</p>
             </div>
             <div class="col-md-3">
                 <i class="bi bi-truck text-primary" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
-                <h5 class="fw-bold">Giao hàng nhanh</h5>
-                <p class="text-muted small">Giao tận nơi trên toàn quốc.</p>
+                <h5 class="fw-bold">Giao hÃƒÂ ng nhanh</h5>
+                <p class="text-muted small">Giao tÃ¡ÂºÂ­n nÃ†Â¡i trÃƒÂªn toÃƒÂ n quÃ¡Â»â€˜c.</p>
             </div>
             <div class="col-md-3">
                 <i class="bi bi-headset text-primary" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
-                <h5 class="fw-bold">Hỗ trợ 24/7</h5>
-                <p class="text-muted small">Luôn sẵn sàng giải đáp thắc mắc.</p>
+                <h5 class="fw-bold">HÃ¡Â»â€” trÃ¡Â»Â£ 24/7</h5>
+                <p class="text-muted small">LuÃƒÂ´n sÃ¡ÂºÂµn sÃƒÂ ng giÃ¡ÂºÂ£i Ã„â€˜ÃƒÂ¡p thÃ¡ÂºÂ¯c mÃ¡ÂºÂ¯c.</p>
             </div>
         </div>
     </section>

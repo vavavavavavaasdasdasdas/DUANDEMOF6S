@@ -1,29 +1,64 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/user-layout :: html}">
 <head>
-    <title>Đặt hàng thành công | SHOP GIÀY</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Äáº·t hÃ ng thÃ nh cÃ´ng</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="/">👟 SHOP GIÀY</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
-                <li class="nav-item"><a class="nav-link" href="/products">Sản phẩm</a></li>
-            </ul>
+    <div th:fragment="content" class="container my-5 text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 6rem;"></i>
+                <h2 class="mt-4 fw-bold text-success">Äáº¶T HÃ€NG THÃ€NH CÃ”NG!</h2>
+                <p class="text-muted fs-5">Cáº£m Æ¡n báº¡n Ä‘Ã£ mua sáº¯m táº¡i SHOP GIÃ€Y.</p>
+                
+                <div class="card my-4 border-0 shadow-sm text-start">
+                    <div class="card-body p-4 bg-light rounded">
+                        <h5 class="fw-bold border-bottom pb-2 mb-3">ThÃ´ng tin Ä‘Æ¡n hÃ ng <span class="text-primary" th:text="'#' + ${order.orderCode}"></span></h5>
+                        
+                        <div class="row mb-2">
+                            <div class="col-5 text-muted">NgÆ°á»i nháº­n:</div>
+                            <div class="col-7 fw-bold" th:text="${order.receiverName}"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-5 text-muted">Sá»‘ Ä‘iá»‡n thoáº¡i:</div>
+                            <div class="col-7 fw-bold" th:text="${order.phoneNumber}"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-5 text-muted">Äá»‹a chá»‰:</div>
+                            <div class="col-7 fw-bold" th:text="${order.shippingAddress}"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-5 text-muted">Tá»•ng tiá»n:</div>
+                            <div class="col-7 text-danger fw-bold" th:text="${#numbers.formatDecimal(order.finalAmount, 0, 'COMMA', 0, 'POINT')} + ' Ä‘'"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-5 text-muted">PhÆ°Æ¡ng thá»©c:</div>
+                            <div class="col-7 fw-bold" th:text="${order.paymentMethod == 'COD' ? 'Thanh toÃ¡n khi nháº­n hÃ ng' : 'Chuyá»ƒn khoáº£n ngÃ¢n hÃ ng'}"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-5 text-muted">Tráº¡ng thÃ¡i TT:</div>
+                            <div class="col-7 fw-bold" th:classappend="${order.paymentStatus == 'PAID' ? 'text-success' : 'text-warning'}" th:text="${order.paymentStatus == 'PAID' ? 'ÄÃ£ thanh toÃ¡n' : 'ChÆ°a thanh toÃ¡n'}"></div>
+                        </div>
+                        
+                        <div th:if="${order.paymentMethod == 'BANK_TRANSFER' and order.paymentStatus == 'UNPAID'}" class="mt-4 p-3 border border-warning rounded bg-white">
+                            <h6 class="fw-bold text-warning"><i class="bi bi-info-circle"></i> Vui lÃ²ng chuyá»ƒn khoáº£n</h6>
+                            <p class="small text-muted mb-2">ÄÆ¡n hÃ ng sáº½ Ä‘Æ°á»£c xá»­ lÃ½ sau khi chÃºng tÃ´i nháº­n Ä‘Æ°á»£c thanh toÃ¡n.</p>
+                            <div class="small">
+                                <strong>NgÃ¢n hÃ ng:</strong> <span th:text="${bankName}"></span><br>
+                                <strong>Sá»‘ tÃ i khoáº£n:</strong> <span th:text="${bankAccount}"></span><br>
+                                <strong>Chá»§ tÃ i khoáº£n:</strong> <span th:text="${bankOwner}"></span><br>
+                                <strong>Ná»™i dung CK:</strong> <span th:text="${order.orderCode} + ' ' + ${order.phoneNumber}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-3 justify-content-center mt-2">
+                    <a href="/products" class="btn btn-outline-primary px-4 py-2 rounded-pill fw-bold">TIáº¾P Tá»¤C MUA Sáº®M</a>
+                    <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-primary px-4 py-2 rounded-pill fw-bold">XEM ÄÆ N HÃ€NG</a>
+                </div>
+            </div>
         </div>
     </div>
-</nav>
-
-<div class="container mt-5 text-center">
-    <div class="p-5 mb-4 bg-white border rounded-3 shadow">
-        <h1 class="display-5 fw-bold text-success">Đặt hàng thành công! 🎉</h1>
-        <p class="fs-4 mt-3">Mã đơn hàng của bạn là: <strong th:text="${code}"></strong></p>
-        <p class="text-muted">Cảm ơn bạn đã mua sắm tại SHOP GIÀY. Chúng tôi sẽ liên hệ sớm nhất để giao hàng.</p>
-        <a class="btn btn-dark btn-lg mt-3" href="/products">Tiếp tục mua sắm</a>
-    </div>
-</div>
 </body>
 </html>

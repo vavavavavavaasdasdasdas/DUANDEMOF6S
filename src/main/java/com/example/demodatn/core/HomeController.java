@@ -32,14 +32,8 @@ public class HomeController {
         List<ProductDto> bestSellers = productFilterService
                 .filterProducts(null, null, null, null, null, null, "best_seller", 0, SECTION_SIZE)
                 .getContent().stream().filter(p -> p.getTotalSold() > 0).collect(Collectors.toList());
-        boolean bestSellerFallback = bestSellers.isEmpty();
-
         List<ProductDto> newest = productFilterService
                 .filterProducts(null, null, null, null, null, null, "newest", 0, SECTION_SIZE).getContent();
-        if (bestSellerFallback) {
-            bestSellers = newest; // chua co don hang -> dung san pham moi nhat
-        }
-
         List<ProductDto> promotions = productFilterService
                 .filterProducts(null, null, null, null, null, true, "newest", 0, SECTION_SIZE).getContent();
 
@@ -51,7 +45,6 @@ public class HomeController {
 
         model.addAttribute("brands", brands);
         model.addAttribute("bestSellers", bestSellers);
-        model.addAttribute("bestSellerFallback", bestSellerFallback);
         model.addAttribute("promotions", promotions);
         model.addAttribute("newest", newest);
         model.addAttribute("heroProduct", heroProduct);

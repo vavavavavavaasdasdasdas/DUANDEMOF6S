@@ -1,19 +1,20 @@
 package com.example.demodatn.banhang;
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khuyenmai.*;
-import com.example.demodatn.thongke.*;
+
+import com.example.demodatn.khachhang.Customer;
+import com.example.demodatn.nhanvien.Employee;
+import com.example.demodatn.khuyenmai.Voucher;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
@@ -32,29 +33,41 @@ public class Order {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @Column(name = "order_type", nullable = false)
+    @Column(name = "order_type", nullable = false) // ONLINE, IN_STORE
     private String orderType;
 
-    @Column(nullable = false)
+    @Column(nullable = false) // PENDING, CONFIRMED, etc.
     private String status;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_amount", nullable = false) // Subtotal
     private BigDecimal totalAmount;
 
     @Column(name = "discount_amount")
     private BigDecimal discountAmount;
 
-    @Column(name = "final_amount", nullable = false)
+    @Column(name = "shipping_fee")
+    private BigDecimal shippingFee = BigDecimal.ZERO;
+
+    @Column(name = "final_amount", nullable = false) // Total after discount + shipping
     private BigDecimal finalAmount;
 
-    @Column(name = "payment_method")
+    @Column(name = "payment_method") // COD, BANK_TRANSFER
     private String paymentMethod;
+
+    @Column(name = "payment_status") // UNPAID, PAID
+    private String paymentStatus = "UNPAID";
+
+    @Column(name = "receiver_name")
+    private String receiverName;
 
     @Column(name = "shipping_address")
     private String shippingAddress;
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @Column(name = "email")
+    private String email;
 
     @ManyToOne
     @JoinColumn(name = "voucher_id")
@@ -65,4 +78,12 @@ public class Order {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetail> orderDetails = new ArrayList<>();
+
+    public void addDetail(OrderDetail detail) {
+        orderDetails.add(detail);
+        detail.setOrder(this);
+    }
 }

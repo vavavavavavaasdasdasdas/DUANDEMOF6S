@@ -1,12 +1,7 @@
 package com.example.demodatn.khuyenmai;
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khuyenmai.*;
-import com.example.demodatn.thongke.*;
-
-import com.example.demodatn.khuyenmai.Voucher;
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
-public interface VoucherRepository extends JpaRepository<Voucher, Integer> {}
+public interface VoucherRepository extends JpaRepository<Voucher, Integer> {
+    Optional<Voucher> findByCode(String code);
+}
