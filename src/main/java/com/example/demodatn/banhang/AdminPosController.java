@@ -107,7 +107,7 @@ public class AdminPosController {
             model.addAttribute("checkoutToken", session.getAttribute("posCheckoutToken"));
             model.addAttribute("customers", customers.findAll().stream().filter(c->Boolean.TRUE.equals(c.getStatus())).toList());
         }
-        return "admin/pos";
+        return "admin/ban-tai-quay/ban-tai-quay";
     }
 
     @PostMapping("/add")
@@ -261,6 +261,6 @@ public class AdminPosController {
         var invoice=invoices.findByOrder_Id(id).orElseThrow(()->new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
         if(!"POS".equals(invoice.getOrder().getOrderType())) throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND);
         model.addAttribute("invoice",invoice);
-        return "admin/pos-success";
+        return "admin/ban-tai-quay/thanh-toan-thanh-cong";
     }
 }

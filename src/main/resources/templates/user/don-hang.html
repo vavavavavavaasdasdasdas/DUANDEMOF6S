@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/bo-cuc/bo-cuc-nguoi-dung :: html}"><body><div th:fragment="content" class="container mt-4">
+    <h2 class="mb-4">Lịch sử Đơn Hàng</h2>
+    <div class="bg-white p-4 shadow-sm border rounded">
+        <div class="table-responsive"><table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã Đơn Hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="order : ${orders}" th:if="${order.orderType == 'ONLINE'}">
+                    <td th:text="${order.orderCode}"></td>
+                    <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td class="text-danger fw-bold" th:text="${@money.format(order.finalAmount)} + ' đ'"></td>
+                    <td>
+                        <span class="badge bg-primary" th:text="${order.status}"></span>
+                    </td>
+                    <td>
+                        <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-sm btn-outline-info">Xem chi tiết</a>
+                    </td>
+                </tr>
+            <tr th:if="${#lists.isEmpty(orders)}"><td colspan="5" class="empty-state">Bạn chưa có đơn hàng. <a href="/products">Chọn sản phẩm</a></td></tr></tbody>
+        </table></div>
+    </div>
+</div>
+</body></html>

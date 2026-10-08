@@ -28,13 +28,13 @@ public class AdminInvoiceController {
         if(from!=null && to!=null && to.isBefore(from)) model.addAttribute("error","Ngày kết thúc phải từ ngày bắt đầu.");
         model.addAttribute("invoices",invoices.findAll(filter,PageRequest.of(Math.max(0,page),20,Sort.by(Sort.Order.desc("issuedAt"),Sort.Order.desc("id")))));
         model.addAttribute("q",q);model.addAttribute("from",from);model.addAttribute("to",to);
-        return "admin/invoices/list";
+        return "admin/hoa-don/danh-sach";
     }
 
     @GetMapping("/{id}")
     public String detail(@PathVariable Integer id,Model model) {
         model.addAttribute("invoice",invoices.findById(id).orElseThrow(()->new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND)));
         model.addAttribute("shopName",shopName);model.addAttribute("shopAddress",shopAddress);model.addAttribute("shopPhone",shopPhone);
-        return "admin/invoices/detail";
+        return "admin/hoa-don/chi-tiet";
     }
 }

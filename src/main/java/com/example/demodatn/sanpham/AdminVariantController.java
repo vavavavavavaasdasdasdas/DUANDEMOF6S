@@ -23,7 +23,7 @@ public class AdminVariantController {
         model.addAttribute("variants",result.getContent()); model.addAttribute("dataPage",result);
         model.addAttribute("selectedProduct",productId==null?null:catalog.product(productId));
         model.addAttribute("products",products.findAll()); model.addAttribute("productId",productId);
-        return "admin/variants/list";
+        return "admin/bien-the/danh-sach";
     }
     @GetMapping("/admin/variants/create")
     public String create(@RequestParam(required=false) Integer productId, Model model) {
@@ -51,7 +51,7 @@ public class AdminVariantController {
     }
     private String form(Model model) {
         model.addAttribute("products",products.findAll()); model.addAttribute("sizes",sizes.findAll());
-        return "admin/variants/form";
+        return "admin/bien-the/bieu-mau";
     }
 }
 

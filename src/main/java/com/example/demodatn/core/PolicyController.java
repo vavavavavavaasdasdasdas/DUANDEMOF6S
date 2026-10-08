@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class PolicyController {
     @GetMapping("/policy")
     public String policy() {
-        return "user/policy";
+        return "user/chinh-sach";
     }
 }

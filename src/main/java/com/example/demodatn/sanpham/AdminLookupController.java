@@ -24,16 +24,16 @@ public class AdminLookupController {
         long count = "sizes".equals(kind) ? sizes.count() : categories.count();
         int current = Math.min(Math.max(0,page),(int)Math.max(0,(count-1)/20));
         var paging = org.springframework.data.domain.PageRequest.of(current,20,org.springframework.data.domain.Sort.by("id"));
-        model.addAttribute("items","sizes".equals(kind)? sizes.findAll(paging):categories.findAll(paging)); return "admin/lookups/list";
+        model.addAttribute("items","sizes".equals(kind)? sizes.findAll(paging):categories.findAll(paging)); return "admin/danh-muc-kich-co/danh-sach";
     }
     @GetMapping("/create")
-    public String create(Model model) { model.addAttribute("lookup",new LookupForm()); return "admin/lookups/form"; }
+    public String create(Model model) { model.addAttribute("lookup",new LookupForm()); return "admin/danh-muc-kich-co/bieu-mau"; }
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable String kind,@PathVariable Integer id, Model model) {
         LookupForm form=new LookupForm(); form.setId(id);
         if("sizes".equals(kind)) form.setValue(sizes.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND)).getSizeValue());
         else { Category category=categories.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND)); form.setValue(category.getName()); form.setStatus(category.getStatus()); }
-        model.addAttribute("lookup",form); return "admin/lookups/form";
+        model.addAttribute("lookup",form); return "admin/danh-muc-kich-co/bieu-mau";
     }
     @PostMapping("/save")
     public String save(@PathVariable String kind,@Valid @ModelAttribute("lookup") LookupForm form,BindingResult result,Model model,RedirectAttributes flash) {
@@ -42,7 +42,7 @@ public class AdminLookupController {
             catch(CatalogValidationException ex) { result.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
             catch(DataIntegrityViolationException ex) { result.rejectValue("value","duplicate","Giá trị đã tồn tại hoặc vừa được sử dụng."); }
         }
-        return "admin/lookups/form";
+        return "admin/danh-muc-kich-co/bieu-mau";
     }
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable String kind,@PathVariable Integer id,RedirectAttributes flash) {

@@ -26,7 +26,7 @@ public class ProfileController {
         String username = auth.getName();
         Customer customer = customerRepository.findByUser_Username(username).orElse(null);
         model.addAttribute("customer", customer);
-        return "user/profile";
+        return "user/ho-so";
     }
 
     @PostMapping("/update")

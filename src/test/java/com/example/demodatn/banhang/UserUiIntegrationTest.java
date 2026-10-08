@@ -21,7 +21,7 @@ class UserUiIntegrationTest {
     void historyAndOwnedDetailUseSharedLayoutAndResponsiveTables() throws Exception {
         var mvc=MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
         Integer id=jdbc.queryForObject("SELECT TOP(1) o.id FROM orders o JOIN customers c ON c.id=o.customer_id JOIN users u ON u.id=c.user_id WHERE u.username='user' AND o.order_type='ONLINE' ORDER BY o.id",Integer.class);
-        mvc.perform(get("/orders")).andExpect(status().isOk()).andExpect(content().string(containsString("/css/design-system.css"))).andExpect(content().string(containsString("table-responsive")));
+        mvc.perform(get("/orders")).andExpect(status().isOk()).andExpect(content().string(containsString("/css/he-thong-thiet-ke.css"))).andExpect(content().string(containsString("table-responsive")));
         mvc.perform(get("/orders/"+id)).andExpect(status().isOk()).andExpect(content().string(containsString("table-responsive"))).andExpect(content().string(not(containsString("customerName"))));
     }
     @Test
@@ -42,6 +42,6 @@ class UserUiIntegrationTest {
     @Test
     void cartLoadsItsExistingActionsInsideLayoutContent() throws Exception {
         MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(get("/cart"))
-                .andExpect(status().isOk()).andExpect(content().string(containsString("/js/cart.js"))).andExpect(content().string(containsString("store-confirm")));
+                .andExpect(status().isOk()).andExpect(content().string(containsString("/js/gio-hang.js"))).andExpect(content().string(containsString("store-confirm")));
     }
 }

@@ -35,6 +35,6 @@ public class ProductUploadExceptionAdvice {
         model.addAttribute("adminNav", AdminPageAdvice.NAV);
         model.addAttribute("adminActive", "products");
         model.addAttribute("adminTitle", "Sản phẩm");
-        return "admin/products/form";
+        return "admin/san-pham/bieu-mau";
     }
 }

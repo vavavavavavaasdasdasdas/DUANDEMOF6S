@@ -21,7 +21,7 @@ public class AuthController {
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("registerRequest", new RegisterRequest());
-        return "user/register";
+        return "auth/dang-ky";
     }
 
     @PostMapping("/register")
@@ -30,7 +30,7 @@ public class AuthController {
                                   Model model, 
                                   RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            return "user/register";
+            return "auth/dang-ky";
         }
         try {
             authService.register(request);
@@ -38,10 +38,10 @@ public class AuthController {
             return "redirect:/login";
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             model.addAttribute("error", "Username, email hoặc số điện thoại vừa được sử dụng. Vui lòng kiểm tra lại.");
-            return "user/register";
+            return "auth/dang-ky";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return "user/register";
+            return "auth/dang-ky";
         }
     }
 }

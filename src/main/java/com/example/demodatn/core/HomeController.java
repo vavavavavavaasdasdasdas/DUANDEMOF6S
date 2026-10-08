@@ -48,11 +48,11 @@ public class HomeController {
         model.addAttribute("promotions", promotions);
         model.addAttribute("newest", newest);
         model.addAttribute("heroProduct", heroProduct);
-        return "user/home";
+        return "user/trang-chu";
     }
 
     @GetMapping("/login")
     public String login() {
-        return "login";
+        return "auth/dang-nhap";
     }
 }

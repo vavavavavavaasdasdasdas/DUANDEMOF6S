@@ -15,7 +15,7 @@ public class AdminController {
     @GetMapping(value = {"", "/", "/dashboard"})
     public String dashboard(@RequestParam(defaultValue = "7") int days, Model model) {
         model.addAttribute("dashboard", dashboardService.load(days == 30 ? 30 : 7));
-        return "admin/dashboard";
+        return "admin/bang-dieu-khien";
     }
 
     @GetMapping("/products")

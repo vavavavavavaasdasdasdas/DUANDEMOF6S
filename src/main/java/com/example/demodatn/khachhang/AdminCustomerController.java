@@ -30,20 +30,20 @@ public class AdminCustomerController {
         if(result.getTotalPages()>0 && page>=result.getTotalPages())
             result=repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,pageable.withPage(result.getTotalPages()-1));
         model.addAttribute("peoplePage",result);model.addAttribute("keyword",keyword);
-        return "admin/customers/list";
+        return "admin/khach-hang/danh-sach";
     }
     @GetMapping("/create")
-    public String create(Model model) { model.addAttribute("customer",new CustomerDto());return "admin/customers/form"; }
+    public String create(Model model) { model.addAttribute("customer",new CustomerDto());return "admin/khach-hang/bieu-mau"; }
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id,Model model) {
         var item=people.customer(id);var form=new CustomerDto();BeanUtils.copyProperties(item,form);
-        model.addAttribute("customer",form);return "admin/customers/form";
+        model.addAttribute("customer",form);return "admin/khach-hang/bieu-mau";
     }
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Integer id,@RequestParam(defaultValue="0") int page,Model model) {
         var item=people.customer(id);model.addAttribute("person",item);model.addAttribute("self",people.isSelf(item.getUser()));
         model.addAttribute("orderPage",orders.findByCustomer_IdOrderByCreatedAtDescIdDesc(id,org.springframework.data.domain.PageRequest.of(Math.max(0,page),10)));
-        return "admin/customers/detail";
+        return "admin/khach-hang/chi-tiet";
     }
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute("customer") CustomerDto form,BindingResult errors,Model model,RedirectAttributes flash) {
@@ -54,7 +54,7 @@ public class AdminCustomerController {
             } catch(PeopleValidationException ex) { errors.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
             catch(DataIntegrityViolationException ex) { errors.reject("duplicate","Dữ liệu mã/email/SĐT/tài khoản vừa được sử dụng. Kiểm tra lại trước khi lưu."); }
         }
-        return "admin/customers/form";
+        return "admin/khach-hang/bieu-mau";
     }
     @PostMapping("/status/{id}")
     public String status(@PathVariable Integer id,@RequestParam boolean enabled,RedirectAttributes flash) {

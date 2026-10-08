@@ -19,7 +19,7 @@ public class AdminInventoryController {
         var result=query.variantsPage(null,stock,Math.max(0,threshold),page,20);
         model.addAttribute("variants",result.getContent()); model.addAttribute("dataPage",result); model.addAttribute("stock",stock);
         model.addAttribute("threshold",Math.max(0,threshold)); model.addAttribute("history",query.history(variantId));
-        model.addAttribute("historyVariant",variantId); return "admin/inventory/list";
+        model.addAttribute("historyVariant",variantId); return "admin/ton-kho/danh-sach";
     }
     @GetMapping("/adjust/{id}")
     public String adjust(@PathVariable Integer id,Model model) {
@@ -39,6 +39,6 @@ public class AdminInventoryController {
         }
         return form(form.getVariantId(),model);
     }
-    private String form(Integer id,Model model) { model.addAttribute("item",catalog.variant(id)); return "admin/inventory/form"; }
+    private String form(Integer id,Model model) { model.addAttribute("item",catalog.variant(id)); return "admin/ton-kho/bieu-mau"; }
 }
 

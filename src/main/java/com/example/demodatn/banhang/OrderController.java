@@ -94,7 +94,7 @@ public class OrderController {
         model.addAttribute("bankAccount", bankAccount);
         model.addAttribute("bankOwner", bankOwner);
 
-        return "user/checkout";
+        return "user/thanh-toan";
     }
     
     @PostMapping("/checkout/validate-voucher-ajax")
@@ -162,14 +162,14 @@ public class OrderController {
         model.addAttribute("orders",customer==null ? List.of() : orderRepository
                 .findByCustomer_IdOrderByCreatedAtDescIdDesc(customer.getId(),org.springframework.data.domain.Pageable.unpaged())
                 .getContent().stream().filter(o -> "ONLINE".equals(o.getOrderType())).toList());
-        return "user/orders";
+        return "user/don-hang";
     }
 
     @GetMapping("/orders/{id}")
     public String detail(@PathVariable Integer id, Principal principal, Model model) {
         Order order = customerOrder(id,principal);
         model.addAttribute("order",order);model.addAttribute("orderDetails",order.getOrderDetails());
-        return "user/order-detail";
+        return "user/chi-tiet-don-hang";
     }
 
     private Order customerOrder(Integer id, Principal principal) {
@@ -188,6 +188,6 @@ public class OrderController {
         model.addAttribute("bankName", bankName);
         model.addAttribute("bankAccount", bankAccount);
         model.addAttribute("bankOwner", bankOwner);
-        return "user/success";
+        return "user/dat-hang-thanh-cong";
     }
 }

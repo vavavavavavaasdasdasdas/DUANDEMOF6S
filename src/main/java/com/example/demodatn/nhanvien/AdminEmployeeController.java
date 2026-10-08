@@ -29,20 +29,20 @@ public class AdminEmployeeController {
         if(result.getTotalPages()>0 && page>=result.getTotalPages())
             result=repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,pageable.withPage(result.getTotalPages()-1));
         model.addAttribute("peoplePage",result);model.addAttribute("keyword",keyword);
-        return "admin/employees/list";
+        return "admin/nhan-vien/danh-sach";
     }
     @GetMapping("/create")
-    public String create(Model model) { model.addAttribute("employee",new EmployeeDto());return "admin/employees/form"; }
+    public String create(Model model) { model.addAttribute("employee",new EmployeeDto());return "admin/nhan-vien/bieu-mau"; }
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id,Model model) {
         var item=people.employee(id);var form=new EmployeeDto();BeanUtils.copyProperties(item,form);
         form.setUsername(item.getUser().getUsername());
-        model.addAttribute("employee",form);return "admin/employees/form";
+        model.addAttribute("employee",form);return "admin/nhan-vien/bieu-mau";
     }
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Integer id,@RequestParam(defaultValue="0") int page,Model model) {
         var item=people.employee(id);model.addAttribute("person",item);model.addAttribute("self",people.isSelf(item.getUser()));
-        return "admin/employees/detail";
+        return "admin/nhan-vien/chi-tiet";
     }
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute("employee") EmployeeDto form,BindingResult errors,Model model,RedirectAttributes flash) {
@@ -54,7 +54,7 @@ public class AdminEmployeeController {
             catch(DataIntegrityViolationException ex) { errors.reject("duplicate","Dữ liệu mã/email/SĐT/tài khoản vừa được sử dụng. Kiểm tra lại trước khi lưu."); }
         }
         form.setPassword(null);
-        return "admin/employees/form";
+        return "admin/nhan-vien/bieu-mau";
     }
     @PostMapping("/status/{id}")
     public String status(@PathVariable Integer id,@RequestParam boolean enabled,RedirectAttributes flash) {

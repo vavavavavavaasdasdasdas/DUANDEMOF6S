@@ -96,7 +96,7 @@ public class CartController {
         model.addAttribute("freeShippingThreshold", freeShippingThreshold);
         model.addAttribute("hasWarning", hasWarning);
         
-        return "user/cart";
+        return "user/gio-hang";
     }
 
     @PostMapping("/add-ajax")

@@ -30,7 +30,7 @@ public class AdminOrderController {
             filter=filter.and((r,x,c)->c.like(c.upper(r.get("orderCode")), "%"+code.replace("!","!!").replace("%","!%").replace("_","!_")+"%", '!')); }
         model.addAttribute("orders",orderRepository.findAll(filter,PageRequest.of(Math.max(0,page),20,Sort.by(Sort.Order.desc("createdAt"),Sort.Order.desc("id")))));
         model.addAttribute("q",q);model.addAttribute("status",status);
-        return "admin/orders/list";
+        return "admin/don-hang/danh-sach";
     }
 
     @GetMapping({"/{id}","/detail/{id}"})
@@ -39,7 +39,7 @@ public class AdminOrderController {
         model.addAttribute("order",order);
         model.addAttribute("allowedStatuses",orderService.allowedStatuses(order));
         model.addAttribute("invoice",invoices.findByOrder_Id(id).orElse(null));
-        return "admin/orders/detail";
+        return "admin/don-hang/chi-tiet";
     }
 
     @PostMapping({"/update-status/{id}","/{id}/status"})

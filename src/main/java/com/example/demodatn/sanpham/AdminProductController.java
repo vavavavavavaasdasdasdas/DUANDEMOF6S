@@ -23,7 +23,7 @@ public class AdminProductController {
         model.addAttribute("categories",categories.findAll());
         model.addAttribute("keyword",keyword); model.addAttribute("categoryId",categoryId);
         model.addAttribute("status",status); model.addAttribute("sort",sort);
-        return "admin/products/list";
+        return "admin/san-pham/danh-sach";
     }
     @GetMapping("/create")
     public String create(Model model) { model.addAttribute("product",new AdminProductForm()); return form(model); }
@@ -39,7 +39,7 @@ public class AdminProductController {
     @GetMapping("/view/{id}")
     public String view(@PathVariable Integer id, Model model) {
         model.addAttribute("product",catalog.product(id));
-        model.addAttribute("variants",query.variants(id,"all",0)); return "admin/products/detail";
+        model.addAttribute("variants",query.variants(id,"all",0)); return "admin/san-pham/chi-tiet";
     }
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute("product") AdminProductForm product, BindingResult result, Model model, RedirectAttributes flash) {
@@ -63,6 +63,6 @@ public class AdminProductController {
     private String form(Model model) {
         model.addAttribute("categories",categories.findAll());
         model.addAttribute("uploadMaxBytes",maxBytes);
-        return "admin/products/form";
+        return "admin/san-pham/bieu-mau";
     }
 }

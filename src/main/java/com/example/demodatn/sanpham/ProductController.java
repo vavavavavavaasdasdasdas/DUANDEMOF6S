@@ -53,14 +53,14 @@ public class ProductController {
         model.addAttribute("promotion", promotion);
         model.addAttribute("sort", sort);
         
-        return "user/products";
+        return "user/san-pham";
     }
     
     @GetMapping("/category/{id}")
     public String categoryList(@PathVariable Integer id, Model model, jakarta.servlet.http.HttpServletResponse response) {
         if (!categoryRepository.existsById(id)) {
             response.setStatus(404);
-            return "error/404";
+            return "loi/404";
         }
         return list(null, id, null, null, null, null, "newest", 0, model);
     }
@@ -70,7 +70,7 @@ public class ProductController {
         Product product = productService.getProductById(id);
         if (product == null || !Boolean.TRUE.equals(product.getStatus())) {
             response.setStatus(404);
-            return "error/404";
+            return "loi/404";
         }
         
         List<ProductVariant> variants = productService.getVariantsByProductId(id);
@@ -90,6 +90,6 @@ public class ProductController {
         model.addAttribute("variantPrices", variantPrices);
         model.addAttribute("relatedProducts", relatedProducts);
         
-        return "user/product-details";
+        return "user/chi-tiet-san-pham";
     }
 }

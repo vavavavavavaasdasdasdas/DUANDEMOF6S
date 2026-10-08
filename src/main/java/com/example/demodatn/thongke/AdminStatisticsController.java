@@ -37,6 +37,6 @@ public class AdminStatisticsController {
                 !Set.of("ALL","ONLINE","POS").contains(channel) ? "Kênh bán không hợp lệ." : null;
         model.addAttribute("filterError",error);
         if(error==null) model.addAttribute("stats",statistics.load(start,end,channel));
-        return "admin/statistics";
+        return "admin/thong-ke/thong-ke";
     }
 }

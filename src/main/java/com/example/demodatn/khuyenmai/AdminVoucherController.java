@@ -14,8 +14,8 @@ public class AdminVoucherController {
     private final VoucherRepository vouchers;
     private final CustomerRepository customers;
     private final DiscountAdminService discounts;
-    @GetMapping public String list(Model model) { model.addAttribute("vouchers",vouchers.findAll(org.springframework.data.domain.Sort.by("id").descending()));return "admin/vouchers/list"; }
-    private String form(Model model) { model.addAttribute("customers",customers.findAll());return "admin/vouchers/form"; }
+    @GetMapping public String list(Model model) { model.addAttribute("vouchers",vouchers.findAll(org.springframework.data.domain.Sort.by("id").descending()));return "admin/voucher/danh-sach"; }
+    private String form(Model model) { model.addAttribute("customers",customers.findAll());return "admin/voucher/bieu-mau"; }
     @GetMapping("/create") public String create(Model model) { model.addAttribute("voucher",new VoucherDto());return form(model); }
     @GetMapping("/edit/{id}") public String edit(@PathVariable Integer id,Model model) {
         Voucher v=discounts.voucher(id);VoucherDto f=new VoucherDto();BeanUtils.copyProperties(v,f);
