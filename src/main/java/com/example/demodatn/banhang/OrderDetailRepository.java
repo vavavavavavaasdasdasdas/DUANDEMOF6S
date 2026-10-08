@@ -9,4 +9,6 @@ import com.example.demodatn.thongke.*;
 import com.example.demodatn.banhang.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderDetailRepository extends JpaRepository<OrderDetail, Integer> {}
+public interface OrderDetailRepository extends JpaRepository<OrderDetail, Integer> {
+    boolean existsByProductVariant_Product_Id(Integer productId);
+}

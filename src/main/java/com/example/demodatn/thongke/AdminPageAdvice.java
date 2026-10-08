@@ -1,0 +1,40 @@
+package com.example.demodatn.thongke;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.ui.Model;
+import java.util.List;
+
+@ControllerAdvice(basePackages = "com.example.demodatn")
+public class AdminPageAdvice {
+    public record NavItem(String group, String title, String route, String key) {}
+    public static final List<NavItem> NAV = List.of(
+        new NavItem("", "Dashboard", "/admin/dashboard", "dashboard"),
+        new NavItem("BÁN HÀNG", "Bán hàng tại quầy", "/admin/pos", "pos"),
+        new NavItem("", "Đơn hàng", "/admin/orders", "orders"),
+        new NavItem("", "Hóa đơn", "/admin/invoices", "invoices"),
+        new NavItem("SẢN PHẨM", "Sản phẩm", "/admin/products-crud", "products"),
+        new NavItem("", "Variant", "/admin/variants", "variants"),
+        new NavItem("", "Danh mục", "/admin/categories", "categories"),
+        new NavItem("", "Size", "/admin/sizes", "sizes"),
+        new NavItem("", "Tồn kho", "/admin/inventory", "inventory"),
+        new NavItem("KHÁCH HÀNG", "Khách hàng", "/admin/customers", "customers"),
+        new NavItem("", "Nhân viên", "/admin/employees", "employees"),
+        new NavItem("KHUYẾN MÃI", "Voucher", "/admin/vouchers", "vouchers"),
+        new NavItem("", "Đợt giảm giá", "/admin/promotions", "promotions"),
+        new NavItem("THỐNG KÊ", "Doanh thu", "/admin/statistics/revenue", "revenue"),
+        new NavItem("", "Sản phẩm bán chạy", "/admin/statistics/best-sellers", "best-sellers"),
+        new NavItem("HỆ THỐNG", "Tài khoản", "/admin/account", "account")
+    );
+    @ModelAttribute
+    public void navigation(HttpServletRequest request, Model model) {
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+        if (!path.equals("/admin") && !path.startsWith("/admin/")) return;
+        NavItem active = NAV.stream().filter(n -> path.equals(n.route()) || path.startsWith(n.route() + "/"))
+                .findFirst().orElse(NAV.get(0));
+        model.addAttribute("adminNav", NAV);
+        model.addAttribute("adminActive", active.key());
+        model.addAttribute("adminTitle", active.title());
+    }
+}
+

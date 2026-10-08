@@ -29,6 +29,7 @@ public class OrderController {
     private final CustomerRepository customerRepository;
     private final VoucherService voucherService;
     private final OrderRepository orderRepository;
+    private final PricingService pricingService;
 
     @Value("${shop.shipping.fee:30000}")
     private BigDecimal shippingFee;
@@ -43,11 +44,12 @@ public class OrderController {
     @Value("${shop.bank.owner:SHOP GIAY}")
     private String bankOwner;
 
-    public OrderController(OrderService orderService, CustomerRepository customerRepository, VoucherService voucherService, OrderRepository orderRepository) {
+    public OrderController(OrderService orderService, CustomerRepository customerRepository, VoucherService voucherService, OrderRepository orderRepository, PricingService pricingService) {
         this.orderService = orderService;
         this.customerRepository = customerRepository;
         this.voucherService = voucherService;
         this.orderRepository = orderRepository;
+        this.pricingService=pricingService;
     }
 
     private Customer getCustomer(Principal principal) {
@@ -59,14 +61,13 @@ public class OrderController {
     public String checkoutPage(Model model, HttpSession session, Principal principal, RedirectAttributes redirectAttributes) {
         List<CartItemDto> cart = (List<CartItemDto>) session.getAttribute("cart");
         if (cart == null || cart.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "GiÃ¡Â»Â hÃƒÂ ng rÃ¡Â»â€”ng!");
+            redirectAttributes.addFlashAttribute("error", "Giỏ hàng rỗng.");
             return "redirect:/cart";
         }
         
-        BigDecimal subTotal = BigDecimal.ZERO;
-        for (CartItemDto item : cart) {
-            subTotal = subTotal.add(item.getPrice().multiply(new BigDecimal(item.getQuantity())));
-        }
+        BigDecimal subTotal;
+        try { subTotal=pricingService.refreshCart(cart); }
+        catch(IllegalArgumentException ex) { redirectAttributes.addFlashAttribute("error",ex.getMessage());return "redirect:/cart"; }
 
         BigDecimal fee = subTotal.compareTo(freeShippingThreshold) >= 0 ? BigDecimal.ZERO : shippingFee;
         
@@ -84,6 +85,7 @@ public class OrderController {
         }
         
         model.addAttribute("cartItems", cart);
+        model.addAttribute("variantPrices",cart.stream().collect(java.util.stream.Collectors.toMap(CartItemDto::getVariantId,i->pricingService.priceForVariant(i.getVariantId()),(a,b)->a)));
         model.addAttribute("subTotal", subTotal);
         model.addAttribute("shippingFee", fee);
         model.addAttribute("total", subTotal.add(fee));
@@ -99,12 +101,11 @@ public class OrderController {
     @ResponseBody
     public ResponseEntity<?> validateVoucher(@RequestParam String code, HttpSession session, Principal principal) {
         List<CartItemDto> cart = (List<CartItemDto>) session.getAttribute("cart");
-        if (cart == null || cart.isEmpty()) return ResponseEntity.badRequest().body(Map.of("message", "GiÃ¡Â»Â hÃƒÂ ng rÃ¡Â»â€”ng"));
+        if (cart == null || cart.isEmpty()) return ResponseEntity.badRequest().body(Map.of("message", "Giỏ hàng rỗng."));
         
-        BigDecimal subTotal = BigDecimal.ZERO;
-        for (CartItemDto item : cart) {
-            subTotal = subTotal.add(item.getPrice().multiply(new BigDecimal(item.getQuantity())));
-        }
+        BigDecimal subTotal;
+        try { subTotal=pricingService.refreshCart(cart); }
+        catch(IllegalArgumentException ex) { return ResponseEntity.badRequest().body(Map.of("valid",false,"message",ex.getMessage())); }
         
         Customer customer = getCustomer(principal);
         VoucherService.VoucherResult res = voucherService.validateAndCalculate(code, customer, subTotal);
@@ -112,6 +113,9 @@ public class OrderController {
         Map<String, Object> response = new HashMap<>();
         response.put("valid", res.valid);
         response.put("message", res.message);
+        BigDecimal fee=subTotal.compareTo(freeShippingThreshold)>=0 ? BigDecimal.ZERO : shippingFee;
+        response.put("subtotal",subTotal);response.put("shippingFee",fee);
+        response.put("total",subTotal.subtract(res.discountAmount).add(fee));
         if (res.valid) {
             response.put("discountAmount", res.discountAmount);
         }
@@ -124,14 +128,13 @@ public class OrderController {
         
         List<CartItemDto> cart = (List<CartItemDto>) session.getAttribute("cart");
         if (cart == null || cart.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "GiÃ¡Â»Â hÃƒÂ ng rÃ¡Â»â€”ng!");
+            redirectAttributes.addFlashAttribute("error", "Giỏ hàng rỗng.");
             return "redirect:/cart";
         }
         
-        BigDecimal subTotal = BigDecimal.ZERO;
-        for (CartItemDto item : cart) {
-            subTotal = subTotal.add(item.getPrice().multiply(new BigDecimal(item.getQuantity())));
-        }
+        BigDecimal subTotal;
+        try { subTotal=pricingService.refreshCart(cart); }
+        catch(IllegalArgumentException ex) { redirectAttributes.addFlashAttribute("error",ex.getMessage());return "redirect:/cart"; }
 
         if (result.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.checkoutRequest", result);
@@ -153,15 +156,34 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/orders")
+    public String history(Principal principal, Model model) {
+        Customer customer = getCustomer(principal);
+        model.addAttribute("orders",customer==null ? List.of() : orderRepository
+                .findByCustomer_IdOrderByCreatedAtDescIdDesc(customer.getId(),org.springframework.data.domain.Pageable.unpaged())
+                .getContent().stream().filter(o -> "ONLINE".equals(o.getOrderType())).toList());
+        return "user/orders";
+    }
+
+    @GetMapping("/orders/{id}")
+    public String detail(@PathVariable Integer id, Principal principal, Model model) {
+        Order order = customerOrder(id,principal);
+        model.addAttribute("order",order);model.addAttribute("orderDetails",order.getOrderDetails());
+        return "user/order-detail";
+    }
+
+    private Order customerOrder(Integer id, Principal principal) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
+        Customer customer = getCustomer(principal);
+        if(customer==null || order.getCustomer()==null || !customer.getId().equals(order.getCustomer().getId()))
+            throw new org.springframework.security.access.AccessDeniedException("Không có quyền truy cập");
+        return order;
+    }
+
     @GetMapping("/orders/success/{id}")
     public String orderSuccess(@PathVariable Integer id, Principal principal, Model model) {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("KhÃƒÂ´ng tÃƒÂ¬m thÃ¡ÂºÂ¥y Ã„â€˜Ã†Â¡n hÃƒÂ ng"));
-        
-        Customer customer = getCustomer(principal);
-        if (customer == null || !customer.getId().equals(order.getCustomer().getId())) {
-            throw new org.springframework.security.access.AccessDeniedException("Không có quyền truy cập");
-        }
-        
+        Order order = customerOrder(id,principal);
+
         model.addAttribute("order", order);
         model.addAttribute("bankName", bankName);
         model.addAttribute("bankAccount", bankAccount);

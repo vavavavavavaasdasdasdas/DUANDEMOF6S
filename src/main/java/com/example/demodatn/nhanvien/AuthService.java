@@ -17,6 +17,9 @@ public class AuthService {
 
     @Transactional
     public void register(RegisterRequest request) {
+        request.setUsername(request.getUsername().trim().toLowerCase(java.util.Locale.ROOT));
+        request.setEmail(com.example.demodatn.core.PeopleService.email(request.getEmail()));
+        request.setPhone(com.example.demodatn.core.PeopleService.phone(request.getPhone()));
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("Mật khẩu xác nhận không khớp");
         }

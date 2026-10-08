@@ -13,17 +13,17 @@
                         <h4 class="mt-2">Đăng ký tài khoản</h4>
                     </div>
 
-                    <form th:action="@{/register}" th:object="${registerRequest}" method="post">
-                        
+                    <form th:action="@{/register}" th:object="${registerRequest}" method="post" data-user-form novalidate>
+
                         <div class="mb-3">
                             <label for="username" class="form-label">Tên đăng nhập *</label>
-                            <input type="text" class="form-control" id="username" th:field="*{username}">
+                            <input type="text" class="form-control" id="username" required th:field="*{username}">
                             <div class="text-danger small" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="fullName" class="form-label">Họ và tên *</label>
-                            <input type="text" class="form-control" id="fullName" th:field="*{fullName}">
+                            <input type="text" class="form-control" id="fullName" required th:field="*{fullName}">
                             <div class="text-danger small" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
                         </div>
 
@@ -35,19 +35,19 @@
 
                         <div class="mb-3">
                             <label for="phone" class="form-label">Số điện thoại *</label>
-                            <input type="text" class="form-control" id="phone" th:field="*{phone}">
+                            <input type="text" class="form-control" id="phone" required th:field="*{phone}">
                             <div class="text-danger small" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Mật khẩu *</label>
-                            <input type="password" class="form-control" id="password" th:field="*{password}">
+                            <input type="password" class="form-control" id="password" required th:field="*{password}">
                             <div class="text-danger small" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="confirmPassword" class="form-label">Xác nhận mật khẩu *</label>
-                            <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}">
+                            <input type="password" class="form-control" id="confirmPassword" required th:field="*{confirmPassword}">
                             <div class="text-danger small" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
                         </div>
 
@@ -55,7 +55,7 @@
                             <button type="submit" class="btn btn-primary">Đăng ký</button>
                         </div>
                     </form>
-                    
+
                     <div class="text-center mt-3">
                         <span class="text-muted">Đã có tài khoản?</span>
                         <a th:href="@{/login}" class="text-decoration-none">Đăng nhập</a>

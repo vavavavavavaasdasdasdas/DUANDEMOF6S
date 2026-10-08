@@ -9,4 +9,8 @@ import com.example.demodatn.thongke.*;
 import com.example.demodatn.sanpham.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository extends JpaRepository<Product, Integer> {}
+public interface ProductRepository extends JpaRepository<Product, Integer> {
+    boolean existsByCodeIgnoreCaseAndIdNot(String code, Integer id);
+    boolean existsByCategory_Id(Integer categoryId);
+    java.util.List<Product> findByStatusTrue();
+}

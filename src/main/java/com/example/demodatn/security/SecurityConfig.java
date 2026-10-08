@@ -24,7 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -43,14 +43,13 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/orders/**", "/checkout", "/profile").authenticated()
-                .requestMatchers("/", "/products/**", "/category/**", "/search", "/cart/**", "/login", "/register", "/policy", "/css/**", "/js/**", "/images/**", "/error").permitAll()
+                .requestMatchers("/orders/**", "/checkout/**", "/profile").authenticated()
+                .requestMatchers("/", "/products/**", "/category/**", "/search", "/cart/**", "/login", "/register", "/policy", "/css/**", "/js/**", "/images/**", "/uploads/products/**", "/error").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.setStatus(403);
-                    response.getWriter().write("Access Denied");
+                    response.sendError(jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN);
                 })
             )
             .formLogin(form -> form
@@ -83,6 +82,8 @@ public class SecurityConfig {
             );
         
         http.authenticationProvider(authenticationProvider());
+        http.addFilterBefore(new AccountStatusFilter(userDetailsService),
+                org.springframework.security.web.access.intercept.AuthorizationFilter.class);
 
         return http.build();
     }

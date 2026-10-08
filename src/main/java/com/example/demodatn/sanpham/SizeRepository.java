@@ -9,4 +9,6 @@ import com.example.demodatn.thongke.*;
 import com.example.demodatn.sanpham.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SizeRepository extends JpaRepository<Size, Integer> {}
+public interface SizeRepository extends JpaRepository<Size, Integer> {
+    boolean existsBySizeValueIgnoreCaseAndIdNot(String value, Integer id);
+}

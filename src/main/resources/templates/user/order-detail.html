@@ -1,24 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Chi tiết đơn hàng | SHOP GIÀY</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="/">👟 SHOP GIÀY</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
-                <li class="nav-item"><a class="nav-link" href="/products">Sản phẩm</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<!DOCTYPE html><html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/user-layout :: html}"><body><div th:fragment="content" class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <h2>Chi tiết Đơn Hàng <span class="text-primary" th:text="${order.orderCode}"></span></h2>
         <a href="/orders" class="btn btn-outline-secondary">Quay lại danh sách</a>
     </div>
@@ -27,7 +8,7 @@
         <div class="col-md-4">
             <div class="p-3 border rounded bg-light shadow-sm">
                 <h5>Thông tin nhận hàng</h5>
-                <p class="mb-1"><strong>Người nhận:</strong> <span th:text="${order.customerName}"></span></p>
+                <p class="mb-1"><strong>Người nhận:</strong> <span th:text="${order.receiverName}"></span></p>
                 <p class="mb-1"><strong>SĐT:</strong> <span th:text="${order.phoneNumber}"></span></p>
                 <p class="mb-1"><strong>Địa chỉ:</strong> <span th:text="${order.shippingAddress}"></span></p>
                 <hr>
@@ -35,11 +16,11 @@
                 <p class="mb-1"><strong>Trạng thái:</strong> <span class="badge bg-primary" th:text="${order.status}"></span></p>
             </div>
         </div>
-        
+
         <div class="col-md-8">
             <div class="p-3 border rounded shadow-sm bg-white">
                 <h5>Sản phẩm đã mua</h5>
-                <table class="table mt-3">
+                <div class="table-responsive"><table class="table mt-3">
                     <thead>
                         <tr>
                             <th>Sản phẩm</th>
@@ -51,25 +32,22 @@
                     </thead>
                     <tbody>
                         <tr th:each="detail : ${orderDetails}">
-                            <td th:text="${detail.productVariant.product.name}"></td>
-                            <td th:text="${detail.productVariant.size.sizeValue}"></td>
+                            <td th:text="${detail.productName != null ? detail.productName : detail.productVariant.product.name}"></td>
+                            <td th:text="${detail.sizeName != null ? detail.sizeName : detail.productVariant.size.sizeValue}"></td>
                             <td th:text="${detail.quantity}"></td>
-                            <td th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
-                            <td class="text-end fw-bold" th:text="${#numbers.formatDecimal(detail.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                            <td th:text="${@money.format(detail.price)} + ' đ'"></td>
+                            <td class="text-end fw-bold" th:text="${@money.format(detail.totalPrice)} + ' đ'"></td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="4" class="text-end fw-bold">Tổng cộng:</td>
-                            <td class="text-end fw-bold text-danger fs-5" th:text="${#numbers.formatDecimal(order.finalAmount, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+                            <td class="text-end fw-bold text-danger fs-5" th:text="${@money.format(order.finalAmount)} + ' đ'"></td>
                         </tr>
                     </tfoot>
-                </table>
+                </table></div>
             </div>
         </div>
     </div>
 </div>
-</body>
-</html>
-
-
+</body></html>

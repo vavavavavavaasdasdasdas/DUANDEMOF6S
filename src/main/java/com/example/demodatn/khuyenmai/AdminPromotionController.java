@@ -1,79 +1,37 @@
 package com.example.demodatn.khuyenmai;
-
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khuyenmai.*;
-import com.example.demodatn.thongke.*;
-
+import com.example.demodatn.sanpham.ProductRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-@Controller
-@RequestMapping("/admin/promotions")
-@RequiredArgsConstructor
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.List;
+import java.util.stream.Collectors;
+@Controller @RequestMapping("/admin/promotions") @RequiredArgsConstructor
 public class AdminPromotionController {
-
-    private final PromotionRepository promotionRepository;
-
-    @GetMapping
-    public String list(Model model) {
-        model.addAttribute("promotions", promotionRepository.findAll());
-        return "admin/promotions/list";
-    }
-
-    @GetMapping("/create")
-    public String createForm(Model model) {
-        model.addAttribute("promotion", new PromotionDto());
+    private final PromotionRepository promotions;
+    private final PromotionDetailRepository details;
+    private final ProductRepository products;
+    private final DiscountAdminService discounts;
+    @GetMapping public String list(Model model) { model.addAttribute("promotions",promotions.findAll(org.springframework.data.domain.Sort.by("id").descending()));return "admin/promotions/list"; }
+    @GetMapping("/create") public String create(Model model) { model.addAttribute("promotion",new PromotionDto());return "admin/promotions/form"; }
+    @GetMapping("/edit/{id}") public String edit(@PathVariable Integer id,Model model) { PromotionDto f=new PromotionDto();BeanUtils.copyProperties(discounts.promotion(id),f);model.addAttribute("promotion",f);return "admin/promotions/form"; }
+    @PostMapping("/save") public String save(@Valid @ModelAttribute("promotion") PromotionDto f,BindingResult errors,RedirectAttributes flash) {
+        if(!errors.hasErrors()) try { Promotion p=discounts.savePromotion(f);flash.addFlashAttribute("message","Đã lưu đợt giảm giá. Chọn sản phẩm áp dụng.");return "redirect:/admin/promotions/"+p.getId()+"/products"; }
+        catch(DiscountValidationException ex) { errors.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
         return "admin/promotions/form";
     }
-
-    @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("promotion") PromotionDto promotionDto, BindingResult result) {
-        if (result.hasErrors()) {
-            return "admin/promotions/form";
-        }
-
-        Promotion promotion = new Promotion();
-        if (promotionDto.getId() != null) {
-            promotion = promotionRepository.findById(promotionDto.getId()).orElse(new Promotion());
-        }
-        
-        promotion.setName(promotionDto.getName());
-        promotion.setDiscountType(promotionDto.getDiscountType());
-        promotion.setDiscountValue(promotionDto.getDiscountValue());
-        promotion.setStartDate(promotionDto.getStartDate());
-        promotion.setEndDate(promotionDto.getEndDate());
-        promotion.setStatus(promotionDto.getStatus());
-
-        promotionRepository.save(promotion);
-        return "redirect:/admin/promotions";
+    @GetMapping("/{id}/products") public String selection(@PathVariable Integer id,Model model) {
+        model.addAttribute("promotion",discounts.promotion(id));model.addAttribute("products",products.findAll(org.springframework.data.domain.Sort.by("name")));
+        model.addAttribute("selected",details.findByPromotion_Id(id).stream().map(d->d.getProduct().getId()).collect(Collectors.toSet()));return "admin/promotions/products";
     }
-
-    @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Integer id, Model model) {
-        Promotion promotion = promotionRepository.findById(id).orElseThrow();
-        PromotionDto dto = new PromotionDto();
-        dto.setId(promotion.getId());
-        dto.setName(promotion.getName());
-        dto.setDiscountType(promotion.getDiscountType());
-        dto.setDiscountValue(promotion.getDiscountValue());
-        dto.setStartDate(promotion.getStartDate());
-        dto.setEndDate(promotion.getEndDate());
-        dto.setStatus(promotion.getStatus());
-        
-        model.addAttribute("promotion", dto);
-        return "admin/promotions/form";
+    @PostMapping("/{id}/products") public String select(@PathVariable Integer id,@RequestParam(required=false) List<Integer> productIds,RedirectAttributes flash) {
+        try { discounts.selectProducts(id,productIds==null ? List.of() : productIds);flash.addFlashAttribute("message","Đã lưu sản phẩm áp dụng."); }
+        catch(IllegalArgumentException ex) { flash.addFlashAttribute("error",ex.getMessage()); }
+        return "redirect:/admin/promotions/"+id+"/products";
     }
-
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
-        promotionRepository.deleteById(id);
-        return "redirect:/admin/promotions";
-    }
+    @PostMapping("/delete/{id}") public String delete(@PathVariable Integer id,RedirectAttributes flash) { discounts.deletePromotion(id);flash.addFlashAttribute("message","Đã xóa đợt giảm giá; giá đơn đã đặt được giữ nguyên.");return "redirect:/admin/promotions"; }
 }

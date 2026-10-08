@@ -39,12 +39,23 @@ public class ProfileController {
         String username = auth.getName();
         Customer customer = customerRepository.findByUser_Username(username).orElse(null);
         if (customer != null) {
+            phone=com.example.demodatn.core.PeopleService.phone(phone);
+            email=com.example.demodatn.core.PeopleService.email(email);
+            if(customerRepository.existsByEmailIgnoreCaseAndIdNot(email,customer.getId())
+                    || customerRepository.existsByPhoneAndIdNot(phone,customer.getId())) {
+                ra.addFlashAttribute("error","Email hoặc số điện thoại đã tồn tại.");
+                return "redirect:/profile";
+            }
             customer.setFullName(fullName);
             customer.setPhone(phone);
             customer.setEmail(email);
             customer.setAddress(address);
-            customerRepository.save(customer);
-            ra.addFlashAttribute("message", "Cập nhật thông tin thành công!");
+            try {
+                customerRepository.saveAndFlush(customer);
+                ra.addFlashAttribute("message", "Cập nhật thông tin thành công!");
+            } catch(org.springframework.dao.DataIntegrityViolationException ex) {
+                ra.addFlashAttribute("error","Email hoặc số điện thoại vừa được sử dụng. Vui lòng thử lại.");
+            }
         }
         return "redirect:/profile";
     }

@@ -20,6 +20,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final CategoryRepository categoryRepository;
     private final SizeRepository sizeRepository;
     private final ProductRepository productRepository;
@@ -53,6 +54,10 @@ public class DataInitializer implements CommandLineRunner {
             admin.setRole(adminRole);
             admin.setStatus(true);
             userRepository.save(admin);
+            Employee employee=new Employee();
+            employee.setEmployeeCode("NV-SYSTEM");employee.setFullName("Quản trị hệ thống");
+            employee.setUser(admin);employee.setStatus(true);
+            employeeRepository.save(employee);
         }
         if (userRepository.findByUsername("user").isEmpty()) {
             User user = new User();

@@ -16,6 +16,23 @@ import java.util.List;
 public class PricingService {
 
     private final PromotionDetailRepository promotionDetailRepository;
+    private final com.example.demodatn.sanpham.ProductVariantRepository variants;
+    @org.springframework.beans.factory.annotation.Value("${shop.time-zone:Asia/Ho_Chi_Minh}") private String timeZone="Asia/Ho_Chi_Minh";
+
+    public PriceInfo priceForVariant(Integer id) {
+        return calculatePrice(variants.findById(id).orElseThrow(()->new IllegalArgumentException("Sản phẩm không tồn tại.")));
+    }
+
+    public BigDecimal refreshCart(List<com.example.demodatn.banhang.dto.CartItemDto> cart) {
+        BigDecimal total=BigDecimal.ZERO;
+        for(var item:cart) {
+            var variant=variants.findById(item.getVariantId()).orElseThrow(()->new IllegalArgumentException("Sản phẩm không tồn tại."));
+            if(!Boolean.TRUE.equals(variant.getStatus()) || !Boolean.TRUE.equals(variant.getProduct().getStatus()) || item.getQuantity()==null || item.getQuantity()<=0 || variant.getQuantity()<item.getQuantity()) throw new IllegalArgumentException("Sản phẩm đã ngừng bán hoặc không đủ tồn kho: "+variant.getProduct().getName());
+            item.setPrice(calculatePrice(variant).getFinalPrice());
+            total=total.add(item.getTotalPrice());
+        }
+        return total;
+    }
 
     public PriceInfo calculatePrice(ProductVariant variant) {
         BigDecimal originalPrice = variant.getPrice();
@@ -27,17 +44,18 @@ public class PricingService {
         int maxDiscountPercent = 0;
         boolean hasActivePromo = false;
         
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneId.of(timeZone));
         
         for (PromotionDetail detail : details) {
             Promotion promo = detail.getPromotion();
             if (promo != null && Boolean.TRUE.equals(promo.getStatus()) &&
-                !promo.getStartDate().isAfter(now) && !promo.getEndDate().isBefore(now)) {
+                promo.getStartDate()!=null && promo.getEndDate()!=null && promo.getDiscountValue()!=null &&
+                !promo.getStartDate().isAfter(now) && now.isBefore(promo.getEndDate())) {
                 
                 BigDecimal discount = BigDecimal.ZERO;
                 int percent = 0;
                 
-                if ("PERCENT".equalsIgnoreCase(promo.getDiscountType())) {
+                if ("PERCENT".equalsIgnoreCase(promo.getDiscountType()) && promo.getDiscountValue().compareTo(BigDecimal.ONE)>=0 && promo.getDiscountValue().compareTo(BigDecimal.valueOf(100))<=0) {
                     discount = originalPrice.multiply(promo.getDiscountValue()).divide(new BigDecimal(100), 0, RoundingMode.HALF_UP);
                     percent = promo.getDiscountValue().intValue();
                 } else if ("AMOUNT".equalsIgnoreCase(promo.getDiscountType())) {

@@ -1,86 +1,68 @@
 package com.example.demodatn.sanpham;
-
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khuyenmai.*;
-import com.example.demodatn.thongke.*;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
-@RequestMapping("/admin/products-crud")
-@RequiredArgsConstructor
+@Controller @RequestMapping("/admin/products-crud") @RequiredArgsConstructor
 public class AdminProductController {
-
-    private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
+    private final AdminCatalogService catalog;
+    private final AdminCatalogQuery query;
+    private final CategoryRepository categories;
+    @org.springframework.beans.factory.annotation.Value("${shop.upload-max-bytes:5242880}") private long maxBytes;
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("products", productRepository.findAll());
+    public String list(@RequestParam(defaultValue="") String keyword, @RequestParam(required=false) Integer categoryId,
+                       @RequestParam(required=false) Boolean status, @RequestParam(defaultValue="newest") String sort,
+                       @RequestParam(defaultValue="0") int page, @RequestParam(defaultValue="10") int size, Model model) {
+        model.addAttribute("productPage",query.products(keyword,categoryId,status,sort,page,size));
+        model.addAttribute("categories",categories.findAll());
+        model.addAttribute("keyword",keyword); model.addAttribute("categoryId",categoryId);
+        model.addAttribute("status",status); model.addAttribute("sort",sort);
         return "admin/products/list";
     }
-
     @GetMapping("/create")
-    public String createForm(Model model) {
-        model.addAttribute("product", new ProductDto());
-        model.addAttribute("categories", categoryRepository.findAll());
-        return "admin/products/form";
-    }
-
-    @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("product") ProductDto productDto, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("categories", categoryRepository.findAll());
-            return "admin/products/form";
-        }
-
-        Product product = new Product();
-        if (productDto.getId() != null) {
-            product = productRepository.findById(productDto.getId()).orElse(new Product());
-        }
-        product.setCode(productDto.getCode());
-        product.setName(productDto.getName());
-        product.setDescription(productDto.getDescription());
-        product.setImageUrl(productDto.getImageUrl());
-        product.setStatus(productDto.getStatus());
-        
-        if (productDto.getCategoryId() != null) {
-            product.setCategory(categoryRepository.findById(productDto.getCategoryId()).orElse(null));
-        }
-
-        productRepository.save(product);
-        return "redirect:/admin/products-crud";
-    }
-
+    public String create(Model model) { model.addAttribute("product",new AdminProductForm()); return form(model); }
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Integer id, Model model) {
-        Product product = productRepository.findById(id).orElseThrow();
-        ProductDto dto = new ProductDto();
-        dto.setId(product.getId());
-        dto.setCode(product.getCode());
-        dto.setName(product.getName());
-        dto.setDescription(product.getDescription());
-        dto.setImageUrl(product.getImageUrl());
-        dto.setStatus(product.getStatus());
-        if (product.getCategory() != null) {
-            dto.setCategoryId(product.getCategory().getId());
-        }
-        model.addAttribute("product", dto);
-        model.addAttribute("categories", categoryRepository.findAll());
-        return "admin/products/form";
+    public String edit(@PathVariable Integer id, Model model) {
+        Product product=catalog.product(id);
+        AdminProductForm form=new AdminProductForm();
+        form.setId(id); form.setCode(product.getCode()); form.setName(product.getName());
+        form.setDescription(product.getDescription()); form.setImageUrl(product.getImageUrl());
+        form.setCategoryId(product.getCategory()==null?null:product.getCategory().getId()); form.setStatus(product.getStatus());
+        model.addAttribute("product",form); return form(model);
     }
-
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
-        productRepository.deleteById(id);
+    @GetMapping("/view/{id}")
+    public String view(@PathVariable Integer id, Model model) {
+        model.addAttribute("product",catalog.product(id));
+        model.addAttribute("variants",query.variants(id,"all",0)); return "admin/products/detail";
+    }
+    @PostMapping("/save")
+    public String save(@Valid @ModelAttribute("product") AdminProductForm product, BindingResult result, Model model, RedirectAttributes flash) {
+        if (!result.hasErrors()) {
+            try {
+                Product saved=catalog.saveProduct(product);
+                flash.addFlashAttribute("message","Đã lưu sản phẩm. Tiếp tục quản lý size, giá và tồn kho ở phần variant.");
+                return "redirect:/admin/products-crud/view/"+saved.getId();
+            } catch(CatalogValidationException ex) { result.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
+              catch(DataIntegrityViolationException ex) { result.rejectValue("code","duplicate","Mã sản phẩm đã tồn tại hoặc dữ liệu liên quan vừa thay đổi."); }
+        }
+        if(product.getId()!=null) product.setImageUrl(catalog.product(product.getId()).getImageUrl());
+        return form(model);
+    }
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Integer id, RedirectAttributes flash) {
+        try { flash.addFlashAttribute("message",catalog.deleteProduct(id)); }
+        catch(DataIntegrityViolationException ex) { flash.addFlashAttribute("error","Không thể xóa: sản phẩm vừa phát sinh dữ liệu liên quan."); }
         return "redirect:/admin/products-crud";
+    }
+    private String form(Model model) {
+        model.addAttribute("categories",categories.findAll());
+        model.addAttribute("uploadMaxBytes",maxBytes);
+        return "admin/products/form";
     }
 }

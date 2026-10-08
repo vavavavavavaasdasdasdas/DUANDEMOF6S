@@ -24,7 +24,7 @@
                         <h5 class="mb-0 fw-bold">Thông Tin Cá Nhân</h5>
                     </div>
                     <div class="card-body p-4">
-                        <form action="/profile/update" method="post">
+                        <form action="/profile/update" method="post" data-user-form novalidate>
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Họ và tên</label>
@@ -54,19 +54,19 @@
                         <h5 class="mb-0 fw-bold">Đổi Mật Khẩu</h5>
                     </div>
                     <div class="card-body p-4">
-                        <form action="/profile/change-password" method="post">
+                        <form action="/profile/change-password" method="post" data-user-form novalidate>
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Mật khẩu cũ</label>
-                                <input type="password" class="form-control" name="oldPassword" required>
+                                <input type="password" autocomplete="current-password" class="form-control" name="oldPassword" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Mật khẩu mới</label>
-                                <input type="password" class="form-control" name="newPassword" required>
+                                <input type="password" autocomplete="current-password" class="form-control" name="newPassword" required>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Xác nhận mật khẩu mới</label>
-                                <input type="password" class="form-control" name="confirmPassword" required>
+                                <input type="password" autocomplete="current-password" class="form-control" name="confirmPassword" required>
                             </div>
                             <button type="submit" class="btn btn-danger px-4 rounded-pill">Đổi Mật Khẩu</button>
                         </form>

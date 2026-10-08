@@ -57,7 +57,7 @@ public class ProductFilterService {
         List<ProductDto> dtoList = new ArrayList<>();
 
         for (Product p : allProducts) {
-            if (Boolean.FALSE.equals(p.getStatus())) continue;
+            if (!Boolean.TRUE.equals(p.getStatus())) continue;
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String kw = keyword.trim().toLowerCase();
                 String name = p.getName() == null ? "" : p.getName().toLowerCase();
@@ -66,7 +66,7 @@ public class ProductFilterService {
             }
             if (categoryId != null && (p.getCategory() == null || !p.getCategory().getId().equals(categoryId))) continue;
 
-            List<ProductVariant> variants = productVariantRepository.findByProduct_Id(p.getId());
+            List<ProductVariant> variants = productVariantRepository.findByProduct_IdAndStatusTrue(p.getId());
             if (variants.isEmpty()) continue;
 
             if (sizeId != null) {

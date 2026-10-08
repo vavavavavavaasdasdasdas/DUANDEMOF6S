@@ -2,7 +2,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-            <li class="breadcrumb-item" th:if="${title}"><a href="#" th:text="${title}"></a></li>
+            <li class="breadcrumb-item" th:if="${title}"><span th:text="${title}"></span></li>
             <li class="breadcrumb-item active" aria-current="page" th:text="${active}"></li>
         </ol>
     </nav>

@@ -1,90 +1,72 @@
 package com.example.demodatn.nhanvien;
 
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khuyenmai.*;
-import com.example.demodatn.thongke.*;
-
+import com.example.demodatn.core.PeopleService;
+import com.example.demodatn.core.PeopleValidationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/employees")
 @RequiredArgsConstructor
 public class AdminEmployeeController {
-
-    private final EmployeeRepository employeeRepository;
-    private final UserRepository userRepository;
+    private final EmployeeRepository repository;
+    private final PeopleService people;
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("employees", employeeRepository.findAll());
+    public String list(@RequestParam(defaultValue="") String keyword,@RequestParam(defaultValue="0") int page,Model model) {
+        String query=keyword.trim();
+        var pageable=PageRequest.of(Math.max(0,page),10,Sort.by(Sort.Direction.DESC,"id"));
+        var result=repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,pageable);
+        if(result.getTotalPages()>0 && page>=result.getTotalPages())
+            result=repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,pageable.withPage(result.getTotalPages()-1));
+        model.addAttribute("peoplePage",result);model.addAttribute("keyword",keyword);
         return "admin/employees/list";
     }
-
     @GetMapping("/create")
-    public String createForm(Model model) {
-        model.addAttribute("employee", new EmployeeDto());
-        return "admin/employees/form";
-    }
-
-    @PostMapping("/save")
-    public String save(@Valid @ModelAttribute("employee") EmployeeDto employeeDto, BindingResult result) {
-        if (result.hasErrors()) {
-            return "admin/employees/form";
-        }
-
-        Employee employee = new Employee();
-        if (employeeDto.getId() != null) {
-            employee = employeeRepository.findById(employeeDto.getId()).orElse(new Employee());
-        }
-        
-        employee.setEmployeeCode(employeeDto.getEmployeeCode());
-        employee.setFullName(employeeDto.getFullName());
-        employee.setPhone(employeeDto.getPhone());
-        employee.setEmail(employeeDto.getEmail());
-        employee.setAddress(employeeDto.getAddress());
-        employee.setPosition(employeeDto.getPosition());
-        employee.setStatus(employeeDto.getStatus());
-        
-        if (employeeDto.getUserId() != null) {
-            employee.setUser(userRepository.findById(employeeDto.getUserId()).orElse(null));
-        }
-
-        employeeRepository.save(employee);
-        return "redirect:/admin/employees";
-    }
-
+    public String create(Model model) { model.addAttribute("employee",new EmployeeDto());return "admin/employees/form"; }
     @GetMapping("/edit/{id}")
-    public String editForm(@PathVariable Integer id, Model model) {
-        Employee employee = employeeRepository.findById(id).orElseThrow();
-        EmployeeDto dto = new EmployeeDto();
-        dto.setId(employee.getId());
-        dto.setEmployeeCode(employee.getEmployeeCode());
-        dto.setFullName(employee.getFullName());
-        dto.setPhone(employee.getPhone());
-        dto.setEmail(employee.getEmail());
-        dto.setAddress(employee.getAddress());
-        dto.setPosition(employee.getPosition());
-        dto.setStatus(employee.getStatus());
-        
-        if (employee.getUser() != null) {
-            dto.setUserId(employee.getUser().getId());
+    public String edit(@PathVariable Integer id,Model model) {
+        var item=people.employee(id);var form=new EmployeeDto();BeanUtils.copyProperties(item,form);
+        form.setUsername(item.getUser().getUsername());
+        model.addAttribute("employee",form);return "admin/employees/form";
+    }
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable Integer id,@RequestParam(defaultValue="0") int page,Model model) {
+        var item=people.employee(id);model.addAttribute("person",item);model.addAttribute("self",people.isSelf(item.getUser()));
+        return "admin/employees/detail";
+    }
+    @PostMapping("/save")
+    public String save(@Valid @ModelAttribute("employee") EmployeeDto form,BindingResult errors,Model model,RedirectAttributes flash) {
+        if(!errors.hasErrors()) {
+            try {
+                var saved=people.saveEmployee(form);flash.addFlashAttribute("message","Đã lưu thông tin.");
+                return "redirect:/admin/employees/detail/"+saved.getId();
+            } catch(PeopleValidationException ex) { errors.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
+            catch(DataIntegrityViolationException ex) { errors.reject("duplicate","Dữ liệu mã/email/SĐT/tài khoản vừa được sử dụng. Kiểm tra lại trước khi lưu."); }
         }
-        
-        model.addAttribute("employee", dto);
+        form.setPassword(null);
         return "admin/employees/form";
     }
-
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
-        employeeRepository.deleteById(id);
+    @PostMapping("/status/{id}")
+    public String status(@PathVariable Integer id,@RequestParam boolean enabled,RedirectAttributes flash) {
+        try { people.employeeStatus(id,enabled);flash.addFlashAttribute("message",enabled?"Đã kích hoạt. Tài khoản chỉ hoạt động khi mọi hồ sơ liên kết đều hoạt động.":"Đã vô hiệu hóa hồ sơ và tài khoản liên kết. Lịch sử vẫn được giữ nguyên."); }
+        catch(IllegalArgumentException ex) { flash.addFlashAttribute("error",ex.getMessage()); }
+        return "redirect:/admin/employees/detail/"+id;
+    }
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Integer id,RedirectAttributes flash) {
+        try { flash.addFlashAttribute("message",people.deleteEmployee(id)); }
+        catch(IllegalArgumentException ex) { flash.addFlashAttribute("error",ex.getMessage()); }
+        catch(DataIntegrityViolationException ex) { flash.addFlashAttribute("error","Dữ liệu vừa phát sinh tham chiếu. Không xóa; hãy vô hiệu hóa hồ sơ."); }
         return "redirect:/admin/employees";
     }
 }

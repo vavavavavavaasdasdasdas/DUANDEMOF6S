@@ -4,7 +4,7 @@
             <a class="navbar-brand fw-bold" th:href="@{/}">
                 <i class="bi bi-box-seam text-primary"></i> SHOES
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Mở menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarMain">
@@ -16,7 +16,7 @@
                         <a class="nav-link fw-bold" th:href="@{/products}">Sản phẩm</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle fw-bold" href="#" data-bs-toggle="dropdown">Danh mục</a>
+                        <button type="button" class="nav-link dropdown-toggle fw-bold" data-bs-toggle="dropdown" aria-expanded="false">Danh mục</button>
                         <ul class="dropdown-menu border-0 shadow-sm">
                             <li th:each="cat : ${globalCategories}">
                                 <a class="dropdown-item" th:href="@{/category/{id}(id=${cat.id})}" th:text="${cat.name}"></a>
@@ -28,20 +28,20 @@
                     </li>
                 </ul>
                 <div class="d-flex align-items-center gap-3">
-                    <form class="d-flex position-relative" th:action="@{/products}" method="get">
-                        <input class="form-control rounded-pill ps-4" type="search" name="keyword" placeholder="Tìm kiếm...">
+                    <form class="d-flex position-relative store-search" th:action="@{/products}" method="get">
+                        <input class="form-control rounded-pill ps-4" type="search" name="keyword" aria-label="Tìm sản phẩm" placeholder="Tìm kiếm...">
                         <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"></i>
                     </form>
-                    
-                    <a th:href="@{/cart}" class="nav-link position-relative text-dark fs-5">
+
+                    <a th:href="@{/cart}" class="nav-link position-relative text-dark fs-5" aria-label="Giỏ hàng">
                         <i class="bi bi-cart3"></i>
                         <span class="cart-badge badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle" id="cartBadge" th:text="${cartCount}">0</span>
                     </a>
 
                     <div class="nav-item dropdown ms-2">
-                        <a class="nav-link fs-5 text-dark" href="#" data-bs-toggle="dropdown">
+                        <button type="button" class="nav-link fs-5 text-dark" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Tài khoản">
                             <i class="bi bi-person-circle"></i>
-                        </a>
+                        </button>
                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
                             <li sec:authorize="!isAuthenticated()">
                                 <a class="dropdown-item" th:href="@{/login}">Đăng nhập</a>

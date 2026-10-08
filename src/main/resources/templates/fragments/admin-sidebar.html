@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><body>
+<aside th:fragment="sidebar" id="admin-sidebar" class="admin-sidebar" aria-label="Điều hướng quản trị">
+    <a class="admin-brand" th:href="@{/admin/dashboard}"><span class="brand-mark">S</span><span>ShoeAdmin<small>QUẢN TRỊ CỬA HÀNG</small></span></a>
+    <nav class="admin-nav">
+        <th:block th:each="item : ${adminNav}">
+            <p class="admin-nav-group" th:if="${!item.group().isEmpty()}" th:text="${item.group()}"></p>
+            <a th:href="@{__${item.route()}__}" th:classappend="${adminActive == item.key()} ? 'is-active'"
+               th:attr="aria-current=${adminActive == item.key() ? 'page' : null}">
+               <span class="nav-dot" aria-hidden="true"></span><span th:text="${item.title()}"></span>
+            </a>
+        </th:block>
+    </nav>
+    <form class="admin-logout" th:action="@{/logout}" method="post"><button type="submit">↪ &nbsp; Đăng xuất</button></form>
+</aside>
+</body></html>
+

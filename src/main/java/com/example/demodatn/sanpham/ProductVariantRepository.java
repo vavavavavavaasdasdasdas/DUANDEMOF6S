@@ -10,8 +10,13 @@ import com.example.demodatn.sanpham.ProductVariant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, Integer> {
+    boolean existsByProduct_IdAndSize_IdAndIdNot(Integer productId, Integer sizeId, Integer id);
+    boolean existsBySize_Id(Integer sizeId);
+    boolean existsByProduct_Id(Integer productId);
+    java.util.List<ProductVariant> findByProduct_IdAndStatusTrue(Integer productId);
+    java.util.List<ProductVariant> findByStatusTrueAndProduct_StatusTrue();
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("select v from ProductVariant v where v.id=:id")
+    java.util.Optional<ProductVariant> findForUpdate(@org.springframework.data.repository.query.Param("id") Integer id);
     java.util.List<ProductVariant> findByProduct_Id(Integer productId);
-    @org.springframework.data.jpa.repository.Modifying
-    @org.springframework.data.jpa.repository.Query("UPDATE ProductVariant pv SET pv.quantity = pv.quantity - :qty WHERE pv.id = :id AND pv.quantity >= :qty")
-    int deductStock(@org.springframework.data.repository.query.Param("id") Integer id, @org.springframework.data.repository.query.Param("qty") Integer qty);
 }

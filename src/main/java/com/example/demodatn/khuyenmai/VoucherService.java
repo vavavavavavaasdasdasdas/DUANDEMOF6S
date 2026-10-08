@@ -1,91 +1,70 @@
 package com.example.demodatn.khuyenmai;
 
 import com.example.demodatn.khachhang.Customer;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Locale;
 
-@Service
+@Service @RequiredArgsConstructor
 public class VoucherService {
-
     private final VoucherRepository voucherRepository;
-
-    public VoucherService(VoucherRepository voucherRepository) {
-        this.voucherRepository = voucherRepository;
-    }
+    @Value("${shop.time-zone:Asia/Ho_Chi_Minh}") private String timeZone="Asia/Ho_Chi_Minh";
 
     public static class VoucherResult {
         public boolean valid;
         public String message;
         public Voucher voucher;
-        public BigDecimal discountAmount = BigDecimal.ZERO;
+        public BigDecimal discountAmount=BigDecimal.ZERO;
     }
+    public static String normalize(String code) { return code==null ? "" : code.trim().toUpperCase(Locale.ROOT); }
 
+    @Transactional(readOnly=true)
     public VoucherResult validateAndCalculate(String code, Customer customer, BigDecimal subtotal) {
-        VoucherResult result = new VoucherResult();
-        if (code == null || code.trim().isEmpty()) {
-            result.valid = false;
-            result.message = "Mã voucher trống";
-            return result;
-        }
-
-        Voucher voucher = voucherRepository.findByCode(code).orElse(null);
-        if (voucher == null || voucher.getStatus() == null || !voucher.getStatus()) {
-            result.valid = false;
-            result.message = "Voucher không tồn tại hoặc đã bị khóa";
-            return result;
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        if (voucher.getStartDate() != null && now.isBefore(voucher.getStartDate())) {
-            result.valid = false;
-            result.message = "Voucher chưa tới ngày sử dụng";
-            return result;
-        }
-
-        if (voucher.getEndDate() != null && now.isAfter(voucher.getEndDate())) {
-            result.valid = false;
-            result.message = "Voucher đã hết hạn";
-            return result;
-        }
-
-        if (voucher.getUsageLimit() != null && voucher.getUsedCount() != null && voucher.getUsedCount() >= voucher.getUsageLimit()) {
-            result.valid = false;
-            result.message = "Voucher đã hết lượt sử dụng";
-            return result;
-        }
-
-        if (voucher.getCustomer() != null && (customer == null || !voucher.getCustomer().getId().equals(customer.getId()))) {
-            result.valid = false;
-            result.message = "Voucher không dành cho tài khoản này";
-            return result;
-        }
-
-        if (voucher.getMinOrderValue() != null && subtotal.compareTo(voucher.getMinOrderValue()) < 0) {
-            result.valid = false;
-            result.message = "Đơn hàng chưa đạt giá trị tối thiểu " + String.format("%,d đ", voucher.getMinOrderValue().longValue());
-            return result;
-        }
-
-        // Tính giảm giá
-        BigDecimal discount = BigDecimal.ZERO;
-        if ("PERCENT".equals(voucher.getDiscountType())) {
-            discount = subtotal.multiply(voucher.getDiscountValue()).divide(new BigDecimal("100"));
-            if (voucher.getMaxDiscount() != null && discount.compareTo(voucher.getMaxDiscount()) > 0) {
-                discount = voucher.getMaxDiscount();
-            }
-        } else if ("FIXED".equals(voucher.getDiscountType())) {
-            discount = voucher.getDiscountValue();
-        }
-
-        if (discount.compareTo(subtotal) > 0) {
-            discount = subtotal;
-        }
-
-        result.valid = true;
-        result.voucher = voucher;
-        result.discountAmount = discount;
-        result.message = "Áp dụng thành công";
+        return calculate(voucherRepository.findByCodeIgnoreCase(normalize(code)).orElse(null),customer,subtotal);
+    }
+    // Caller must own the order transaction: failures roll back usage, order and stock together.
+    @Transactional(propagation=Propagation.MANDATORY)
+    public VoucherResult consume(String code, Customer customer, BigDecimal subtotal) {
+        Voucher voucher=voucherRepository.findByCodeForUpdate(normalize(code)).orElse(null);
+        VoucherResult result=calculate(voucher,customer,subtotal);
+        if(!result.valid) throw new IllegalArgumentException(result.message);
+        voucher.setUsedCount((voucher.getUsedCount()==null ? 0 : voucher.getUsedCount())+1);
+        voucherRepository.save(voucher);
         return result;
+    }
+    private VoucherResult failure(String message) {
+        VoucherResult r=new VoucherResult();r.message=message;return r;
+    }
+    private VoucherResult calculate(Voucher voucher, Customer customer, BigDecimal subtotal) {
+        if(subtotal==null || subtotal.signum()<0) return failure("Giá trị đơn hàng không hợp lệ.");
+        if(voucher==null || !Boolean.TRUE.equals(voucher.getStatus())) return failure("Voucher không tồn tại hoặc đã bị khóa.");
+        LocalDateTime now=LocalDateTime.now(ZoneId.of(timeZone));
+        if(voucher.getStartDate()==null || voucher.getEndDate()==null || !voucher.getEndDate().isAfter(voucher.getStartDate())) return failure("Thời hạn voucher không hợp lệ.");
+        if(now.isBefore(voucher.getStartDate())) return failure("Voucher chưa tới ngày sử dụng.");
+        if(!now.isBefore(voucher.getEndDate())) return failure("Voucher đã hết hạn.");
+        if(voucher.getUsageLimit()!=null && (voucher.getUsedCount()==null ? 0 : voucher.getUsedCount())>=voucher.getUsageLimit()) return failure("Voucher đã hết lượt sử dụng.");
+        if(!Boolean.TRUE.equals(voucher.getIsPublic()) && (voucher.getCustomer()==null || customer==null || !voucher.getCustomer().getId().equals(customer.getId()))) return failure("Voucher không dành cho khách hàng này.");
+        if(voucher.getMinOrderValue()!=null && subtotal.compareTo(voucher.getMinOrderValue())<0) return failure("Đơn hàng chưa đạt giá trị tối thiểu "+voucher.getMinOrderValue().toPlainString()+" đ.");
+        BigDecimal value=voucher.getDiscountValue(),discount;
+        if(value==null || value.signum()<=0) return failure("Giá trị giảm của voucher không hợp lệ.");
+        if("PERCENT".equals(voucher.getDiscountType())) {
+            if(value.compareTo(BigDecimal.ONE)<0 || value.compareTo(BigDecimal.valueOf(100))>0) return failure("Phần trăm voucher không hợp lệ.");
+            discount=subtotal.multiply(value).divide(BigDecimal.valueOf(100),0,RoundingMode.HALF_UP);
+            if(voucher.getMaxDiscount()!=null) {
+                if(voucher.getMaxDiscount().signum()<=0) return failure("Giảm tối đa của voucher không hợp lệ.");
+                discount=discount.min(voucher.getMaxDiscount());
+            }
+        } else if("FIXED".equals(voucher.getDiscountType())) discount=value;
+        else return failure("Loại voucher không hợp lệ.");
+        VoucherResult result=new VoucherResult();result.valid=true;result.voucher=voucher;
+        result.discountAmount=discount.min(subtotal);
+        result.message="Áp dụng thành công.";return result;
     }
 }

@@ -1,0 +1,6 @@
+package com.example.demodatn.banhang;
+
+public interface InvoiceRepository extends org.springframework.data.jpa.repository.JpaRepository<Invoice,Integer>,
+        org.springframework.data.jpa.repository.JpaSpecificationExecutor<Invoice> {
+    java.util.Optional<Invoice> findByOrder_Id(Integer id);
+}

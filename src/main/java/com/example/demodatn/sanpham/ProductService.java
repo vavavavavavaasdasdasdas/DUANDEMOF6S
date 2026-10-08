@@ -22,7 +22,7 @@ public class ProductService {
     private final ProductVariantRepository productVariantRepository;
 
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return productRepository.findByStatusTrue();
     }
 
     public Product getProductById(Integer id) {
@@ -31,9 +31,7 @@ public class ProductService {
 
     public List<ProductVariant> getVariantsByProductId(Integer productId) {
         // We might need a custom query, let's just fetch all and filter for simplicity if repo method is missing
-        return productVariantRepository.findAll().stream()
-                .filter(v -> v.getProduct().getId().equals(productId))
-                .toList();
+        return productVariantRepository.findByProduct_IdAndStatusTrue(productId);
     }
 
     public ProductVariant getVariantById(Integer variantId) {

@@ -73,8 +73,6 @@ public class CartController {
                     item.setWarningMessage("Chỉ còn " + stock + " sản phẩm.");
                     hasWarning = true;
                 } else if (priceInfo.getFinalPrice().compareTo(dto.getPrice()) != 0) {
-                    item.setWarningMessage("Giá sản phẩm đã thay đổi.");
-                    hasWarning = true;
                     // Update session price
                     dto.setPrice(priceInfo.getFinalPrice());
                     session.setAttribute("cart", sessionCart);
@@ -182,7 +180,7 @@ public class CartController {
             return "Vui lòng chọn size và số lượng hợp lệ!";
         }
         ProductVariant variant = productService.getVariantById(variantId);
-        if (variant == null || Boolean.FALSE.equals(variant.getStatus())) {
+        if (variant == null || !Boolean.TRUE.equals(variant.getStatus()) || !Boolean.TRUE.equals(variant.getProduct().getStatus())) {
             return "Sản phẩm không tồn tại hoặc đã ngừng bán";
         }
         int stock = variant.getQuantity() == null ? 0 : variant.getQuantity();

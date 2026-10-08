@@ -19,6 +19,9 @@ import java.util.Collections;
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
+    private final boolean profileEnabled;
+
+    public Integer getUserId() { return user.getId(); }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -42,7 +45,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.getStatus() != null && user.getStatus();
+        return true;
     }
 
     @Override
@@ -52,6 +55,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.getStatus() != null && user.getStatus();
+        return Boolean.TRUE.equals(user.getStatus()) && profileEnabled;
     }
 }

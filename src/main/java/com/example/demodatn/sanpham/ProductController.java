@@ -68,7 +68,7 @@ public class ProductController {
     @GetMapping("/products/{id}")
     public String detail(@PathVariable Integer id, Model model, jakarta.servlet.http.HttpServletResponse response) {
         Product product = productService.getProductById(id);
-        if (product == null) {
+        if (product == null || !Boolean.TRUE.equals(product.getStatus())) {
             response.setStatus(404);
             return "error/404";
         }
