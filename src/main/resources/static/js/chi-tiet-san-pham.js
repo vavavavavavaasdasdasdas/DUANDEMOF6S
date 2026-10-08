@@ -15,7 +15,7 @@
                 let currentMaxQty = 0;
 
                 function formatCurrency(value) {
-                    return new Intl.NumberFormat('vi-VN').format(value) + ' ' + window.dich('money.unit');
+                    return new Intl.NumberFormat('vi-VN').format(value) + ' ₫';
                 }
 
                 sizeRadios.forEach(radio => {
@@ -48,7 +48,7 @@
                                 displayOriginalPrice.classList.remove('d-none');
                             }
                             if(displayDiscount) {
-                                displayDiscount.textContent = window.dich('ui.009') + discount + "%";
+                                displayDiscount.textContent = "SALE -" + discount + "%";
                                 displayDiscount.classList.remove('d-none');
                             }
                         } else {

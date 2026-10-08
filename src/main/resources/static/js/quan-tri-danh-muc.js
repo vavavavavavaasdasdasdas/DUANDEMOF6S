@@ -27,7 +27,7 @@
  function validate(field) {
    if(!field.id || field.disabled || field.type==='hidden' || field.type==='submit')return true;
    let message='';
-   if(field.required && !field.value.trim()) message=window.dich('ui.065');
+   if(field.required && !field.value.trim()) message='Vui lòng nhập hoặc chọn thông tin này.';
    else if(field.validity.badInput || field.validity.typeMismatch) message='Giá trị không đúng định dạng.';
    else if(field.validity.patternMismatch) message=field.dataset.formatMessage || 'Giá trị không đúng định dạng.';
    else if(field.validity.rangeUnderflow) message='Giá trị phải ≥ '+field.min+'.';

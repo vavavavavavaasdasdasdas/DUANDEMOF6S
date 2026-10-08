@@ -21,7 +21,7 @@
                         Đã đăng xuất thành công!
                     </div>
 
-                    <div th:if="${param.disabled}" class="alert alert-danger" role="alert"><th:block th:text="${@nhan.text('ui.002')}"></th:block></div>
+                    <div th:if="${param.disabled}" class="alert alert-danger" role="alert">Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ quản trị.</div>
                     <form th:action="@{/login}" method="post" data-user-form novalidate>
                         <div class="mb-3">
                             <label for="username" class="form-label">Tên đăng nhập</label>

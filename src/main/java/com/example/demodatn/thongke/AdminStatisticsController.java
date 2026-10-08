@@ -33,7 +33,7 @@ public class AdminStatisticsController {
         model.addAttribute("productsTab",products);model.addAttribute("adminActive",products ? "best-sellers" : "revenue");
         model.addAttribute("adminTitle","Thống kê");model.addAttribute("timeZone",timeZone);
         String error=end.isBefore(start) ? "Ngày kết thúc phải từ ngày bắt đầu." :
-                ChronoUnit.DAYS.between(start,end)>3660 ? com.example.demodatn.core.NhanHienThi.text("ui.056") :
+                ChronoUnit.DAYS.between(start,end)>3660 ? "Vui lòng chọn khoảng ngày không quá 10 năm." :
                 !Set.of("ALL","ONLINE","POS").contains(channel) ? "Kênh bán không hợp lệ." : null;
         model.addAttribute("filterError",error);
         if(error==null) model.addAttribute("stats",statistics.load(start,end,channel));

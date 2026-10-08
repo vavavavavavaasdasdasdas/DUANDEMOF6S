@@ -17,7 +17,7 @@
                     <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
                     <td class="text-danger fw-bold" th:text="${@money.format(order.finalAmount)} + ' đ'"></td>
                     <td>
-                        <span class="badge bg-primary" th:text="${@nhan.label(order.status)}"></span>
+                        <span class="badge bg-primary" th:text="${order.status}"></span>
                     </td>
                     <td>
                         <a th:href="@{/orders/{id}(id=${order.id})}" class="btn btn-sm btn-outline-info">Xem chi tiết</a>

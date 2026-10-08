@@ -14,7 +14,7 @@ public class CartItemDto {
     @NotNull(message = "Product ID is required")
     private Integer productId;
 
-    @NotNull(message = "{ui.057}")
+    @NotNull(message = "Variant ID is required")
     private Integer variantId;
 
     private String productName;

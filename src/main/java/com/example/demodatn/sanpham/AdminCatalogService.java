@@ -24,7 +24,7 @@ public class AdminCatalogService {
         return products.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy sản phẩm."));
     }
     public ProductVariant variant(Integer id) {
-        return variants.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,com.example.demodatn.core.NhanHienThi.text("ui.043")));
+        return variants.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy variant."));
     }
     @Transactional
     public Product saveProduct(AdminProductForm form) {
@@ -53,7 +53,7 @@ public class AdminCatalogService {
         }
         if (variants.existsByProduct_Id(id) || inventoryLogs.existsByVariant_Product_Id(id) || !promotions.findByProductId(id).isEmpty()) {
             product.setStatus(false);
-            return com.example.demodatn.core.NhanHienThi.text("ui.044");
+            return "Sản phẩm có variant/lịch sử liên quan: đã chuyển sang ngừng bán để bảo toàn tồn kho và lịch sử.";
         }
         products.delete(product);
         products.flush();
@@ -64,10 +64,10 @@ public class AdminCatalogService {
         Product product = product(form.getProductId());
         Size size = sizes.findById(form.getSizeId()).orElseThrow(() -> new CatalogValidationException("sizeId","Size không tồn tại."));
         if (variants.existsByProduct_IdAndSize_IdAndIdNot(product.getId(),size.getId(),form.getId()==null ? -1 : form.getId()))
-            throw new CatalogValidationException("sizeId",com.example.demodatn.core.NhanHienThi.text("ui.045"));
+            throw new CatalogValidationException("sizeId","Sản phẩm đã có variant với size này.");
         ProductVariant variant = form.getId() == null ? new ProductVariant() : inventory.lock(form.getId());
         if (form.getId() != null && !variant.getProduct().getId().equals(product.getId()))
-            throw new CatalogValidationException("productId",com.example.demodatn.core.NhanHienThi.text("ui.046"));
+            throw new CatalogValidationException("productId","Không thể chuyển variant sang sản phẩm khác.");
         int before = variant.getQuantity();
         if (form.getId() != null && !java.util.Objects.equals(form.getExpectedQuantity(),before))
             throw new CatalogValidationException("quantity","Tồn kho đã thay đổi. Tải lại trang trước khi lưu.");
@@ -75,7 +75,7 @@ public class AdminCatalogService {
             throw new CatalogValidationException("reason","Nhập lý do khi thay đổi số lượng.");
         variant.setProduct(product); variant.setSize(size); variant.setPrice(form.getPrice()); variant.setStatus(form.getStatus());
         variants.saveAndFlush(variant);
-        inventory.change(variant, form.getQuantity(), form.getId() == null ? com.example.demodatn.core.NhanHienThi.text("ui.047") : (form.getReason()==null || form.getReason().isBlank() ? com.example.demodatn.core.NhanHienThi.text("ui.048") : form.getReason()));
+        inventory.change(variant, form.getQuantity(), form.getId() == null ? "Khởi tạo variant" : (form.getReason()==null || form.getReason().isBlank() ? "Lưu variant không đổi tồn" : form.getReason()));
         return variant;
     }
     @Transactional
@@ -97,7 +97,7 @@ public class AdminCatalogService {
     @Transactional
     public String deleteLookup(String kind, Integer id) {
         if ("sizes".equals(kind)) {
-            if (variants.existsBySize_Id(id)) return com.example.demodatn.core.NhanHienThi.text("ui.049");
+            if (variants.existsBySize_Id(id)) return "Không thể xóa size đang được variant tham chiếu.";
             sizes.deleteById(id); sizes.flush(); return "Đã xóa size.";
         }
         if (products.existsByCategory_Id(id)) return "Không thể xóa danh mục đang được sản phẩm tham chiếu.";

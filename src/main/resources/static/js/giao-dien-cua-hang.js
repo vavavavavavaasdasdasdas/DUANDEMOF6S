@@ -6,7 +6,7 @@
   const csrf=document.querySelector('meta[name=_csrf]')?.content;if(csrf)data._csrf=csrf;
   let response;
   try { response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','Accept':'application/json'},body:new URLSearchParams(data)}); }
-  catch { throw new Error(window.dich('ui.064')); }
+  catch { throw new Error('Không thể kết nối. Giỏ hàng được giữ nguyên; vui lòng thử lại.'); }
   const result=await response.json();if(!response.ok)throw new Error(result.error||result.message||'Không thể thực hiện thao tác.');return result;
  };
  const ask=(text,trigger)=>new Promise(resolve=>{
@@ -32,7 +32,7 @@
    if(form.dataset.busy){event.preventDefault();return;}
    let invalid=null;
    fields.forEach(field=>{
-    let text=field.required&&!field.value.trim()?window.dich('ui.063'):field.validity.typeMismatch?'Giá trị không đúng định dạng.':'';
+    let text=field.required&&!field.value.trim()?'Vui lòng nhập thông tin này.':field.validity.typeMismatch?'Giá trị không đúng định dạng.':'';
     if(field.name==='confirmPassword'&&field.value!==form.querySelector('[name=password],[name=newPassword]')?.value)text='Mật khẩu xác nhận không khớp.';
     const slot=document.getElementById(field.id+'-error');slot.textContent=text;field.setAttribute('aria-invalid',String(Boolean(text)));if(text&&!invalid)invalid=field;
    });

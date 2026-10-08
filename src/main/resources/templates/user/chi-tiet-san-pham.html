@@ -18,7 +18,7 @@
             <!-- Product Image -->
             <div class="col-md-6 mb-4 mb-md-0">
                 <div class="card border-0 shadow-sm">
-                    <img th:src="${product.imageUrl != null and (#strings.startsWith(product.imageUrl,'/uploads/') or #strings.startsWith(product.imageUrl,'/images/')) ? product.imageUrl : '/anh/anh-san-pham-thay-the.svg'}" class="detail-image card-img-top img-fluid" th:alt="${@nhan.text('ui.008')}">
+                    <img th:src="${product.imageUrl != null and (#strings.startsWith(product.imageUrl,'/uploads/') or #strings.startsWith(product.imageUrl,'/images/')) ? product.imageUrl : '/anh/anh-san-pham-thay-the.svg'}" class="detail-image card-img-top img-fluid" alt="Product Image">
                 </div>
             </div>
 
@@ -29,9 +29,9 @@
 
                 <!-- Display Price from the first variant by default -->
                 <div class="price-display mb-4" th:if="${!variants.isEmpty()}" th:with="firstPrice=${variantPrices.get(variants[0].id)}">
-                    <h3 class="text-danger fw-bold d-inline-block" id="displayFinalPrice" th:text="${@money.format(firstPrice.finalPrice)} + ${@nhan.text('money.suffix')}">0 ₫</h3>
-                    <del class="text-muted ms-2 fs-5" id="displayOriginalPrice" th:if="${firstPrice.hasPromotion}" th:text="${@money.format(firstPrice.originalPrice)} + ${@nhan.text('money.suffix')}">0 ₫</del>
-                    <span class="badge bg-danger ms-2" id="displayDiscount" th:if="${firstPrice.hasPromotion}" th:text="${@nhan.text('ui.009')} + ${firstPrice.discountPercentage} + '%'">-0%</span>
+                    <h3 class="text-danger fw-bold d-inline-block" id="displayFinalPrice" th:text="${@money.format(firstPrice.finalPrice)} + ' ₫'">0 ₫</h3>
+                    <del class="text-muted ms-2 fs-5" id="displayOriginalPrice" th:if="${firstPrice.hasPromotion}" th:text="${@money.format(firstPrice.originalPrice)} + ' ₫'">0 ₫</del>
+                    <span class="badge bg-danger ms-2" id="displayDiscount" th:if="${firstPrice.hasPromotion}" th:text="'SALE -' + ${firstPrice.discountPercentage} + '%'">-0%</span>
                 </div>
 
                 <form id="addToCartForm" novalidate th:action="@{/cart/add}" method="post">
@@ -50,7 +50,7 @@
                                 <label class="btn btn-outline-primary" th:for="'size-' + ${v.id}" th:classappend="${v.quantity <= 0 ? 'disabled' : ''}" th:text="${v.size.sizeValue}">39</label>
                             </th:block>
                         </div>
-                        <div id="size-error" class="text-danger small mt-2 d-none"><th:block th:text="${@nhan.text('ui.010')}"></th:block></div>
+                        <div id="size-error" class="text-danger small mt-2 d-none">Vui lòng chọn size!</div>
                     </div>
 
                     <!-- Quantity & Stock -->
@@ -61,7 +61,7 @@
                             <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" max="1" readonly>
                             <button class="btn btn-outline-secondary" type="button" id="btn-plus" aria-label="Tăng số lượng">+</button>
                         </div>
-                        <span class="ms-3 text-muted" id="stock-status"><th:block th:text="${@nhan.text('ui.011')}"></th:block></span>
+                        <span class="ms-3 text-muted" id="stock-status">Vui lòng chọn size</span>
                     </div>
 
                     <!-- Action Buttons -->
@@ -120,9 +120,9 @@
                         <div class="mt-auto" th:with="rpVariants=${@productService.getVariantsByProductId(rp.id)}">
                             <th:block th:if="${!rpVariants.isEmpty()}">
                                 <th:block th:with="rpPriceInfo=${@pricingService.calculatePrice(rpVariants[0])}">
-                                    <div class="text-danger fw-bold" th:text="${@money.format(rpPriceInfo.finalPrice)} + ${@nhan.text('money.suffix')}">0 ₫</div>
+                                    <div class="text-danger fw-bold" th:text="${@money.format(rpPriceInfo.finalPrice)} + ' ₫'">0 ₫</div>
                                     <div th:if="${rpPriceInfo.hasPromotion}">
-                                        <del class="text-muted small" th:text="${@money.format(rpPriceInfo.originalPrice)} + ${@nhan.text('money.suffix')}"></del>
+                                        <del class="text-muted small" th:text="${@money.format(rpPriceInfo.originalPrice)} + ' ₫'"></del>
                                         <span class="badge bg-danger ms-1" th:text="'-' + ${rpPriceInfo.discountPercentage} + '%'"></span>
                                     </div>
                                 </th:block>

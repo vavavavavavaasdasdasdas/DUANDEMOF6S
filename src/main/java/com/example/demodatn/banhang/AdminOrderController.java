@@ -16,8 +16,8 @@ public class AdminOrderController {
     private final OrderService orderService;
     private final InvoiceRepository invoices;
     public static final java.util.Map<String,String> STATUS_LABELS=java.util.Map.of(
-        "PENDING",com.example.demodatn.core.NhanHienThi.label("PENDING"),"CONFIRMED",com.example.demodatn.core.NhanHienThi.label("CONFIRMED"),"PREPARING",com.example.demodatn.core.NhanHienThi.label("PREPARING"),
-        "SHIPPING",com.example.demodatn.core.NhanHienThi.label("SHIPPING"),"DELIVERED",com.example.demodatn.core.NhanHienThi.label("DELIVERED"),"CANCELLED",com.example.demodatn.core.NhanHienThi.label("CANCELLED"));
+        "PENDING","Chờ xử lý","CONFIRMED","Đã xác nhận","PREPARING","Đang chuẩn bị",
+        "SHIPPING","Đang giao","DELIVERED","Hoàn tất","CANCELLED","Đã hủy");
 
     @ModelAttribute public void labels(Model model) { model.addAttribute("statusLabels",STATUS_LABELS); }
 
