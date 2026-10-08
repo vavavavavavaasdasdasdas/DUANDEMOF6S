@@ -31,7 +31,16 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local Phase 5 browser evidence and generated audit files (no session data in Git)
+/.playwright-cli/
+/output/playwright/
 target/
 *.log
 .idea/
 .vscode/
+
+/uploads/
+
+# Tệp cách ly sau đợt dọn dẹp, không đưa dữ liệu phiên hoặc capture lên Git.
+/_cho_xoa/
