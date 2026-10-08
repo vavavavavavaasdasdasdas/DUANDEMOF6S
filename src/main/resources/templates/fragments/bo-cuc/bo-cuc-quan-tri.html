@@ -10,6 +10,8 @@
     <link rel="stylesheet" th:href="@{/css/quan-tri.css}">
     <script th:src="@{/js/quan-tri.js}" defer></script>
     <script th:src="@{/js/quan-tri-danh-muc.js}" defer></script>
+    <script th:inline="javascript">window.nhanHienThi = /*[[${nhanHienThi}]]*/ {};</script>
+    <script src="/js/nhan-hien-thi.js"></script>
 </head>
 <body class="admin-body">
 <dialog id="admin-confirm" class="catalog-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-description">
@@ -18,7 +20,7 @@
 </dialog>
 <a class="admin-skip" href="#admin-content">Đến nội dung chính</a>
 <aside th:replace="~{fragments/thanh-ben-quan-tri :: sidebar}"></aside>
-<button class="admin-backdrop" aria-label="Đóng menu" tabindex="-1" hidden></button>
+<button class="admin-backdrop" th:aria-label="${@nhan.text('ui.038')}" tabindex="-1" hidden></button>
 <div class="admin-shell">
     <header th:replace="~{fragments/thanh-dau-quan-tri :: topbar}"></header>
     <main id="admin-content" class="admin-content" tabindex="-1">

@@ -9,12 +9,12 @@ import java.util.List;
 public class AdminPageAdvice {
     public record NavItem(String group, String title, String route, String key) {}
     public static final List<NavItem> NAV = List.of(
-        new NavItem("", "Dashboard", "/admin/dashboard", "dashboard"),
+        new NavItem("", com.example.demodatn.core.NhanHienThi.text("ui.001"), "/admin/dashboard", "dashboard"),
         new NavItem("BÁN HÀNG", "Bán hàng tại quầy", "/admin/pos", "pos"),
         new NavItem("", "Đơn hàng", "/admin/orders", "orders"),
         new NavItem("", "Hóa đơn", "/admin/invoices", "invoices"),
         new NavItem("SẢN PHẨM", "Sản phẩm", "/admin/products-crud", "products"),
-        new NavItem("", "Variant", "/admin/variants", "variants"),
+        new NavItem("", com.example.demodatn.core.NhanHienThi.text("ui.055"), "/admin/variants", "variants"),
         new NavItem("", "Danh mục", "/admin/categories", "categories"),
         new NavItem("", "Size", "/admin/sizes", "sizes"),
         new NavItem("", "Tồn kho", "/admin/inventory", "inventory"),

@@ -6,7 +6,7 @@
    function reset() { revision++;pending?.abort();message.textContent='';row.hidden=true;total.textContent=money(Number(subtotal.dataset.subtotal)+Number(box.dataset.shipping||0));button.disabled=false;button.removeAttribute('aria-busy');total.dataset.amount=Number(subtotal.dataset.subtotal)+Number(box.dataset.shipping||0);box.dispatchEvent(new Event('voucherchange')); }
    input.addEventListener('input',reset);customer?.addEventListener('change',reset);
    button.addEventListener('click',async()=>{
-     reset();if(!input.value.trim()){message.textContent='Vui lòng nhập mã voucher.';return;}
+     reset();if(!input.value.trim()){message.textContent=window.dich('ui.069');return;}
      const current=revision;pending=new AbortController();button.disabled=true;button.setAttribute('aria-busy','true');message.textContent='Đang kiểm tra voucher…';
      try {
        const data=new URLSearchParams({code:input.value.trim()});if(customer?.value)data.set('customerId',customer.value);

@@ -5,19 +5,19 @@ import lombok.Data;
 
 @Data
 public class CheckoutRequest {
-    @NotBlank(message = "Vui lòng nhập họ tên người nhận")
+    @NotBlank(message = "{ui.058}")
     private String receiverName;
 
-    @NotBlank(message = "Vui lòng nhập số điện thoại")
+    @NotBlank(message = "{ui.059}")
     private String phone;
 
-    @NotBlank(message = "Vui lòng nhập email")
+    @NotBlank(message = "{ui.060}")
     private String email;
 
-    @NotBlank(message = "Vui lòng nhập địa chỉ giao hàng")
+    @NotBlank(message = "{ui.061}")
     private String shippingAddress;
 
-    @NotBlank(message = "Vui lòng chọn phương thức thanh toán")
+    @NotBlank(message = "{ui.062}")
     private String paymentMethod;
 
     private String voucherCode;

@@ -50,7 +50,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div th:if="${item.hasPromotion}"><span class="badge bg-danger">SALE</span>
+                                            <div th:if="${item.hasPromotion}"><span class="badge bg-danger"><th:block th:text="${@nhan.text('ui.013')}"></th:block></span>
                                                 <span class="text-danger fw-bold d-block" th:text="${@money.format(item.price)} + ' đ'"></span>
                                                 <span class="text-muted text-decoration-line-through small" th:text="${@money.format(item.originalPrice)} + ' đ'"></span>
                                             </div>

@@ -42,7 +42,7 @@ public class AdminVariantController {
         if(!result.hasErrors()) {
             try {
                 ProductVariant saved=catalog.saveVariant(form);
-                flash.addFlashAttribute("message","Đã lưu variant. Mọi thay đổi tồn kho đã được ghi lịch sử.");
+                flash.addFlashAttribute("message",com.example.demodatn.core.NhanHienThi.text("ui.052"));
                 return "redirect:/admin/products-crud/"+saved.getProduct().getId()+"/variants";
             } catch(CatalogValidationException ex) { result.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
               catch(DataIntegrityViolationException ex) { result.rejectValue("sizeId","duplicate","Cặp sản phẩm–size đã tồn tại hoặc dữ liệu vừa thay đổi."); }

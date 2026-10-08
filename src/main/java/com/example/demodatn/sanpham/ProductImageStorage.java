@@ -50,7 +50,7 @@ public class ProductImageStorage {
                 }
                 return "/uploads/products/" + filename;
             } finally { reader.dispose(); }
-        } catch (IOException ex) { throw invalid("Không thể đọc/lưu ảnh. Vui lòng thử lại với ảnh PNG/JPEG hợp lệ."); }
+        } catch (IOException ex) { throw invalid(com.example.demodatn.core.NhanHienThi.text("ui.054")); }
     }
     public void removeNewFile(String url) {
         if (url == null || !url.matches("/uploads/products/[a-f0-9-]+\\.(png|jpg)")) return;

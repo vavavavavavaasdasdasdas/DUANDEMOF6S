@@ -30,7 +30,7 @@ public class AdminInventoryController {
     @PostMapping("/adjust")
     public String save(@Valid @ModelAttribute("adjustment") InventoryForm form,BindingResult result,Model model,RedirectAttributes flash) {
         if (form.getVariantId() == null)
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,"Thiếu variant cần điều chỉnh.");
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,com.example.demodatn.core.NhanHienThi.text("ui.050"));
         if(!result.hasErrors()) {
             try {
                 inventory.adjust(form); flash.addFlashAttribute("message","Đã điều chỉnh tồn kho và ghi lịch sử.");

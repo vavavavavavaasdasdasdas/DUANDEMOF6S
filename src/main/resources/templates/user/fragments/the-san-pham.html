@@ -7,7 +7,7 @@
 -->
 <div th:fragment="card(p)" class="card h-100 shadow-sm border-0 product-card position-relative">
     <span class="product-sale-badge position-absolute top-0 start-0 m-2 badge bg-danger"
-          th:if="${p.hasPromotion}" th:text="|SALE -${p.discountPercentage}%|">SALE</span>
+          th:if="${p.hasPromotion}" th:text="|${@nhan.text('ui.009')}${p.discountPercentage}%|"></span>
 
     <a th:href="@{/products/{id}(id=${p.id})}">
         <img th:src="${p.imageUrl != null and (#strings.startsWith(p.imageUrl,'/uploads/') or #strings.startsWith(p.imageUrl,'/images/')) ? p.imageUrl : '/anh/anh-san-pham-thay-the.svg'}"

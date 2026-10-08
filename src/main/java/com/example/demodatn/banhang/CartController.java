@@ -177,7 +177,7 @@ public class CartController {
 
     private String addItem(HttpSession session, Integer variantId, Integer quantity) {
         if (variantId == null || quantity == null || quantity <= 0) {
-            return "Vui lòng chọn size và số lượng hợp lệ!";
+            return com.example.demodatn.core.NhanHienThi.text("ui.039");
         }
         ProductVariant variant = productService.getVariantById(variantId);
         if (variant == null || !Boolean.TRUE.equals(variant.getStatus()) || !Boolean.TRUE.equals(variant.getProduct().getStatus())) {

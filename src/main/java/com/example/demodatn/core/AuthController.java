@@ -34,10 +34,10 @@ public class AuthController {
         }
         try {
             authService.register(request);
-            redirectAttributes.addFlashAttribute("message", "Đăng ký thành công! Vui lòng đăng nhập.");
+            redirectAttributes.addFlashAttribute("message", com.example.demodatn.core.NhanHienThi.text("ui.040"));
             return "redirect:/login";
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            model.addAttribute("error", "Username, email hoặc số điện thoại vừa được sử dụng. Vui lòng kiểm tra lại.");
+            model.addAttribute("error", com.example.demodatn.core.NhanHienThi.text("ui.041"));
             return "auth/dang-ky";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());

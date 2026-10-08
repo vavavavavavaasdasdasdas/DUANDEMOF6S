@@ -17,10 +17,10 @@
                 </div>
                 <div class="col-lg-6">
                     <img th:if="${heroProduct != null and heroProduct.imageUrl != null}"
-                         th:src="${heroProduct.imageUrl != null and (#strings.startsWith(heroProduct.imageUrl,'/uploads/') or #strings.startsWith(heroProduct.imageUrl,'/images/')) ? heroProduct.imageUrl : '/anh/anh-san-pham-thay-the.svg'}" alt="Hero"
+                         th:src="${heroProduct.imageUrl != null and (#strings.startsWith(heroProduct.imageUrl,'/uploads/') or #strings.startsWith(heroProduct.imageUrl,'/images/')) ? heroProduct.imageUrl : '/anh/anh-san-pham-thay-the.svg'}" th:alt="${@nhan.text('ui.015')}"
                          class="hero-image img-fluid rounded shadow-lg">
                     <img th:if="${heroProduct == null or heroProduct.imageUrl == null}"
-                         src="/anh/anh-thay-the.svg" alt="Hero"
+                         src="/anh/anh-thay-the.svg" th:alt="${@nhan.text('ui.015')}"
                          class="hero-image img-fluid rounded shadow-lg bg-white p-2">
                 </div>
             </div>

@@ -13,7 +13,7 @@
                 <p class="mb-1"><strong>Địa chỉ:</strong> <span th:text="${order.shippingAddress}"></span></p>
                 <hr>
                 <p class="mb-1"><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
-                <p class="mb-1"><strong>Trạng thái:</strong> <span class="badge bg-primary" th:text="${order.status}"></span></p>
+                <p class="mb-1"><strong>Trạng thái:</strong> <span class="badge bg-primary" th:text="${@nhan.label(order.status)}"></span></p>
             </div>
         </div>
 

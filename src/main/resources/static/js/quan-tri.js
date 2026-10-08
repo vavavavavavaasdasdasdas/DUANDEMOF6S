@@ -5,14 +5,14 @@
     const close = () => {
         document.body.classList.remove('menu-open');
         toggle.setAttribute('aria-expanded', 'false');
-        toggle.setAttribute('aria-label', 'Mở menu quản trị');
+        toggle.setAttribute('aria-label', window.dich('ui.006'));
         backdrop.hidden = true;
     };
     toggle.addEventListener('click', () => {
         if (document.body.classList.contains('menu-open')) { close(); return; }
         document.body.classList.add('menu-open');
         toggle.setAttribute('aria-expanded', 'true');
-        toggle.setAttribute('aria-label', 'Đóng menu quản trị');
+        toggle.setAttribute('aria-label', window.dich('ui.066'));
         backdrop.hidden = false;
         sidebar.querySelector('a').focus();
     });

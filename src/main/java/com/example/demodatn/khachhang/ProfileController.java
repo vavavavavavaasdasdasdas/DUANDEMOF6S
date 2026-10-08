@@ -54,7 +54,7 @@ public class ProfileController {
                 customerRepository.saveAndFlush(customer);
                 ra.addFlashAttribute("message", "Cập nhật thông tin thành công!");
             } catch(org.springframework.dao.DataIntegrityViolationException ex) {
-                ra.addFlashAttribute("error","Email hoặc số điện thoại vừa được sử dụng. Vui lòng thử lại.");
+                ra.addFlashAttribute("error",com.example.demodatn.core.NhanHienThi.text("ui.042"));
             }
         }
         return "redirect:/profile";

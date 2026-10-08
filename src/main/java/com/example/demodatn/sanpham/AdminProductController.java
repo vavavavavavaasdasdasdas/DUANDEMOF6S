@@ -46,7 +46,7 @@ public class AdminProductController {
         if (!result.hasErrors()) {
             try {
                 Product saved=catalog.saveProduct(product);
-                flash.addFlashAttribute("message","Đã lưu sản phẩm. Tiếp tục quản lý size, giá và tồn kho ở phần variant.");
+                flash.addFlashAttribute("message",com.example.demodatn.core.NhanHienThi.text("ui.051"));
                 return "redirect:/admin/products-crud/view/"+saved.getId();
             } catch(CatalogValidationException ex) { result.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
               catch(DataIntegrityViolationException ex) { result.rejectValue("code","duplicate","Mã sản phẩm đã tồn tại hoặc dữ liệu liên quan vừa thay đổi."); }
