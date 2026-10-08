@@ -30,4 +30,12 @@ public class User {
     private Role role;
 
     private Boolean status = true;
+
+    @Column(name = "full_name")
+    @org.hibernate.annotations.Nationalized
+    private String fullName;
+    private String email;
+    private String phone;
+    @Column(name = "created_at")
+    private java.time.LocalDateTime createdAt = java.time.LocalDateTime.now();
 }

@@ -23,6 +23,7 @@ public class Employee {
     private String employeeCode;
 
     @Column(name = "full_name", nullable = false)
+    @org.hibernate.annotations.Nationalized
     private String fullName;
 
     @Column(unique = true)
@@ -35,7 +36,7 @@ public class Employee {
     private String position;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
     private Boolean status = true;
