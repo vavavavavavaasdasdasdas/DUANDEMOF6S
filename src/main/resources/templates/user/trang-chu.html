@@ -60,6 +60,12 @@
         </div>
     </section>
 
+    <section class="empty-state mb-5" th:if="${#lists.isEmpty(newest)}" role="status">
+        <h2>Cửa hàng chưa có sản phẩm</h2>
+        <p>Sản phẩm mới sẽ được cập nhật tại đây. Bạn có thể quay lại sau để xem bộ sưu tập mới.</p>
+        <a class="btn btn-outline-primary" href="/products">Xem danh sách sản phẩm</a>
+    </section>
+
     <!-- Khuyến mãi -->
     <section class="mb-5" th:if="${promotions != null and !promotions.isEmpty()}">
         <div class="store-section-heading d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
