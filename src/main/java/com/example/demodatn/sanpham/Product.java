@@ -35,4 +35,5 @@ public class Product {
     private String imageUrl;
 
     private Boolean status = true;
+    public String getDisplayImageUrl() { return ProductMedia.source(imageUrl); }
 }

@@ -32,7 +32,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="detail : ${orderDetails}">
-                            <td th:text="${detail.productName != null ? detail.productName : detail.productVariant.product.name}"></td>
+                            <td><img class="product-thumbnail" th:src="${detail.productVariant.product.displayImageUrl}" th:alt="${detail.productName}+' — ảnh chính'" width="56" height="56"><span th:text="${detail.productName != null ? detail.productName : detail.productVariant.product.name}"></span></td>
                             <td th:text="${detail.sizeName != null ? detail.sizeName : detail.productVariant.size.sizeValue}"></td>
                             <td th:text="${detail.quantity}"></td>
                             <td th:text="${@money.format(detail.price)} + ' đ'"></td>

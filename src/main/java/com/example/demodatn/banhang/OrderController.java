@@ -30,6 +30,8 @@ public class OrderController {
     private final VoucherService voucherService;
     private final OrderRepository orderRepository;
     private final PricingService pricingService;
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.example.demodatn.sanpham.ProductVariantRepository productVariants;
 
     @Value("${shop.shipping.fee:30000}")
     private BigDecimal shippingFee;
@@ -85,6 +87,9 @@ public class OrderController {
         }
         
         model.addAttribute("cartItems", cart);
+        Map<Integer,String> variantImages=new HashMap<>();
+        for (CartItemDto item:cart) productVariants.findById(item.getVariantId()).ifPresent(v->variantImages.put(v.getId(),v.getProduct().getDisplayImageUrl()));
+        model.addAttribute("variantImages",variantImages);
         model.addAttribute("variantPrices",cart.stream().collect(java.util.stream.Collectors.toMap(CartItemDto::getVariantId,i->pricingService.priceForVariant(i.getVariantId()),(a,b)->a)));
         model.addAttribute("subTotal", subTotal);
         model.addAttribute("shippingFee", fee);

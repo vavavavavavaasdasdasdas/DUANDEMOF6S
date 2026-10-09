@@ -28,6 +28,7 @@ public class ProductController {
     private final ProductFilterService productFilterService;
     private final CategoryRepository categoryRepository;
     private final SizeRepository sizeRepository;
+    private final ProductGalleryService gallery;
 
     @GetMapping({"/products", "/search"})
     public String list(
@@ -86,6 +87,7 @@ public class ProductController {
             .collect(Collectors.toList());
             
         model.addAttribute("product", product);
+        model.addAttribute("productImages", gallery.list(id));
         model.addAttribute("variants", variants);
         model.addAttribute("variantPrices", variantPrices);
         model.addAttribute("relatedProducts", relatedProducts);

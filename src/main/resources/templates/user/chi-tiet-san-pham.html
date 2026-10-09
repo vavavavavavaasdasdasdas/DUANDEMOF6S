@@ -17,9 +17,19 @@
         <div class="row mb-5">
             <!-- Product Image -->
             <div class="col-md-6 mb-4 mb-md-0">
-                <div class="card border-0 shadow-sm">
-                    <img th:src="${product.imageUrl != null and (#strings.startsWith(product.imageUrl,'/uploads/') or #strings.startsWith(product.imageUrl,'/images/')) ? product.imageUrl : '/anh/anh-san-pham-thay-the.svg'}" class="detail-image card-img-top img-fluid" alt="Product Image">
-                </div>
+                <section class="product-gallery" data-product-gallery tabindex="0" aria-label="Bộ ảnh sản phẩm. Dùng phím trái, phải để chuyển ảnh.">
+                    <div class="product-gallery-frame">
+                        <img data-gallery-large th:src="${product.displayImageUrl}" th:alt="${product.name}+' — ảnh sản phẩm'" width="600" height="600">
+                        <button th:if="${#lists.size(productImages)>1}" type="button" class="gallery-arrow gallery-prev" data-gallery-prev aria-label="Xem ảnh trước"><span aria-hidden="true">&lt;</span></button>
+                        <button th:if="${#lists.size(productImages)>1}" type="button" class="gallery-arrow gallery-next" data-gallery-next aria-label="Xem ảnh tiếp theo"><span aria-hidden="true">&gt;</span></button>
+                    </div>
+                    <div class="gallery-thumbnails" th:if="${#lists.size(productImages)>1}">
+                        <button th:each="image,it:${productImages}" type="button" data-gallery-thumb th:data-main="${image.main}" th:attr="aria-label='Xem góc ảnh '+${it.count}">
+                            <img th:src="${image.displayPath}" th:alt="${product.name}+' — góc ảnh '+${it.count}" width="72" height="72" loading="lazy">
+                        </button>
+                    </div>
+                    <p data-gallery-status class="field-help" aria-live="polite" th:if="${#lists.size(productImages)>1}"></p>
+                </section>
             </div>
 
             <!-- Product Info -->
@@ -134,6 +144,7 @@
         </div>
 
         <script src="/js/chi-tiet-san-pham.js" defer></script>
+        <script src="/js/bo-anh-san-pham.js" defer></script>
     </div>
 </body>
 </html>

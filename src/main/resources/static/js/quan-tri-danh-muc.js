@@ -43,8 +43,8 @@
    }
    if(field.type==='file' && field.files[0]) {
      const f=field.files[0];
-     if(!['image/png','image/jpeg'].includes(f.type) || !/\.(png|jpe?g)$/i.test(f.name))message='Chỉ chấp nhận ảnh PNG hoặc JPEG.';
-     else if(f.size>Number(field.dataset.maxBytes))message='Ảnh vượt dung lượng cho phép (5 MB).';
+     if(!['image/png','image/jpeg','image/webp'].includes(f.type) || !/\.(png|jpe?g|webp)$/i.test(f.name))message='Chỉ chấp nhận ảnh JPG, PNG hoặc WEBP.';
+     else if(f.size>Number(field.dataset.maxBytes || 5242880))message='Ảnh vượt dung lượng cho phép (5 MB).';
    }
    if(field.id==='reason' && field.hasAttribute('data-stock-reason')) {
      const expected=field.form.querySelector('[name=expectedQuantity]')?.value;

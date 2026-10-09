@@ -26,11 +26,12 @@ public class ProductUploadExceptionAdvice {
     public String tooLarge(Model model) {
         AdminProductForm form = new AdminProductForm();
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(form, "product");
-        errors.rejectValue("image", "tooLarge", "Ảnh vượt giới hạn tải lên. Chọn PNG/JPEG tối đa "
+        errors.rejectValue("image", "tooLarge", "Ảnh vượt giới hạn tải lên. Chọn JPG/PNG/WEBP tối đa "
                 + maxBytes / 1024 / 1024 + " MB và nhập lại thông tin.");
         model.addAttribute("product", form);
         model.addAttribute(BindingResult.MODEL_KEY_PREFIX + "product", errors);
         model.addAttribute("categories", categories.findAll());
+        model.addAttribute("productImages", java.util.List.of());
         model.addAttribute("uploadMaxBytes", maxBytes);
         model.addAttribute("adminNav", AdminPageAdvice.NAV);
         model.addAttribute("adminActive", "products");

@@ -47,6 +47,11 @@ class CatalogIntegrationTest {
     private AdminProductForm productForm(String code) {
         AdminProductForm f=new AdminProductForm();
         f.setCode(code);f.setName("Kiểm thử Phase 6");f.setStatus(true);f.setCategoryId(categories.findAll().get(0).getId());
+        try {
+            var bytes=new java.io.ByteArrayOutputStream();
+            javax.imageio.ImageIO.write(new java.awt.image.BufferedImage(2,2,java.awt.image.BufferedImage.TYPE_INT_RGB),"png",bytes);
+            f.setImage(new MockMultipartFile("image","fixture.png","image/png",bytes.toByteArray()));
+        } catch(java.io.IOException ex) { throw new IllegalStateException(ex); }
         return f;
     }
     private Product product() { return catalog.saveProduct(productForm("T6-"+UUID.randomUUID())); }

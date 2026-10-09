@@ -8,6 +8,25 @@
   --bs-border-radius: 0.5rem;
 }
 
+.product-gallery { min-width:0; }
+.product-gallery-frame { position:relative; aspect-ratio:1; overflow:hidden; background:#fff; border-radius:var(--bs-border-radius); border:1px solid #e2e5e9; }
+.product-gallery-frame > img { display:block; width:100%; height:100%; object-fit:contain; touch-action:pan-y; }
+.gallery-arrow { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border:1px solid #d5d9de; border-radius:50%; background:#fff; color:var(--bs-body-color); box-shadow:0 2px 8px rgba(0,0,0,.12); font-size:24px; display:grid; place-items:center; }
+.gallery-prev { left:12px; }.gallery-next { right:12px; }
+.gallery-arrow:hover { color:var(--bs-primary); border-color:var(--bs-primary); }
+.gallery-thumbnails { display:flex; gap:8px; overflow-x:auto; padding:12px 3px 8px; max-width:100%; }
+.gallery-thumbnails button { flex:0 0 76px; border:2px solid transparent; background:#fff; padding:2px; border-radius:var(--bs-border-radius); }
+.gallery-thumbnails button.is-current { border-color:var(--bs-primary); }
+.gallery-thumbnails img { width:68px; height:68px; object-fit:contain; display:block; }
+.product-gallery :focus-visible { outline:3px solid var(--bs-primary); outline-offset:3px; }
+.image-manager-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:16px 0; }
+.image-manager-item { min-width:0; border:2px solid #e2e5e9; border-radius:var(--bs-border-radius); padding:8px; }
+.image-manager-item.is-main { border-color:var(--bs-primary); }
+.image-manager-item > img { width:100%; aspect-ratio:1; height:auto; object-fit:contain; background:#fff; }
+.image-manager-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.product-thumbnail { width:56px; height:56px; object-fit:contain; flex:none; vertical-align:middle; margin-right:12px; }
+@media(max-width:480px) { .image-manager-list { grid-template-columns:1fr; } }
+
 body {
   font-family: var(--bs-body-font-family);
   background-color: var(--bs-body-bg);

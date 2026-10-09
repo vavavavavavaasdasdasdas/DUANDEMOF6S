@@ -19,6 +19,7 @@ public class AdminCatalogService {
     private final InventoryLogRepository inventoryLogs;
     private final InventoryService inventory;
     private final ProductImageStorage images;
+    private final ProductGalleryService gallery;
 
     public Product product(Integer id) {
         return products.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy sản phẩm."));
@@ -32,16 +33,11 @@ public class AdminCatalogService {
         if (products.existsByCodeIgnoreCaseAndIdNot(code, form.getId() == null ? -1 : form.getId()))
             throw new CatalogValidationException("code","Mã sản phẩm đã tồn tại.");
         Category category = categories.findById(form.getCategoryId()).orElseThrow(() -> new CatalogValidationException("categoryId","Danh mục không tồn tại."));
-        Product product = form.getId() == null ? new Product() : product(form.getId());
+        Product product = form.getId() == null ? new Product() : products.lockById(form.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         product.setCode(code); product.setName(form.getName().trim()); product.setDescription(form.getDescription());
         product.setCategory(category); product.setStatus(form.getStatus());
-        String image = images.store(form.getImage());
-        if (image != null) {
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-                @Override public void afterCompletion(int status) { if (status != STATUS_COMMITTED) images.removeNewFile(image); }
-            });
-            product.setImageUrl(image);
-        }
+        products.saveAndFlush(product);
+        gallery.save(product,form);
         return products.saveAndFlush(product);
     }
     @Transactional
@@ -55,6 +51,7 @@ public class AdminCatalogService {
             product.setStatus(false);
             return "Sản phẩm có variant/lịch sử liên quan: đã chuyển sang ngừng bán để bảo toàn tồn kho và lịch sử.";
         }
+        gallery.removeForProduct(id);
         products.delete(product);
         products.flush();
         return "Đã xóa sản phẩm chưa có dữ liệu liên quan.";

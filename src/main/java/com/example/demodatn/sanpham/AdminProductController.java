@@ -13,6 +13,7 @@ public class AdminProductController {
     private final AdminCatalogService catalog;
     private final AdminCatalogQuery query;
     private final CategoryRepository categories;
+    private final ProductGalleryService gallery;
     @org.springframework.beans.factory.annotation.Value("${shop.upload-max-bytes:5242880}") private long maxBytes;
 
     @GetMapping
@@ -61,6 +62,8 @@ public class AdminProductController {
         return "redirect:/admin/products-crud";
     }
     private String form(Model model) {
+        AdminProductForm form=(AdminProductForm)model.getAttribute("product");
+        model.addAttribute("productImages", form.getId()==null ? java.util.List.of() : gallery.list(form.getId()));
         model.addAttribute("categories",categories.findAll());
         model.addAttribute("uploadMaxBytes",maxBytes);
         return "admin/san-pham/bieu-mau";

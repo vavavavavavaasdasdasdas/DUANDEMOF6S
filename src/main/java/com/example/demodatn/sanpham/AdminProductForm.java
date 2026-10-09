@@ -15,5 +15,8 @@ public class AdminProductForm {
     @NotNull(message="Chọn trạng thái.") private Boolean status = true;
     private MultipartFile image;
     private String imageUrl;
+    private MultipartFile[] images;
+    private java.util.List<Long> removedImageIds = new java.util.ArrayList<>();
+    private java.util.List<String> imageOrder = new java.util.ArrayList<>();
+    private String mainImageKey;
 }
-
