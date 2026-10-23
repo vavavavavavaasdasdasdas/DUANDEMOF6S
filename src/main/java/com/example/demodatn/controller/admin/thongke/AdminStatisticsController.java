@@ -1,6 +1,5 @@
-package com.example.demodatn.thongke;
+package com.example.demodatn.controller.admin.thongke;
 import com.example.demodatn.service.thongke.StatisticsService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

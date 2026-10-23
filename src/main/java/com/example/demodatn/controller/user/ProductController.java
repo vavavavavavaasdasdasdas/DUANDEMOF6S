@@ -1,4 +1,4 @@
-package com.example.demodatn.sanpham;
+package com.example.demodatn.controller.user;
 import com.example.demodatn.banhang.PriceInfo;
 import com.example.demodatn.entity.sanpham.Material;
 import com.example.demodatn.entity.sanpham.Product;
@@ -6,6 +6,7 @@ import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.repository.sanpham.CategoryRepository;
 import com.example.demodatn.repository.sanpham.MaterialRepository;
 import com.example.demodatn.repository.sanpham.SizeRepository;
+import com.example.demodatn.sanpham.ProductDto;
 import com.example.demodatn.service.donhang.PricingService;
 import com.example.demodatn.service.sanpham.ProductFilterService;
 import com.example.demodatn.service.sanpham.ProductGalleryService;

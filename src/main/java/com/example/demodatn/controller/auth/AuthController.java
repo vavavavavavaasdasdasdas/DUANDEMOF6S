@@ -1,4 +1,4 @@
-package com.example.demodatn.core;
+package com.example.demodatn.controller.auth;
 import com.example.demodatn.nhanvien.RegisterRequest;
 import com.example.demodatn.service.nhanvien.AuthService;
 import jakarta.validation.Valid;

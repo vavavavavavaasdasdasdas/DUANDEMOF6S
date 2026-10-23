@@ -1,5 +1,7 @@
-package com.example.demodatn.khuyenmai;
+package com.example.demodatn.controller.admin.khuyenmai;
 import com.example.demodatn.entity.khuyenmai.Promotion;
+import com.example.demodatn.khuyenmai.DiscountValidationException;
+import com.example.demodatn.khuyenmai.PromotionDto;
 import com.example.demodatn.repository.khuyenmai.PromotionDetailRepository;
 import com.example.demodatn.repository.khuyenmai.PromotionRepository;
 import com.example.demodatn.repository.sanpham.ProductRepository;

@@ -1,4 +1,4 @@
-package com.example.demodatn.khachhang;
+package com.example.demodatn.controller.user;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import lombok.RequiredArgsConstructor;

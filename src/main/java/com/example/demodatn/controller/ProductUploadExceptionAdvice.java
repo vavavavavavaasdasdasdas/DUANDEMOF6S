@@ -1,7 +1,6 @@
-package com.example.demodatn.config;
+package com.example.demodatn.controller;
 import com.example.demodatn.repository.sanpham.CategoryRepository;
 import com.example.demodatn.sanpham.AdminProductForm;
-import com.example.demodatn.thongke.AdminPageAdvice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

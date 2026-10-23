@@ -1,4 +1,4 @@
-package com.example.demodatn.thongke;
+package com.example.demodatn.controller.admin.nhanvien;
 import com.example.demodatn.nhanvien.AccountPasswordForm;
 import com.example.demodatn.nhanvien.AccountProfileForm;
 import com.example.demodatn.service.nhanvien.AdminAccountService;

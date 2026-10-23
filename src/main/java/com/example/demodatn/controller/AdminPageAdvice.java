@@ -1,4 +1,4 @@
-package com.example.demodatn.thongke;
+package com.example.demodatn.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;

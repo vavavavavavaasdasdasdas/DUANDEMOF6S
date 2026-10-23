@@ -1,4 +1,4 @@
-package com.example.demodatn.banhang;
+package com.example.demodatn.controller.admin.donhang;
 import com.example.demodatn.entity.donhang.Order;
 import com.example.demodatn.repository.donhang.InvoiceRepository;
 import com.example.demodatn.repository.donhang.OrderRepository;

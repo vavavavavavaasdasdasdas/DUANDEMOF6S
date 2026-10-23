@@ -1,5 +1,6 @@
-package com.example.demodatn.khachhang;
+package com.example.demodatn.controller.admin.khachhang;
 import com.example.demodatn.core.PeopleValidationException;
+import com.example.demodatn.khachhang.CustomerDto;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import com.example.demodatn.service.PeopleService;
 import jakarta.validation.Valid;
