@@ -20,7 +20,9 @@ Với database hiện có, làm theo [hướng dẫn triển khai](docs/HUONG_DA
 
 ## Cấu hình và chạy
 
-Xem `application-example.properties`. Ba biến datasource bắt buộc; không có mật khẩu thật mặc định trong cấu hình nguồn. Nhập bí mật qua môi trường, không commit file cấu hình cục bộ.
+Xem `application-example.properties`. Cung cấp đủ URL, tài khoản và mật khẩu datasource qua biến môi trường hoặc cấu hình local; không có mật khẩu thật mặc định trong cấu hình nguồn. Không commit file cấu hình cục bộ.
+
+Nếu chạy nút Run trong IntelliJ: tạo `application-local.properties` từ file mẫu, điền kết nối `shop_verify` và mật khẩu SQL trên máy, chọn working directory là thư mục gốc dự án. Ứng dụng tự đọc file này; file đã được gitignore. Bạn cũng có thể đặt ba biến môi trường datasource trực tiếp trong Run Configuration. Cổng local là `http://localhost:8080`; lệnh kiểm thử bên dưới dùng 8081.
 
 ```powershell
 $env:JAVA_HOME = 'DUONG_DAN_JDK_17'
