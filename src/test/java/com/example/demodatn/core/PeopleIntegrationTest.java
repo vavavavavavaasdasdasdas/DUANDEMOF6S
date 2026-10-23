@@ -113,7 +113,8 @@ class PeopleIntegrationTest {
     }
     @Test
     void employeeInsertFailureRollsBackTheAlreadyInsertedUser() {
-        var f=employeeForm();f.setFullName("x".repeat(101));long before=users.count();
+        int limit=jdbc.queryForObject("SELECT CHARACTER_MAXIMUM_LENGTH FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='employees' AND COLUMN_NAME='full_name'",Integer.class);
+        var f=employeeForm();f.setFullName("x".repeat(limit+1));long before=users.count();
         assertThrows(org.springframework.dao.DataAccessException.class,()->people.saveEmployee(f));
         assertEquals(before,users.count());assertTrue(users.findByUsername(f.getUsername()).isEmpty());
         assertFalse(employees.existsByEmployeeCodeIgnoreCaseAndIdNot(f.getEmployeeCode(),-1));
