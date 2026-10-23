@@ -1,7 +1,7 @@
 package com.example.demodatn.controller.admin.khuyenmai;
+import com.example.demodatn.dto.khuyenmai.PromotionDto;
 import com.example.demodatn.entity.khuyenmai.Promotion;
-import com.example.demodatn.khuyenmai.DiscountValidationException;
-import com.example.demodatn.khuyenmai.PromotionDto;
+import com.example.demodatn.exception.DiscountValidationException;
 import com.example.demodatn.repository.khuyenmai.PromotionDetailRepository;
 import com.example.demodatn.repository.khuyenmai.PromotionRepository;
 import com.example.demodatn.repository.sanpham.ProductRepository;
@@ -22,7 +22,7 @@ public class AdminPromotionController {
     private final PromotionDetailRepository details;
     private final ProductRepository products;
     private final DiscountAdminService discounts;
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
     @GetMapping public String list(@RequestParam(defaultValue="0") String page,Model model) { var result=pagination.load(page,org.springframework.data.domain.Sort.by("id").descending(),promotions::findAll);model.addAttribute("promotions",result.getContent());model.addAttribute("dataPage",result);return "admin/khuyen-mai/danh-sach"; }
     @GetMapping("/create") public String create(Model model) { model.addAttribute("promotion",new PromotionDto());return "admin/khuyen-mai/bieu-mau"; }
     @GetMapping("/edit/{id}") public String edit(@PathVariable Integer id,Model model) { PromotionDto f=new PromotionDto();BeanUtils.copyProperties(discounts.promotion(id),f);model.addAttribute("promotion",f);return "admin/khuyen-mai/bieu-mau"; }

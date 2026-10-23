@@ -7,6 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DemoDatnApplication {
     public static void main(String[] args) {
         SpringApplication.run(DemoDatnApplication.class, args);
-        System.out.println("Done-.-, brooo Use Local now");
+        
     }
 }

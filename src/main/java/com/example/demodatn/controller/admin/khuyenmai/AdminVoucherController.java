@@ -1,7 +1,7 @@
 package com.example.demodatn.controller.admin.khuyenmai;
+import com.example.demodatn.dto.khuyenmai.VoucherDto;
 import com.example.demodatn.entity.khuyenmai.Voucher;
-import com.example.demodatn.khuyenmai.DiscountValidationException;
-import com.example.demodatn.khuyenmai.VoucherDto;
+import com.example.demodatn.exception.DiscountValidationException;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import com.example.demodatn.repository.khuyenmai.VoucherRepository;
 import com.example.demodatn.service.khuyenmai.DiscountAdminService;
@@ -19,7 +19,7 @@ public class AdminVoucherController {
     private final VoucherRepository vouchers;
     private final CustomerRepository customers;
     private final DiscountAdminService discounts;
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
     @GetMapping public String list(@RequestParam(defaultValue="0") String page,Model model) { var result=pagination.load(page,org.springframework.data.domain.Sort.by("id").descending(),vouchers::findAll);model.addAttribute("vouchers",result.getContent());model.addAttribute("dataPage",result);return "admin/voucher/danh-sach"; }
     private String form(Model model) { model.addAttribute("customers",customers.findAll());return "admin/voucher/bieu-mau"; }
     @GetMapping("/create") public String create(Model model) { model.addAttribute("voucher",new VoucherDto());return form(model); }

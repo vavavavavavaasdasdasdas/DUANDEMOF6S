@@ -1,7 +1,7 @@
 package com.example.demodatn.service.nhanvien;
+import com.example.demodatn.dto.nhanvien.AccountPasswordForm;
+import com.example.demodatn.dto.nhanvien.AccountProfileForm;
 import com.example.demodatn.entity.nhanvien.User;
-import com.example.demodatn.nhanvien.AccountPasswordForm;
-import com.example.demodatn.nhanvien.AccountProfileForm;
 import com.example.demodatn.repository.nhanvien.EmployeeRepository;
 import com.example.demodatn.repository.nhanvien.UserRepository;
 import lombok.RequiredArgsConstructor;

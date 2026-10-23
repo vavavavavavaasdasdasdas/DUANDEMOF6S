@@ -1,6 +1,6 @@
 package com.example.demodatn.service.donhang;
-import com.example.demodatn.banhang.dto.CartItemDto;
-import com.example.demodatn.banhang.dto.PosCheckoutRequest;
+import com.example.demodatn.dto.donhang.CartItemDto;
+import com.example.demodatn.dto.donhang.PosCheckoutRequest;
 import com.example.demodatn.entity.donhang.Order;
 import com.example.demodatn.entity.donhang.PosHeldItem;
 import com.example.demodatn.entity.donhang.PosHeldOrder;

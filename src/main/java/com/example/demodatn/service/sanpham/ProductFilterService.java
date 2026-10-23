@@ -1,12 +1,12 @@
 package com.example.demodatn.service.sanpham;
-import com.example.demodatn.banhang.PriceInfo;
+import com.example.demodatn.dto.donhang.PriceInfo;
+import com.example.demodatn.dto.sanpham.ProductDto;
 import com.example.demodatn.entity.donhang.OrderDetail;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.repository.donhang.OrderDetailRepository;
 import com.example.demodatn.repository.sanpham.ProductRepository;
 import com.example.demodatn.repository.sanpham.ProductVariantRepository;
-import com.example.demodatn.sanpham.ProductDto;
 import com.example.demodatn.service.donhang.PricingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +31,7 @@ public class ProductFilterService {
     public static final String CANCELLED = "CANCELLED";
 
     private final ProductRepository productRepository;
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
     private final ProductVariantRepository productVariantRepository;
     private final PricingService pricingService;
     private final OrderDetailRepository orderDetailRepository;

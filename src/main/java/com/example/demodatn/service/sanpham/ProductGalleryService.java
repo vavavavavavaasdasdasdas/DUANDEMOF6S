@@ -1,9 +1,9 @@
 package com.example.demodatn.service.sanpham;
+import com.example.demodatn.dto.sanpham.AdminProductForm;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductImage;
+import com.example.demodatn.exception.CatalogValidationException;
 import com.example.demodatn.repository.sanpham.ProductImageRepository;
-import com.example.demodatn.sanpham.AdminProductForm;
-import com.example.demodatn.sanpham.CatalogValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.*;

@@ -1,8 +1,8 @@
 package com.example.demodatn.service.nhanvien;
+import com.example.demodatn.dto.nhanvien.RegisterRequest;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.nhanvien.Role;
 import com.example.demodatn.entity.nhanvien.User;
-import com.example.demodatn.nhanvien.RegisterRequest;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import com.example.demodatn.repository.nhanvien.RoleRepository;
 import com.example.demodatn.repository.nhanvien.UserRepository;

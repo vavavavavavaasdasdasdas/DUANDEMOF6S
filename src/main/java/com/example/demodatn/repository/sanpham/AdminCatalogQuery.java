@@ -8,7 +8,7 @@ import java.util.*;
 @Repository @RequiredArgsConstructor
 public class AdminCatalogQuery {
     private final JdbcTemplate jdbc;
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
     public Page<Map<String,Object>> products(String keyword, Integer category, Boolean status, String sort, Object page) {
         String where = " WHERE 1=1";
         List<Object> args = new ArrayList<>();

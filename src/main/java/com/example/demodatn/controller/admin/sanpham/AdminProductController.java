@@ -1,9 +1,9 @@
 package com.example.demodatn.controller.admin.sanpham;
+import com.example.demodatn.dto.sanpham.AdminProductForm;
 import com.example.demodatn.entity.sanpham.Product;
+import com.example.demodatn.exception.CatalogValidationException;
 import com.example.demodatn.repository.sanpham.AdminCatalogQuery;
 import com.example.demodatn.repository.sanpham.CategoryRepository;
-import com.example.demodatn.sanpham.AdminProductForm;
-import com.example.demodatn.sanpham.CatalogValidationException;
 import com.example.demodatn.service.sanpham.AdminCatalogService;
 import com.example.demodatn.service.sanpham.ProductGalleryService;
 import jakarta.validation.Valid;
@@ -21,7 +21,7 @@ public class AdminProductController {
     private final AdminCatalogQuery query;
     private final CategoryRepository categories;
     private final ProductGalleryService gallery;
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
     @org.springframework.beans.factory.annotation.Value("${shop.upload-max-bytes:5242880}") private long maxBytes;
 
     @GetMapping

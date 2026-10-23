@@ -1,8 +1,8 @@
 package com.example.demodatn.service.donhang;
-import com.example.demodatn.core.Pagination;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.repository.sanpham.ProductRepository;
+import com.example.demodatn.util.Pagination;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.*;
 import org.springframework.jdbc.core.JdbcTemplate;

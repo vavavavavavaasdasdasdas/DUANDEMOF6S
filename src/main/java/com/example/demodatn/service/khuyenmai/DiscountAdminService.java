@@ -1,10 +1,10 @@
 package com.example.demodatn.service.khuyenmai;
+import com.example.demodatn.dto.khuyenmai.PromotionDto;
+import com.example.demodatn.dto.khuyenmai.VoucherDto;
 import com.example.demodatn.entity.khuyenmai.Promotion;
 import com.example.demodatn.entity.khuyenmai.PromotionDetail;
 import com.example.demodatn.entity.khuyenmai.Voucher;
-import com.example.demodatn.khuyenmai.DiscountValidationException;
-import com.example.demodatn.khuyenmai.PromotionDto;
-import com.example.demodatn.khuyenmai.VoucherDto;
+import com.example.demodatn.exception.DiscountValidationException;
 import com.example.demodatn.repository.donhang.OrderRepository;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import com.example.demodatn.repository.khuyenmai.PromotionDetailRepository;

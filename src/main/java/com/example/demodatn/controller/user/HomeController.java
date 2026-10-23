@@ -1,7 +1,7 @@
 package com.example.demodatn.controller.user;
+import com.example.demodatn.dto.sanpham.ProductDto;
 import com.example.demodatn.entity.sanpham.Category;
 import com.example.demodatn.repository.sanpham.CategoryRepository;
-import com.example.demodatn.sanpham.ProductDto;
 import com.example.demodatn.service.sanpham.ProductFilterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

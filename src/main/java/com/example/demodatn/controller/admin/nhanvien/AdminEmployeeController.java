@@ -1,6 +1,6 @@
 package com.example.demodatn.controller.admin.nhanvien;
-import com.example.demodatn.core.PeopleValidationException;
-import com.example.demodatn.nhanvien.EmployeeDto;
+import com.example.demodatn.dto.nhanvien.EmployeeDto;
+import com.example.demodatn.exception.PeopleValidationException;
 import com.example.demodatn.repository.nhanvien.EmployeeRepository;
 import com.example.demodatn.service.PeopleService;
 import jakarta.validation.Valid;
@@ -21,7 +21,7 @@ public class AdminEmployeeController {
     private final EmployeeRepository repository;
     private final PeopleService people;
 
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
 
     @GetMapping
     public String list(@RequestParam(defaultValue="") String keyword,@RequestParam(defaultValue="0") String page,Model model) {

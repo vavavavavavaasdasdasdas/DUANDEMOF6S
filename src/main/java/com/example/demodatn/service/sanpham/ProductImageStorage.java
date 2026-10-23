@@ -1,5 +1,5 @@
 package com.example.demodatn.service.sanpham;
-import com.example.demodatn.sanpham.CatalogValidationException;
+import com.example.demodatn.exception.CatalogValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

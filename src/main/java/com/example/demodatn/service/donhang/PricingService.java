@@ -1,5 +1,5 @@
 package com.example.demodatn.service.donhang;
-import com.example.demodatn.banhang.PriceInfo;
+import com.example.demodatn.dto.donhang.PriceInfo;
 import com.example.demodatn.entity.khuyenmai.Promotion;
 import com.example.demodatn.entity.khuyenmai.PromotionDetail;
 import com.example.demodatn.entity.sanpham.ProductVariant;
@@ -23,7 +23,7 @@ public class PricingService {
         return calculatePrice(variants.findById(id).orElseThrow(()->new IllegalArgumentException("Sản phẩm không tồn tại.")));
     }
 
-    public BigDecimal refreshCart(List<com.example.demodatn.banhang.dto.CartItemDto> cart) {
+    public BigDecimal refreshCart(List<com.example.demodatn.dto.donhang.CartItemDto> cart) {
         BigDecimal total=BigDecimal.ZERO;
         for(var item:cart) {
             var variant=variants.findById(item.getVariantId()).orElseThrow(()->new IllegalArgumentException("Sản phẩm không tồn tại."));

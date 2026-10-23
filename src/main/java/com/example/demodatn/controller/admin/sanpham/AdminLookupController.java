@@ -1,11 +1,11 @@
 package com.example.demodatn.controller.admin.sanpham;
+import com.example.demodatn.dto.sanpham.LookupForm;
 import com.example.demodatn.entity.sanpham.Category;
 import com.example.demodatn.entity.sanpham.Material;
+import com.example.demodatn.exception.CatalogValidationException;
 import com.example.demodatn.repository.sanpham.CategoryRepository;
 import com.example.demodatn.repository.sanpham.MaterialRepository;
 import com.example.demodatn.repository.sanpham.SizeRepository;
-import com.example.demodatn.sanpham.CatalogValidationException;
-import com.example.demodatn.sanpham.LookupForm;
 import com.example.demodatn.service.sanpham.AdminCatalogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class AdminLookupController {
     public void common(@PathVariable String kind, Model model) {
         model.addAttribute("kind",kind); model.addAttribute("lookupTitle","sizes".equals(kind)?"Size":("materials".equals(kind)?"Chất liệu":"Danh mục"));
     }
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
 
     @GetMapping
     public String list(@PathVariable String kind, @RequestParam(defaultValue="0") String page, Model model) {

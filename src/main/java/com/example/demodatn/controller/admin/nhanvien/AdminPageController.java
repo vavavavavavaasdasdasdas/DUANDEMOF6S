@@ -1,6 +1,6 @@
 package com.example.demodatn.controller.admin.nhanvien;
-import com.example.demodatn.nhanvien.AccountPasswordForm;
-import com.example.demodatn.nhanvien.AccountProfileForm;
+import com.example.demodatn.dto.nhanvien.AccountPasswordForm;
+import com.example.demodatn.dto.nhanvien.AccountProfileForm;
 import com.example.demodatn.service.nhanvien.AdminAccountService;
 import java.security.Principal;
 import jakarta.validation.Valid;

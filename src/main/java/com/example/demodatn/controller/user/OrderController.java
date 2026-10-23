@@ -1,6 +1,6 @@
 package com.example.demodatn.controller.user;
-import com.example.demodatn.banhang.dto.CartItemDto;
-import com.example.demodatn.banhang.dto.CheckoutRequest;
+import com.example.demodatn.dto.donhang.CartItemDto;
+import com.example.demodatn.dto.donhang.CheckoutRequest;
 import com.example.demodatn.entity.donhang.Order;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.repository.donhang.OrderRepository;
@@ -164,7 +164,7 @@ public class OrderController {
         }
     }
 
-    @org.springframework.beans.factory.annotation.Autowired private com.example.demodatn.core.Pagination pagination;
+    @org.springframework.beans.factory.annotation.Autowired private com.example.demodatn.util.Pagination pagination;
 
     @GetMapping("/orders")
     public String history(Principal principal,@RequestParam(defaultValue="0") String page,Model model) {

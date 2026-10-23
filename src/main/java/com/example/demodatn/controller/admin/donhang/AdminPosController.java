@@ -1,6 +1,6 @@
 package com.example.demodatn.controller.admin.donhang;
-import com.example.demodatn.banhang.dto.CartItemDto;
-import com.example.demodatn.banhang.dto.PosCheckoutRequest;
+import com.example.demodatn.dto.donhang.CartItemDto;
+import com.example.demodatn.dto.donhang.PosCheckoutRequest;
 import com.example.demodatn.repository.donhang.InvoiceRepository;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import com.example.demodatn.repository.nhanvien.EmployeeRepository;

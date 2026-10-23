@@ -19,7 +19,7 @@ public class AdminInvoiceController {
     @org.springframework.beans.factory.annotation.Value("${shop.address:}") private String shopAddress;
     @org.springframework.beans.factory.annotation.Value("${shop.phone:}") private String shopPhone;
 
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
 
     @GetMapping
     public String list(@RequestParam(defaultValue="") String q,@RequestParam(required=false) LocalDate from,

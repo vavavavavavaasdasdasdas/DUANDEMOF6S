@@ -13,7 +13,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class StatisticsService {
     private final JdbcTemplate jdbc;
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
     private static final String FILTER = " o.created_at>=? AND o.created_at<? AND (?='ALL' OR o.order_type=?)";
     private static final String ELIGIBLE = " o.payment_status='PAID' AND o.status<>'CANCELLED' AND" + FILTER;
 

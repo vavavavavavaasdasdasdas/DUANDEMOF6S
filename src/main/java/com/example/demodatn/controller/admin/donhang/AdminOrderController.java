@@ -22,7 +22,7 @@ public class AdminOrderController {
 
     @ModelAttribute public void labels(Model model) { model.addAttribute("statusLabels",STATUS_LABELS); }
 
-    private final com.example.demodatn.core.Pagination pagination;
+    private final com.example.demodatn.util.Pagination pagination;
 
     @GetMapping
     public String list(@RequestParam(required=false) String status,@RequestParam(defaultValue="") String q,

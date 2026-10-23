@@ -1,11 +1,11 @@
 package com.example.demodatn.service;
-import com.example.demodatn.core.PeopleValidationException;
+import com.example.demodatn.dto.khachhang.CustomerDto;
+import com.example.demodatn.dto.nhanvien.EmployeeDto;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.nhanvien.Employee;
 import com.example.demodatn.entity.nhanvien.Role;
 import com.example.demodatn.entity.nhanvien.User;
-import com.example.demodatn.khachhang.CustomerDto;
-import com.example.demodatn.nhanvien.EmployeeDto;
+import com.example.demodatn.exception.PeopleValidationException;
 import com.example.demodatn.repository.donhang.OrderRepository;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import com.example.demodatn.repository.khuyenmai.VoucherRepository;
