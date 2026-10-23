@@ -1,4 +1,4 @@
-package com.example.demodatn.khachhang;
+package com.example.demodatn.repository.khachhang;
 import com.example.demodatn.entity.khachhang.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,7 +1,6 @@
 package com.example.demodatn.core;
 import com.example.demodatn.nhanvien.AuthService;
 import com.example.demodatn.nhanvien.RegisterRequest;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

@@ -1,6 +1,8 @@
 package com.example.demodatn.sanpham;
 import com.example.demodatn.entity.sanpham.InventoryLog;
 import com.example.demodatn.entity.sanpham.ProductVariant;
+import com.example.demodatn.repository.sanpham.InventoryLogRepository;
+import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +16,7 @@ import java.time.ZoneId;
 public class InventoryService {
     private final ProductVariantRepository variants;
     private final InventoryLogRepository logs;
-    private final com.example.demodatn.banhang.OrderRepository orders;
+    private final com.example.demodatn.repository.donhang.OrderRepository orders;
     private final jakarta.persistence.EntityManager entityManager;
     @org.springframework.beans.factory.annotation.Value("${shop.time-zone:Asia/Ho_Chi_Minh}") private String timeZone;
 

@@ -1,4 +1,4 @@
-package com.example.demodatn.thongke;
+package com.example.demodatn.repository.thongke;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;

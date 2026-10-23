@@ -1,6 +1,5 @@
-package com.example.demodatn.sanpham;
+package com.example.demodatn.repository.sanpham;
 import com.example.demodatn.entity.sanpham.Material;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

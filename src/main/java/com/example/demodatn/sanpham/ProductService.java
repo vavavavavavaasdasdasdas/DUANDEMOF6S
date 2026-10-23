@@ -1,6 +1,8 @@
 package com.example.demodatn.sanpham;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
+import com.example.demodatn.repository.sanpham.ProductRepository;
+import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

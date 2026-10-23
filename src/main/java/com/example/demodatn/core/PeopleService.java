@@ -1,18 +1,17 @@
 package com.example.demodatn.core;
-import com.example.demodatn.banhang.OrderRepository;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.nhanvien.Employee;
 import com.example.demodatn.entity.nhanvien.Role;
 import com.example.demodatn.entity.nhanvien.User;
 import com.example.demodatn.khachhang.CustomerDto;
-import com.example.demodatn.khachhang.CustomerRepository;
-import com.example.demodatn.khuyenmai.VoucherRepository;
 import com.example.demodatn.nhanvien.EmployeeDto;
-import com.example.demodatn.nhanvien.EmployeeRepository;
-import com.example.demodatn.nhanvien.RoleRepository;
-import com.example.demodatn.nhanvien.UserRepository;
+import com.example.demodatn.repository.donhang.OrderRepository;
+import com.example.demodatn.repository.khachhang.CustomerRepository;
+import com.example.demodatn.repository.khuyenmai.VoucherRepository;
+import com.example.demodatn.repository.nhanvien.EmployeeRepository;
+import com.example.demodatn.repository.nhanvien.RoleRepository;
+import com.example.demodatn.repository.nhanvien.UserRepository;
 import com.example.demodatn.security.CustomUserDetails;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

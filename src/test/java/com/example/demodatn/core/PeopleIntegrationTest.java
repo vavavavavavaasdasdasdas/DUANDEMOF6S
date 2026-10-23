@@ -1,16 +1,15 @@
 package com.example.demodatn.core;
-import com.example.demodatn.banhang.OrderRepository;
 import com.example.demodatn.entity.donhang.Order;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.nhanvien.Employee;
 import com.example.demodatn.entity.nhanvien.User;
-import com.example.demodatn.khachhang.CustomerRepository;
 import com.example.demodatn.nhanvien.EmployeeDto;
-import com.example.demodatn.nhanvien.EmployeeRepository;
-import com.example.demodatn.nhanvien.RoleRepository;
-import com.example.demodatn.nhanvien.UserRepository;
+import com.example.demodatn.repository.donhang.OrderRepository;
+import com.example.demodatn.repository.khachhang.CustomerRepository;
+import com.example.demodatn.repository.nhanvien.EmployeeRepository;
+import com.example.demodatn.repository.nhanvien.RoleRepository;
+import com.example.demodatn.repository.nhanvien.UserRepository;
 import com.example.demodatn.security.UserDetailsServiceImpl;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

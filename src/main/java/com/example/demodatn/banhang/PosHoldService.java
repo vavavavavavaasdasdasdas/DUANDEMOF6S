@@ -4,11 +4,11 @@ import com.example.demodatn.banhang.dto.PosCheckoutRequest;
 import com.example.demodatn.entity.donhang.Order;
 import com.example.demodatn.entity.donhang.PosHeldItem;
 import com.example.demodatn.entity.donhang.PosHeldOrder;
-import com.example.demodatn.khachhang.CustomerRepository;
-import com.example.demodatn.nhanvien.EmployeeRepository;
-import com.example.demodatn.nhanvien.UserRepository;
-import com.example.demodatn.sanpham.ProductVariantRepository;
-
+import com.example.demodatn.repository.donhang.PosHeldOrderRepository;
+import com.example.demodatn.repository.khachhang.CustomerRepository;
+import com.example.demodatn.repository.nhanvien.EmployeeRepository;
+import com.example.demodatn.repository.nhanvien.UserRepository;
+import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

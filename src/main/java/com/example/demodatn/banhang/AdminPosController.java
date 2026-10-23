@@ -1,11 +1,11 @@
 package com.example.demodatn.banhang;
 import com.example.demodatn.banhang.dto.CartItemDto;
 import com.example.demodatn.banhang.dto.PosCheckoutRequest;
-import com.example.demodatn.khachhang.CustomerRepository;
 import com.example.demodatn.khuyenmai.VoucherService;
-import com.example.demodatn.nhanvien.EmployeeRepository;
-import com.example.demodatn.sanpham.ProductVariantRepository;
-
+import com.example.demodatn.repository.donhang.InvoiceRepository;
+import com.example.demodatn.repository.khachhang.CustomerRepository;
+import com.example.demodatn.repository.nhanvien.EmployeeRepository;
+import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class AdminPosController {
     private final InvoiceRepository invoices;
     private final PosHoldService holds;
     private final PosCatalogQuery catalogQuery;
-    private final com.example.demodatn.sanpham.CategoryRepository categories;
+    private final com.example.demodatn.repository.sanpham.CategoryRepository categories;
 
     @GetMapping("/customers")
     public String customerSearch(@RequestParam(defaultValue="") String customerQuery,@RequestParam(defaultValue="0") String customerPage,Model model){model.addAttribute("customerPage",catalogQuery.customers(customerQuery,customerPage));return "admin/ban-tai-quay/khach-hang :: results";}

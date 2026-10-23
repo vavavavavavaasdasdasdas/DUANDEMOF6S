@@ -2,7 +2,6 @@ package com.example.demodatn.entity.donhang;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.khuyenmai.Voucher;
 import com.example.demodatn.entity.nhanvien.Employee;
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;

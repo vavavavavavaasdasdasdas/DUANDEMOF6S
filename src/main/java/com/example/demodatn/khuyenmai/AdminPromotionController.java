@@ -1,6 +1,8 @@
 package com.example.demodatn.khuyenmai;
 import com.example.demodatn.entity.khuyenmai.Promotion;
-import com.example.demodatn.sanpham.ProductRepository;
+import com.example.demodatn.repository.khuyenmai.PromotionDetailRepository;
+import com.example.demodatn.repository.khuyenmai.PromotionRepository;
+import com.example.demodatn.repository.sanpham.ProductRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;

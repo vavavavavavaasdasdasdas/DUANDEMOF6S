@@ -1,6 +1,5 @@
 package com.example.demodatn.entity.donhang;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;

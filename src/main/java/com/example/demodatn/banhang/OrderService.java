@@ -8,6 +8,7 @@ import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.nhanvien.Employee;
 import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.khuyenmai.VoucherService;
+import com.example.demodatn.repository.donhang.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

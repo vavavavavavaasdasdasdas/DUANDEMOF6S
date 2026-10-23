@@ -1,11 +1,12 @@
 package com.example.demodatn.sanpham;
-import com.example.demodatn.banhang.OrderDetailRepository;
 import com.example.demodatn.banhang.PriceInfo;
 import com.example.demodatn.banhang.PricingService;
 import com.example.demodatn.entity.donhang.OrderDetail;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-
+import com.example.demodatn.repository.donhang.OrderDetailRepository;
+import com.example.demodatn.repository.sanpham.ProductRepository;
+import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;

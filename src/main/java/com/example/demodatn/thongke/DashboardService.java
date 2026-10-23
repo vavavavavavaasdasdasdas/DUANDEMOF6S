@@ -1,4 +1,5 @@
 package com.example.demodatn.thongke;
+import com.example.demodatn.repository.thongke.DashboardRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

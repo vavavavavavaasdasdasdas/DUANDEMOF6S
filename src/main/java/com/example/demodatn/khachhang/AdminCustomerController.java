@@ -1,7 +1,7 @@
 package com.example.demodatn.khachhang;
 import com.example.demodatn.core.PeopleService;
 import com.example.demodatn.core.PeopleValidationException;
-
+import com.example.demodatn.repository.khachhang.CustomerRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminCustomerController {
     private final CustomerRepository repository;
     private final PeopleService people;
-    private final com.example.demodatn.banhang.OrderRepository orders;
+    private final com.example.demodatn.repository.donhang.OrderRepository orders;
 
     private final com.example.demodatn.core.Pagination pagination;
 

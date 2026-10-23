@@ -1,6 +1,7 @@
 package com.example.demodatn.banhang;
 import com.example.demodatn.entity.donhang.Order;
-
+import com.example.demodatn.repository.donhang.InvoiceRepository;
+import com.example.demodatn.repository.donhang.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

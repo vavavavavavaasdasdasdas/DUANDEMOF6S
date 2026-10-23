@@ -1,6 +1,9 @@
 package com.example.demodatn.sanpham;
 import com.example.demodatn.entity.sanpham.Category;
 import com.example.demodatn.entity.sanpham.Material;
+import com.example.demodatn.repository.sanpham.CategoryRepository;
+import com.example.demodatn.repository.sanpham.MaterialRepository;
+import com.example.demodatn.repository.sanpham.SizeRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;

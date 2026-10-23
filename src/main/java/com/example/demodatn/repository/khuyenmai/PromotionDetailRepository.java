@@ -1,4 +1,4 @@
-package com.example.demodatn.khuyenmai;
+package com.example.demodatn.repository.khuyenmai;
 import com.example.demodatn.entity.khuyenmai.PromotionDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 

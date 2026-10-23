@@ -1,17 +1,19 @@
 package com.example.demodatn.khuyenmai;
-import com.example.demodatn.banhang.OrderRepository;
 import com.example.demodatn.banhang.OrderService;
 import com.example.demodatn.banhang.PricingService;
 import com.example.demodatn.banhang.dto.CartItemDto;
 import com.example.demodatn.banhang.dto.CheckoutRequest;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-import com.example.demodatn.khachhang.CustomerRepository;
-import com.example.demodatn.sanpham.MaterialRepository;
-import com.example.demodatn.sanpham.ProductRepository;
-import com.example.demodatn.sanpham.ProductVariantRepository;
-import com.example.demodatn.sanpham.SizeRepository;
-
+import com.example.demodatn.repository.donhang.OrderRepository;
+import com.example.demodatn.repository.khachhang.CustomerRepository;
+import com.example.demodatn.repository.khuyenmai.PromotionDetailRepository;
+import com.example.demodatn.repository.khuyenmai.PromotionRepository;
+import com.example.demodatn.repository.khuyenmai.VoucherRepository;
+import com.example.demodatn.repository.sanpham.MaterialRepository;
+import com.example.demodatn.repository.sanpham.ProductRepository;
+import com.example.demodatn.repository.sanpham.ProductVariantRepository;
+import com.example.demodatn.repository.sanpham.SizeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,7 +49,7 @@ class DiscountIntegrationTest {
     @Autowired CustomerRepository customers;
     @Autowired PricingService pricing;
     @Autowired OrderService orders;
-    @Autowired com.example.demodatn.nhanvien.EmployeeRepository employees;
+    @Autowired com.example.demodatn.repository.nhanvien.EmployeeRepository employees;
     @Autowired OrderRepository orderRepo;
     @Autowired PlatformTransactionManager manager;
     @Autowired JdbcTemplate jdbc;

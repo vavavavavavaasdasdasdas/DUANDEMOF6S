@@ -1,6 +1,6 @@
 package com.example.demodatn.khachhang;
 import com.example.demodatn.entity.khachhang.Customer;
-
+import com.example.demodatn.repository.khachhang.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ProfileController {
 
     private final CustomerRepository customerRepository;
-    private final com.example.demodatn.nhanvien.UserRepository userRepository;
+    private final com.example.demodatn.repository.nhanvien.UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping

@@ -1,12 +1,18 @@
 package com.example.demodatn.sanpham;
-import com.example.demodatn.banhang.OrderRepository;
 import com.example.demodatn.banhang.OrderService;
 import com.example.demodatn.banhang.dto.CartItemDto;
 import com.example.demodatn.banhang.dto.CheckoutRequest;
 import com.example.demodatn.entity.donhang.Order;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-
+import com.example.demodatn.repository.donhang.OrderRepository;
+import com.example.demodatn.repository.sanpham.AdminCatalogQuery;
+import com.example.demodatn.repository.sanpham.CategoryRepository;
+import com.example.demodatn.repository.sanpham.InventoryLogRepository;
+import com.example.demodatn.repository.sanpham.MaterialRepository;
+import com.example.demodatn.repository.sanpham.ProductRepository;
+import com.example.demodatn.repository.sanpham.ProductVariantRepository;
+import com.example.demodatn.repository.sanpham.SizeRepository;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -41,7 +47,7 @@ class CatalogIntegrationTest {
     @Autowired SizeRepository sizes;
     @Autowired MaterialRepository materials;
     @Autowired OrderService orders;
-    @Autowired com.example.demodatn.nhanvien.EmployeeRepository employees;
+    @Autowired com.example.demodatn.repository.nhanvien.EmployeeRepository employees;
     @Autowired OrderRepository orderRepository;
     @Autowired AdminCatalogQuery query;
     @Autowired Validator validator;

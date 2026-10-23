@@ -1,5 +1,7 @@
 package com.example.demodatn.sanpham;
 import com.example.demodatn.entity.sanpham.Product;
+import com.example.demodatn.repository.sanpham.AdminCatalogQuery;
+import com.example.demodatn.repository.sanpham.CategoryRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;

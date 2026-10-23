@@ -4,7 +4,9 @@ import com.example.demodatn.banhang.PricingService;
 import com.example.demodatn.entity.sanpham.Material;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-
+import com.example.demodatn.repository.sanpham.CategoryRepository;
+import com.example.demodatn.repository.sanpham.MaterialRepository;
+import com.example.demodatn.repository.sanpham.SizeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;

@@ -1,6 +1,7 @@
 package com.example.demodatn.nhanvien;
 import com.example.demodatn.entity.nhanvien.User;
-
+import com.example.demodatn.repository.nhanvien.EmployeeRepository;
+import com.example.demodatn.repository.nhanvien.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;

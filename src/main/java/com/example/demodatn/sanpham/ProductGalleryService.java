@@ -1,7 +1,7 @@
 package com.example.demodatn.sanpham;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductImage;
-
+import com.example.demodatn.repository.sanpham.ProductImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.*;

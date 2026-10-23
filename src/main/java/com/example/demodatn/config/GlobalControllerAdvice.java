@@ -1,7 +1,6 @@
 package com.example.demodatn.config;
 import com.example.demodatn.banhang.dto.CartItemDto;
-import com.example.demodatn.sanpham.CategoryRepository;
-
+import com.example.demodatn.repository.sanpham.CategoryRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ControllerAdvice;

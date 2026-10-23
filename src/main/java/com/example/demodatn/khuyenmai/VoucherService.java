@@ -1,7 +1,7 @@
 package com.example.demodatn.khuyenmai;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.khuyenmai.Voucher;
-
+import com.example.demodatn.repository.khuyenmai.VoucherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

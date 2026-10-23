@@ -1,11 +1,13 @@
 package com.example.demodatn.khuyenmai;
-import com.example.demodatn.banhang.OrderRepository;
 import com.example.demodatn.entity.khuyenmai.Promotion;
 import com.example.demodatn.entity.khuyenmai.PromotionDetail;
 import com.example.demodatn.entity.khuyenmai.Voucher;
-import com.example.demodatn.khachhang.CustomerRepository;
-import com.example.demodatn.sanpham.ProductRepository;
-
+import com.example.demodatn.repository.donhang.OrderRepository;
+import com.example.demodatn.repository.khachhang.CustomerRepository;
+import com.example.demodatn.repository.khuyenmai.PromotionDetailRepository;
+import com.example.demodatn.repository.khuyenmai.PromotionRepository;
+import com.example.demodatn.repository.khuyenmai.VoucherRepository;
+import com.example.demodatn.repository.sanpham.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

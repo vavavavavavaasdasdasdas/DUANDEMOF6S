@@ -4,11 +4,11 @@ import com.example.demodatn.banhang.dto.PosCheckoutRequest;
 import com.example.demodatn.entity.donhang.PosHeldOrder;
 import com.example.demodatn.entity.nhanvien.User;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-import com.example.demodatn.khachhang.CustomerRepository;
-import com.example.demodatn.nhanvien.EmployeeRepository;
-import com.example.demodatn.nhanvien.UserRepository;
-import com.example.demodatn.sanpham.ProductVariantRepository;
-
+import com.example.demodatn.repository.donhang.PosHeldOrderRepository;
+import com.example.demodatn.repository.khachhang.CustomerRepository;
+import com.example.demodatn.repository.nhanvien.EmployeeRepository;
+import com.example.demodatn.repository.nhanvien.UserRepository;
+import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import org.junit.jupiter.api.*;
 import java.time.*;
 import java.util.*;

@@ -1,4 +1,4 @@
-package com.example.demodatn.banhang;
+package com.example.demodatn.repository.donhang;
 import com.example.demodatn.entity.donhang.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 

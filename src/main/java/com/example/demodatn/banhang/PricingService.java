@@ -2,8 +2,7 @@ package com.example.demodatn.banhang;
 import com.example.demodatn.entity.khuyenmai.Promotion;
 import com.example.demodatn.entity.khuyenmai.PromotionDetail;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-import com.example.demodatn.khuyenmai.PromotionDetailRepository;
-
+import com.example.demodatn.repository.khuyenmai.PromotionDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -16,7 +15,7 @@ import java.util.List;
 public class PricingService {
 
     private final PromotionDetailRepository promotionDetailRepository;
-    private final com.example.demodatn.sanpham.ProductVariantRepository variants;
+    private final com.example.demodatn.repository.sanpham.ProductVariantRepository variants;
     @org.springframework.beans.factory.annotation.Value("${shop.time-zone:Asia/Ho_Chi_Minh}") private String timeZone="Asia/Ho_Chi_Minh";
 
     public PriceInfo priceForVariant(Integer id) {

@@ -3,9 +3,9 @@ import com.example.demodatn.banhang.dto.CartItemDto;
 import com.example.demodatn.banhang.dto.CheckoutRequest;
 import com.example.demodatn.entity.donhang.Order;
 import com.example.demodatn.entity.khachhang.Customer;
-import com.example.demodatn.khachhang.CustomerRepository;
 import com.example.demodatn.khuyenmai.VoucherService;
-
+import com.example.demodatn.repository.donhang.OrderRepository;
+import com.example.demodatn.repository.khachhang.CustomerRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +31,7 @@ public class OrderController {
     private final OrderRepository orderRepository;
     private final PricingService pricingService;
     @org.springframework.beans.factory.annotation.Autowired
-    private com.example.demodatn.sanpham.ProductVariantRepository productVariants;
+    private com.example.demodatn.repository.sanpham.ProductVariantRepository productVariants;
 
     @Value("${shop.shipping.fee:30000}")
     private BigDecimal shippingFee;

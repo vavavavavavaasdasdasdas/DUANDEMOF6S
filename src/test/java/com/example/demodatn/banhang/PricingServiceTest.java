@@ -3,8 +3,7 @@ import com.example.demodatn.entity.khuyenmai.Promotion;
 import com.example.demodatn.entity.khuyenmai.PromotionDetail;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-import com.example.demodatn.khuyenmai.PromotionDetailRepository;
-
+import com.example.demodatn.repository.khuyenmai.PromotionDetailRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

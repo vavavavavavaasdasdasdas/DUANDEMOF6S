@@ -1,4 +1,4 @@
-package com.example.demodatn.sanpham;
+package com.example.demodatn.repository.sanpham;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.JdbcTemplate;

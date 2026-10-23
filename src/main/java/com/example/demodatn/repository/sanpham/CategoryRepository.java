@@ -1,4 +1,4 @@
-package com.example.demodatn.sanpham;
+package com.example.demodatn.repository.sanpham;
 import com.example.demodatn.entity.sanpham.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 

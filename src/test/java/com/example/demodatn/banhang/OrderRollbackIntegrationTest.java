@@ -3,12 +3,11 @@ import com.example.demodatn.banhang.dto.CartItemDto;
 import com.example.demodatn.entity.khuyenmai.Voucher;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-import com.example.demodatn.khuyenmai.VoucherRepository;
-import com.example.demodatn.sanpham.MaterialRepository;
-import com.example.demodatn.sanpham.ProductRepository;
-import com.example.demodatn.sanpham.ProductVariantRepository;
-import com.example.demodatn.sanpham.SizeRepository;
-
+import com.example.demodatn.repository.khuyenmai.VoucherRepository;
+import com.example.demodatn.repository.sanpham.MaterialRepository;
+import com.example.demodatn.repository.sanpham.ProductRepository;
+import com.example.demodatn.repository.sanpham.ProductVariantRepository;
+import com.example.demodatn.repository.sanpham.SizeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
