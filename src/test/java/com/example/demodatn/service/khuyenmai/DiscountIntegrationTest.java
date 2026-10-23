@@ -59,6 +59,15 @@ class DiscountIntegrationTest {
     @Autowired Validator validator;
     @Autowired WebApplicationContext context;
 
+    private com.example.demodatn.entity.khachhang.Customer customer() {
+        var customer = new com.example.demodatn.entity.khachhang.Customer();
+        customer.setCustomerCode("P8-" + UUID.randomUUID());
+        customer.setFullName("Khách kiểm thử voucher");
+        customer.setPhone("P8-" + UUID.randomUUID());
+        customer.setEmail(UUID.randomUUID() + "@example.invalid");
+        return customers.saveAndFlush(customer);
+    }
+
     private VoucherDto voucherForm() {
         var f=new VoucherDto();f.setCode("P8-"+UUID.randomUUID().toString().substring(0,8));f.setName("Kiểm thử voucher");f.setDiscountValue(new BigDecimal("20"));f.setStartDate(LocalDateTime.now().minusDays(1));f.setEndDate(LocalDateTime.now().plusDays(1));f.setUsageLimit(5);return f;
     }
@@ -78,7 +87,7 @@ class DiscountIntegrationTest {
         v.setStartDate(LocalDateTime.now().plusHours(1));v.setEndDate(LocalDateTime.now().plusDays(2));voucherRepo.flush();assertTrue(vouchers.validateAndCalculate(v.getCode(),null,new BigDecimal("200000")).message.contains("chưa tới"));
         v.setStartDate(LocalDateTime.now().minusDays(1));v.setMinOrderValue(new BigDecimal("300000"));voucherRepo.flush();assertTrue(vouchers.validateAndCalculate(v.getCode(),null,new BigDecimal("200000")).message.contains("tối thiểu"));
         v.setMinOrderValue(BigDecimal.ZERO);v.setUsedCount(5);voucherRepo.flush();assertTrue(vouchers.validateAndCalculate(v.getCode(),null,new BigDecimal("200000")).message.contains("hết lượt"));
-        v.setUsedCount(0);v.setIsPublic(false);v.setCustomer(customers.findAll().get(0));voucherRepo.flush();assertTrue(vouchers.validateAndCalculate(v.getCode(),null,new BigDecimal("200000")).message.contains("khách hàng"));assertTrue(vouchers.validateAndCalculate(v.getCode(),v.getCustomer(),new BigDecimal("200000")).valid);
+        v.setUsedCount(0);v.setIsPublic(false);v.setCustomer(customer());voucherRepo.flush();assertTrue(vouchers.validateAndCalculate(v.getCode(),null,new BigDecimal("200000")).message.contains("khách hàng"));assertTrue(vouchers.validateAndCalculate(v.getCode(),v.getCustomer(),new BigDecimal("200000")).valid);
         v.setIsPublic(true);v.setCustomer(null);v.setDiscountType("FIXED");v.setDiscountValue(new BigDecimal("500000"));voucherRepo.flush();money("200000",vouchers.validateAndCalculate(v.getCode(),null,new BigDecimal("200000")).discountAmount);
         money("200000.50",vouchers.validateAndCalculate(v.getCode(),null,new BigDecimal("200000.50")).discountAmount);
         v.setDiscountType("PERCENT");v.setDiscountValue(new BigDecimal("20"));v.setMaxDiscount(new BigDecimal("30000.50"));voucherRepo.flush();money("30000.50",vouchers.validateAndCalculate(v.getCode(),null,new BigDecimal("200000.50")).discountAmount);
@@ -100,7 +109,7 @@ class DiscountIntegrationTest {
         admin.selectProducts(p.getId(),List.of(a.getProduct().getId(),b.getProduct().getId(),a.getProduct().getId()));assertEquals(2,details.findByPromotion_Id(p.getId()).size());
         money("160000",pricing.calculatePrice(a).getFinalPrice());money("160000",pricing.calculatePrice(b).getFinalPrice());
         var cart=new ArrayList<>(List.of(item(a),item(b)));money("320000",pricing.refreshCart(cart));
-        var o=orders.placeOrder(request(null),cart,customers.findAll().get(0),BigDecimal.ZERO);money("320000",o.getTotalAmount());money("350000",o.getFinalAmount());
+        var o=orders.placeOrder(request(null),cart,customer(),BigDecimal.ZERO);money("320000",o.getTotalAmount());money("350000",o.getFinalAmount());
         p.setEndDate(LocalDateTime.now().minusHours(1));promotions.flush();money("400000",pricing.refreshCart(cart));assertFalse(pricing.calculatePrice(a).isHasPromotion());money("320000",orderRepo.findById(o.getId()).orElseThrow().getTotalAmount());
         p.setEndDate(LocalDateTime.now().plusDays(1));p.setStatus(false);promotions.flush();money("200000",pricing.calculatePrice(a).getFinalPrice());
         admin.deletePromotion(p.getId());assertEquals(0,details.findByPromotion_Id(p.getId()).size());
@@ -108,7 +117,7 @@ class DiscountIntegrationTest {
     @Test @Transactional
     void checkoutAndPosConsumeSamePercentageFormulaAndReferencedDeleteLocksVoucher() {
         var a=variant();var f=voucherForm();f.setMaxDiscount(new BigDecimal("30000"));var v=admin.saveVoucher(f);
-        var online=orders.placeOrder(request(v.getCode()),List.of(item(a)),customers.findAll().get(0),BigDecimal.ZERO);money("30000",online.getDiscountAmount());money("200000",online.getFinalAmount());
+        var online=orders.placeOrder(request(v.getCode()),List.of(item(a)),customer(),BigDecimal.ZERO);money("30000",online.getDiscountAmount());money("200000",online.getFinalAmount());
         var pos=orders.createPosOrder(List.of(item(a)),null,employees.findByUser_Username("admin").orElseThrow(),v.getCode(),"CASH","Tại quầy",new BigDecimal("200000"));money("30000",pos.getDiscountAmount());money("170000",pos.getFinalAmount());assertEquals(2,v.getUsedCount());
         assertTrue(admin.deleteVoucher(v.getId()).contains("giữ"));assertTrue(voucherRepo.existsById(v.getId()));assertFalse(v.getStatus());money("30000",online.getDiscountAmount());
     }

@@ -59,16 +59,16 @@ public class Order {
     private String paymentStatus = "UNPAID";
 
     @Column(name = "receiver_name")
-    private String receiverName;
+    @org.hibernate.annotations.Nationalized private String receiverName;
 
     @Column(name = "shipping_address")
-    private String shippingAddress;
+    @org.hibernate.annotations.Nationalized private String shippingAddress;
 
     @Column(name = "phone_number")
-    private String phoneNumber;
+    @org.hibernate.annotations.Nationalized private String phoneNumber;
 
     @Column(name = "email")
-    private String email;
+    @org.hibernate.annotations.Nationalized private String email;
 
     @ManyToOne
     @JoinColumn(name = "voucher_id")

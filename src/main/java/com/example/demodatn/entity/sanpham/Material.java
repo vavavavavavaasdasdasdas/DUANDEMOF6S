@@ -10,7 +10,7 @@ public class Material {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "ten", nullable = false, unique = true, columnDefinition = "nvarchar(100)")
-    private String name;
+    @org.hibernate.annotations.Nationalized private String name;
     @Column(name = "trang_thai", nullable = false)
     private Boolean status = true;
 }

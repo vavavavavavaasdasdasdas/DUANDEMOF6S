@@ -1,9 +1,9 @@
-CREATE DATABASE shopbangiay;
+-- Khởi tạo schema mới trong database đã chọn bằng sqlcmd -d; không tạo/chuyển database.
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+IF OBJECT_ID(N'dbo.users',N'U') IS NOT NULL THROW 51001,N'Database đã có schema; hãy dùng migrations.',1;
 GO
-
-USE shopbangiay;
-GO
-
 -- 1. Roles
 CREATE TABLE roles (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -16,6 +16,10 @@ CREATE TABLE users (
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role_id INT NOT NULL FOREIGN KEY REFERENCES roles(id),
+    full_name NVARCHAR(255),
+    email NVARCHAR(100),
+    phone NVARCHAR(20),
+    created_at DATETIME2,
     status BIT DEFAULT 1
 );
 
@@ -24,9 +28,10 @@ CREATE TABLE customers (
     id INT IDENTITY(1,1) PRIMARY KEY,
     customer_code VARCHAR(20) UNIQUE,
     full_name NVARCHAR(100) NOT NULL,
-    phone VARCHAR(20) UNIQUE,
-    email VARCHAR(100),
+    phone NVARCHAR(20) UNIQUE,
+    email NVARCHAR(100),
     address NVARCHAR(255),
+    user_id INT FOREIGN KEY REFERENCES users(id),
     created_at DATETIME DEFAULT GETDATE(),
     status BIT DEFAULT 1
 );
@@ -36,8 +41,8 @@ CREATE TABLE employees (
     id INT IDENTITY(1,1) PRIMARY KEY,
     employee_code VARCHAR(20) UNIQUE,
     full_name NVARCHAR(100) NOT NULL,
-    phone VARCHAR(20) UNIQUE,
-    email VARCHAR(100),
+    phone NVARCHAR(20) UNIQUE,
+    email NVARCHAR(100),
     address NVARCHAR(255),
     position NVARCHAR(100),
     user_id INT FOREIGN KEY REFERENCES users(id),
@@ -54,7 +59,7 @@ CREATE TABLE categories (
 -- 6. Sizes
 CREATE TABLE sizes (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    size_value VARCHAR(10) NOT NULL UNIQUE
+    size_value NVARCHAR(10) NOT NULL UNIQUE
 );
 
 -- 7. Products
@@ -64,7 +69,7 @@ CREATE TABLE products (
     name NVARCHAR(255) NOT NULL,
     description NVARCHAR(MAX),
     category_id INT FOREIGN KEY REFERENCES categories(id),
-    image_url VARCHAR(500),
+    image_url NVARCHAR(500),
     status BIT DEFAULT 1
 );
 
@@ -125,9 +130,13 @@ CREATE TABLE orders (
     total_amount DECIMAL(18,2) NOT NULL,
     discount_amount DECIMAL(18,2) DEFAULT 0,
     final_amount DECIMAL(18,2) NOT NULL,
+    shipping_fee DECIMAL(18,2) NOT NULL DEFAULT 0,
+    payment_status VARCHAR(50) NOT NULL DEFAULT 'UNPAID',
+    receiver_name NVARCHAR(255),
+    email NVARCHAR(100),
     payment_method VARCHAR(50), -- CASH, TRANSFER
     shipping_address NVARCHAR(255),
-    phone_number VARCHAR(20),
+    phone_number NVARCHAR(20),
     voucher_id INT FOREIGN KEY REFERENCES vouchers(id),
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE()
@@ -143,61 +152,395 @@ CREATE TABLE order_details (
     total_price DECIMAL(18,2) NOT NULL
 );
 
--- Insert Sample Data
 
--- Roles
-INSERT INTO roles (name) VALUES ('ROLE_ADMIN'), ('ROLE_USER');
+INSERT roles(name) VALUES('ROLE_ADMIN'),('ROLE_USER');
+INSERT categories(name) VALUES(N'Nike'),(N'Adidas'),(N'Converse');
+INSERT sizes(size_value) VALUES(N'39'),(N'40'),(N'41');
+-- DataInitializer tạo admin với PasswordEncoder; không seed khách/sản phẩm/đơn hoặc hash mẫu.
+GO
 
--- Users (password: admin123 and user123 hashed with BCrypt, using sample hash for 'admin123' -> $2a$10$yO5hH/Y2lK7cZ3e0M4a2Q.h9N00X7i4Z4.KzFqF2BwV5wI18C6.bC and 'user123' -> $2a$10$yO5hH/Y2lK7cZ3e0M4a2Q.h9N00X7i4Z4.KzFqF2BwV5wI18C6.bC (Wait, I need correct bcrypt. Let's use a known bcrypt for admin123 and user123.
--- Or I can just put a dummy bcrypt and in the backend initialize it if not found, or use a tool to generate it.
--- Let's use '$2a$12$R.325h.T/G./fGg3i.1L..w2u.E6YVbQ1Nq.o5.3u2O/p4p.i0K0y' which is 'admin123' and same for 'user123'. Wait, let's use standard:
--- password for both is '123456' -> $2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a
--- Wait, let's just write a BCrypt hash for 'admin123' and 'user123'. 
--- admin123: $2a$10$P24I1r481w2dD6b0P1zDjeZlqN0Fp7Yk9B5B2/x.2K08gT6I/v3rG
--- user123: $2a$10$9.L.K4Hk1b.vK5M6U1dF3u/l1/k9v9B5B2/x.2K08gT6I/v3rG
--- Actually I will just use '$2a$10$d.b6t.nQ.O2.M/3DkO/L/.J.ZpB1M01/O65Y1G0n/L2yU7X/X8JOS' (admin123)
--- Let's use it for both for simplicity, or I can update it via code on startup if needed. I'll use valid BCrypt for both.
-INSERT INTO users (username, password, role_id) VALUES 
-('admin', '$2a$10$Wp.u0N6oR7kF5hL0bQnK.OTq8hR6x.P7Jz5hV1vL7jVz9G5j7Vz9.', 1), -- admin123
-('user', '$2a$10$K9h.u0N6oR7kF5hL0bQnK.OTq8hR6x.P7Jz5hV1vL7jVz9G5j7Vz9.', 2); -- user123 (I'll re-encode in DB via a command if it fails)
+-- database/phase6.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+-- Phase 6: additive/idempotent migration. Run against the existing shopbangiay database.
+-- Does not drop tables or alter prices/stock/order totals.
+SET XACT_ABORT ON;
+BEGIN TRANSACTION;
+IF EXISTS (SELECT 1 FROM product_variants GROUP BY product_id,size_id HAVING COUNT(*)>1)
+    THROW 51000, 'Duplicate product/size pairs must be resolved before Phase 6 migration.', 1;
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='UX_product_variants_product_size' AND object_id=OBJECT_ID('product_variants'))
+    CREATE UNIQUE INDEX UX_product_variants_product_size ON product_variants(product_id,size_id);
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name='CK_variant_price_positive')
+    ALTER TABLE product_variants WITH CHECK ADD CONSTRAINT CK_variant_price_positive CHECK(price>0);
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name='CK_variant_quantity_nonnegative')
+    ALTER TABLE product_variants WITH CHECK ADD CONSTRAINT CK_variant_quantity_nonnegative CHECK(quantity>=0);
+IF OBJECT_ID('inventory_logs','U') IS NULL
+BEGIN
+    CREATE TABLE inventory_logs (
+        id BIGINT IDENTITY(1,1) PRIMARY KEY,
+        variant_id INT NOT NULL REFERENCES product_variants(id),
+        quantity_change INT NOT NULL,
+        quantity_before INT NOT NULL CHECK(quantity_before>=0),
+        quantity_after INT NOT NULL CHECK(quantity_after>=0),
+        reason NVARCHAR(500) NOT NULL,
+        actor NVARCHAR(255) NOT NULL,
+        created_at DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+        CONSTRAINT CK_inventory_log_delta CHECK(quantity_after=quantity_before+quantity_change)
+    );
+    CREATE INDEX IX_inventory_logs_variant_time ON inventory_logs(variant_id,created_at DESC,id DESC);
+END;
+IF COL_LENGTH('order_details','product_name') IS NULL
+    ALTER TABLE order_details ADD product_name NVARCHAR(255) NULL;
+IF COL_LENGTH('order_details','size_name') IS NULL
+    ALTER TABLE order_details ADD size_name NVARCHAR(10) NULL;
+-- Dynamic SQL allows the new snapshot columns to be used in the same migration batch.
+EXEC sp_executesql N'UPDATE d SET product_name=COALESCE(d.product_name,p.name),size_name=COALESCE(d.size_name,s.size_value) FROM order_details d JOIN product_variants v ON v.id=d.product_variant_id JOIN products p ON p.id=v.product_id JOIN sizes s ON s.id=v.size_id WHERE d.product_name IS NULL OR d.size_name IS NULL';
+COMMIT TRANSACTION;
 
--- Customers
-INSERT INTO customers (customer_code, full_name, phone, email, address) VALUES
-('KH001', N'Nguyễn Văn A', '0901234567', 'nguyenvana@gmail.com', N'Hà Nội'),
-('KH002', N'Trần Thị B', '0901234568', 'tranthib@gmail.com', N'Hồ Chí Minh');
 
--- Employees
-INSERT INTO employees (employee_code, full_name, phone, email, address, position, user_id) VALUES
-('NV001', N'Lê Quản Trị', '0912345678', 'admin@shop.com', N'Hà Nội', N'Quản lý', 1);
+GO
 
--- Categories
-INSERT INTO categories (name) VALUES ('Nike'), ('Adidas'), ('Converse'), ('Vans'), ('Puma'), ('New Balance');
+-- database/phase7.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+-- Phase 7: additive account/profile integrity. Run on the existing shopbangiay DB.
+SET XACT_ABORT ON;
+BEGIN TRANSACTION;
+IF EXISTS (SELECT 1 FROM employees WHERE user_id IS NULL)
+    THROW 51000, 'Employee without User: resolve the existing identity before migration.', 1;
+IF EXISTS (SELECT 1 FROM employees GROUP BY user_id HAVING COUNT(*)>1)
+    THROW 51001, 'Multiple Employees reference one User.', 1;
+IF EXISTS (SELECT 1 FROM users u JOIN roles r ON r.id=u.role_id WHERE r.name='ROLE_ADMIN' AND NOT EXISTS(SELECT 1 FROM employees e WHERE e.user_id=u.id))
+    THROW 51002, 'ROLE_ADMIN User without Employee: resolve before migration.', 1;
+IF EXISTS (SELECT 1 FROM customers WHERE email IS NOT NULL AND email<>'' GROUP BY LOWER(email) HAVING COUNT(*)>1)
+    THROW 51003, 'Duplicate customer email: resolve before migration.', 1;
+IF EXISTS (SELECT 1 FROM employees WHERE email IS NOT NULL AND email<>'' GROUP BY LOWER(email) HAVING COUNT(*)>1)
+    THROW 51004, 'Duplicate employee email: resolve before migration.', 1;
+ALTER TABLE employees ALTER COLUMN user_id INT NOT NULL;
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id=OBJECT_ID('employees') AND name='UX_employees_user_phase7')
+    CREATE UNIQUE INDEX UX_employees_user_phase7 ON employees(user_id);
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id=OBJECT_ID('employees') AND name='UX_employees_email_phase7')
+    CREATE UNIQUE INDEX UX_employees_email_phase7 ON employees(email) WHERE email IS NOT NULL AND email<>'';
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id=OBJECT_ID('customers') AND name='UX_customers_email_phase7')
+    CREATE UNIQUE INDEX UX_customers_email_phase7 ON customers(email) WHERE email IS NOT NULL AND email<>'';
+COMMIT TRANSACTION;
 
--- Sizes
-INSERT INTO sizes (size_value) VALUES ('36'), ('37'), ('38'), ('39'), ('40'), ('41'), ('42'), ('43');
+GO
 
--- Products
-INSERT INTO products (code, name, description, category_id, image_url) VALUES
-('SP001', 'Nike Air Force 1', N'Giày thể thao Nike Air Force 1 trắng', 1, 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/air-force-1-07-shoes-WrLlWX.png'),
-('SP002', 'Adidas Ultraboost', N'Giày chạy bộ Adidas Ultraboost đen', 2, 'https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/09c5ea6df1bd473e8b02acdf011614cb_9366/Giay_Ultraboost_21_Den_FY0306_01_standard.jpg'),
-('SP003', 'Converse Chuck Taylor', N'Giày Converse cổ cao đen', 3, 'https://www.converse.vn/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/m/9/m9160c.jpg');
+-- database/phase8.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+SET XACT_ABORT ON;
+BEGIN TRANSACTION;
+IF EXISTS (SELECT 1 FROM promotion_details GROUP BY promotion_id,product_id HAVING COUNT(*)>1)
+    THROW 51008, 'Duplicate promotion/product links: resolve before Phase 8 migration.', 1;
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='UX_promotion_details_product_phase8' AND object_id=OBJECT_ID('promotion_details'))
+    CREATE UNIQUE INDEX UX_promotion_details_product_phase8 ON promotion_details(promotion_id,product_id);
+COMMIT TRANSACTION;
 
--- Variants
-INSERT INTO product_variants (product_id, size_id, price, quantity) VALUES
-(1, 4, 2500000, 50), (1, 5, 2500000, 30),
-(2, 5, 3500000, 20), (2, 6, 3500000, 15),
-(3, 4, 1500000, 100), (3, 5, 1500000, 80);
+GO
 
--- Vouchers
-INSERT INTO vouchers (code, name, discount_type, discount_value, min_order_value, max_discount, start_date, end_date, usage_limit) VALUES
-('WELCOME10', N'Giảm 10% khách mới', 'PERCENT', 10, 500000, 200000, '2023-01-01', '2030-12-31', 1000),
-('GIAM50K', N'Giảm 50K', 'FIXED', 500000, 1000000, NULL, '2023-01-01', '2030-12-31', 500);
+-- database/phase9.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+SET XACT_ABORT ON;
+BEGIN TRANSACTION;
+IF OBJECT_ID(N'dbo.invoices', N'U') IS NULL
+CREATE TABLE dbo.invoices (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    order_id INT NOT NULL UNIQUE REFERENCES dbo.orders(id),
+    invoice_code VARCHAR(255) NOT NULL UNIQUE,
+    issued_at DATETIME2 NOT NULL,
+    customer_name NVARCHAR(255) NOT NULL,
+    customer_phone NVARCHAR(255) NULL,
+    employee_name NVARCHAR(255) NULL,
+    cash_received DECIMAL(19,2) NULL,
+    change_amount DECIMAL(19,2) NULL
+);
+INSERT INTO dbo.invoices(order_id,invoice_code,issued_at,customer_name,customer_phone,employee_name)
+SELECT o.id, 'HD'+RIGHT('000000'+CAST(o.id AS VARCHAR(20)),6), COALESCE(o.created_at,SYSDATETIME()),
+       COALESCE(c.full_name,o.receiver_name,N'Khách lẻ'),COALESCE(c.phone,o.phone_number),
+       COALESCE(e.full_name,CASE WHEN o.order_type='ONLINE' THEN N'Đơn online' ELSE N'Không lưu người bán' END)
+FROM dbo.orders o LEFT JOIN dbo.customers c ON c.id=o.customer_id LEFT JOIN dbo.employees e ON e.id=o.employee_id
+WHERE NOT EXISTS (SELECT 1 FROM dbo.invoices i WHERE i.order_id=o.id);
+COMMIT;
 
--- Promotions
-INSERT INTO promotions (name, discount_type, discount_value, start_date, end_date) VALUES
-(N'Khuyến mãi mùa hè', 'PERCENT', 15, '2023-01-01', '2030-12-31');
+GO
 
--- Promotion Details
-INSERT INTO promotion_details (promotion_id, product_id) VALUES
-(1, 1), (1, 2);
+-- database/admin-account-pos-hold.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+-- Apply explicitly to the intended database. Verification uses shop_verify only.
+IF COL_LENGTH('users','full_name') IS NULL ALTER TABLE users ADD full_name nvarchar(255) NULL;
+IF COL_LENGTH('users','email') IS NULL ALTER TABLE users ADD email nvarchar(255) NULL;
+IF COL_LENGTH('users','phone') IS NULL ALTER TABLE users ADD phone nvarchar(255) NULL;
+IF COL_LENGTH('users','created_at') IS NULL ALTER TABLE users ADD created_at datetime2 NULL;
+ALTER TABLE employees ALTER COLUMN full_name nvarchar(255) NOT NULL;
+ALTER TABLE users ALTER COLUMN full_name nvarchar(255) NULL;
+-- Historical creation dates are unknown: leave old records NULL rather than invent dates.
+IF OBJECT_ID('pos_held_orders','U') IS NULL
+CREATE TABLE pos_held_orders (
+ id bigint IDENTITY PRIMARY KEY, code varchar(40) NOT NULL UNIQUE,
+ staff_user_id int NOT NULL REFERENCES users(id), customer_id int NULL REFERENCES customers(id),
+ customer_label nvarchar(255) NULL, voucher_code nvarchar(50) NULL,
+ payment_method varchar(20) NOT NULL CHECK(payment_method IN ('CASH','TRANSFER')),
+ note nvarchar(500) NULL, created_at datetime2 NOT NULL, expires_at datetime2 NOT NULL
+);
+IF OBJECT_ID('pos_held_items','U') IS NULL
+CREATE TABLE pos_held_items (
+ id bigint IDENTITY PRIMARY KEY, held_id bigint NOT NULL REFERENCES pos_held_orders(id),
+ variant_id int NOT NULL REFERENCES product_variants(id), quantity int NOT NULL CHECK(quantity>0),
+ CONSTRAINT uq_pos_hold_variant UNIQUE(held_id,variant_id)
+);
+ALTER TABLE pos_held_orders ALTER COLUMN customer_label nvarchar(255) NULL;
+ALTER TABLE pos_held_orders ALTER COLUMN note nvarchar(500) NULL;
+IF NOT EXISTS(SELECT 1 FROM sys.indexes WHERE name='ix_pos_hold_staff_expiry' AND object_id=OBJECT_ID('pos_held_orders'))
+CREATE INDEX ix_pos_hold_staff_expiry ON pos_held_orders(staff_user_id,expires_at);
+-- Defaults: shop.timezone=Asia/Ho_Chi_Minh; shop.pos.hold.expiry-mode=END_OF_DAY;
+-- shop.pos.hold.cleanup-interval=PT5M. HOURS_24 is the other supported expiry mode.
+
+GO
+
+-- database/migrations/004_anh_san_pham.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+SET NOCOUNT ON;
+SET XACT_ABORT ON;
+BEGIN TRY
+ BEGIN TRANSACTION;
+ IF OBJECT_ID(N'dbo.product_images',N'U') IS NULL
+ BEGIN
+  CREATE TABLE dbo.product_images (
+   id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+   product_id INT NOT NULL,
+   duong_dan NVARCHAR(2048) NOT NULL,
+   thu_tu INT NOT NULL CHECK(thu_tu>=0),
+   la_anh_chinh BIT NOT NULL DEFAULT 0,
+   CONSTRAINT FK_product_images_product FOREIGN KEY(product_id) REFERENCES dbo.products(id) ON DELETE CASCADE
+  );
+  CREATE INDEX IX_product_images_order ON dbo.product_images(product_id,thu_tu,id);
+  CREATE UNIQUE INDEX UX_product_images_main ON dbo.product_images(product_id) WHERE la_anh_chinh=1;
+ END;
+ INSERT INTO dbo.product_images(product_id,duong_dan,thu_tu,la_anh_chinh)
+ SELECT p.id,p.image_url,0,1 FROM dbo.products p
+ WHERE p.image_url IS NOT NULL AND LTRIM(RTRIM(p.image_url))<>N''
+ AND NOT EXISTS(SELECT 1 FROM dbo.product_images i WHERE i.product_id=p.id);
+ COMMIT TRANSACTION;
+ SELECT N'COMMIT' ket_qua,DB_NAME() database_name,COUNT_BIG(*) image_count FROM dbo.product_images;
+END TRY
+BEGIN CATCH
+ IF XACT_STATE()<>0 ROLLBACK TRANSACTION;
+ THROW;
+END CATCH;
+
+GO
+
+-- database/migrations/005_chat_lieu.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+-- SQL Server; chạy trên bản sao kiểm thử trước. Không tự động chọn database.
+SET XACT_ABORT ON;
+BEGIN TRY
+    BEGIN TRANSACTION;
+    IF OBJECT_ID(N'dbo.chat_lieu',N'U') IS NULL
+        CREATE TABLE dbo.chat_lieu (
+            id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+            ten NVARCHAR(100) NOT NULL UNIQUE,
+            trang_thai BIT NOT NULL DEFAULT 1
+        );
+    INSERT INTO dbo.chat_lieu(ten,trang_thai)
+        SELECT v.ten,1 FROM (VALUES (N'Da thật'),(N'Da tổng hợp'),(N'Da lộn'),
+            (N'Vải canvas'),(N'Vải lưới'),(N'Vải dệt kim'),(N'Cao su'),(N'Khác')) v(ten)
+        WHERE NOT EXISTS (SELECT 1 FROM dbo.chat_lieu m WHERE m.ten=v.ten);
+    IF COL_LENGTH('dbo.product_variants','chat_lieu_id') IS NULL
+        ALTER TABLE dbo.product_variants ADD chat_lieu_id INT NULL;
+    EXEC sp_executesql N'UPDATE dbo.product_variants SET chat_lieu_id=(SELECT id FROM dbo.chat_lieu WHERE ten=N''Khác'') WHERE chat_lieu_id IS NULL;
+        ALTER TABLE dbo.product_variants ALTER COLUMN chat_lieu_id INT NOT NULL;';
+    IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name='FK_product_variants_chat_lieu')
+        EXEC sp_executesql N'ALTER TABLE dbo.product_variants ADD CONSTRAINT FK_product_variants_chat_lieu FOREIGN KEY(chat_lieu_id) REFERENCES dbo.chat_lieu(id);';
+    DECLARE @drop NVARCHAR(MAX)=N'';
+    SELECT @drop=@drop+CASE WHEN i.is_unique_constraint=1 THEN N'ALTER TABLE dbo.product_variants DROP CONSTRAINT '+QUOTENAME(i.name)+N';'
+        ELSE N'DROP INDEX '+QUOTENAME(i.name)+N' ON dbo.product_variants;' END
+    FROM sys.indexes i WHERE i.object_id=OBJECT_ID(N'dbo.product_variants') AND i.is_unique=1 AND i.is_primary_key=0
+        AND (SELECT COUNT(*) FROM sys.index_columns ic WHERE ic.object_id=i.object_id AND ic.index_id=i.index_id AND ic.key_ordinal>0)=2
+        AND (SELECT COUNT(*) FROM sys.index_columns ic JOIN sys.columns c ON c.object_id=ic.object_id AND c.column_id=ic.column_id
+            WHERE ic.object_id=i.object_id AND ic.index_id=i.index_id AND ic.key_ordinal>0 AND c.name IN ('product_id','size_id'))=2;
+    EXEC sp_executesql @drop;
+    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id=OBJECT_ID(N'dbo.product_variants') AND name='UX_product_variants_product_size_material')
+        EXEC sp_executesql N'CREATE UNIQUE INDEX UX_product_variants_product_size_material ON dbo.product_variants(product_id,size_id,chat_lieu_id);';
+    IF COL_LENGTH('dbo.order_details','ten_chat_lieu') IS NULL
+        ALTER TABLE dbo.order_details ADD ten_chat_lieu NVARCHAR(100) NULL;
+    EXEC sp_executesql N'UPDATE dbo.order_details SET ten_chat_lieu=N''Khác'' WHERE ten_chat_lieu IS NULL;';
+    COMMIT;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT>0 ROLLBACK;
+    THROW;
+END CATCH;
+
+GO
+
+-- database/migrations/006_luat_ton_kho.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+-- SQL Server. Chạy sau migration 005 trên database đã được sao lưu.
+-- Chỉ bù cờ một lần; chạy lại không thay đổi cờ của các đơn theo luật mới.
+SET XACT_ABORT ON;
+BEGIN TRY
+    BEGIN TRANSACTION;
+    IF COL_LENGTH('dbo.orders','da_tru_kho') IS NULL
+    BEGIN
+        ALTER TABLE dbo.orders ADD da_tru_kho BIT NOT NULL
+            CONSTRAINT DF_orders_da_tru_kho DEFAULT 0 WITH VALUES;
+        EXEC sp_executesql N'UPDATE dbo.orders SET da_tru_kho=CASE WHEN status=''CANCELLED'' THEN 0 ELSE 1 END;';
+    END;
+    -- Lý do trừ/hoàn kho phải giữ nguyên tiếng Việt khi ghi lịch sử.
+    IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id=OBJECT_ID('dbo.inventory_logs') AND name='reason' AND TYPE_NAME(user_type_id)<>'nvarchar')
+        ALTER TABLE dbo.inventory_logs ALTER COLUMN reason NVARCHAR(500) NOT NULL;
+    COMMIT;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT>0 ROLLBACK;
+    THROW;
+END CATCH;
+
+GO
+
+-- database/migrations/007_tieng_viet_unicode.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+-- SQL Server. Chạy sau 006, sau khi sao lưu database.
+-- Chuyển các cột văn bản hiển thị sang NVARCHAR, giữ độ dài và NULL/NOT NULL.
+-- Không thể khôi phục dấu đã mất thành '?' trước khi áp dụng migration.
+SET XACT_ABORT ON;
+BEGIN TRY
+    BEGIN TRANSACTION;
+    DECLARE @table SYSNAME, @column SYSNAME, @length INT, @nullable BIT, @statement NVARCHAR(MAX);
+    DECLARE text_columns CURSOR LOCAL FAST_FORWARD FOR
+        SELECT t.name,c.name,c.max_length,c.is_nullable
+        FROM sys.tables t
+        JOIN sys.columns c ON c.object_id=t.object_id
+        JOIN sys.types ty ON ty.user_type_id=c.user_type_id
+        JOIN (VALUES
+            (N'products',N'name'),(N'products',N'description'),
+            (N'customers',N'full_name'),(N'customers',N'address'),
+            (N'orders',N'receiver_name'),(N'orders',N'shipping_address'),
+            (N'order_details',N'product_name'),(N'order_details',N'size_name'),
+            (N'invoices',N'customer_name'),(N'invoices',N'employee_name'),
+            (N'employees',N'full_name'),(N'employees',N'address'),(N'employees',N'position'),
+            (N'categories',N'name'),(N'promotions',N'name'),(N'vouchers',N'name'),
+            (N'users',N'full_name'),(N'inventory_logs',N'reason'),
+            (N'pos_held_orders',N'customer_label'),(N'pos_held_orders',N'note')
+        ) wanted(table_name,column_name) ON wanted.table_name=t.name AND wanted.column_name=c.name
+        WHERE t.schema_id=SCHEMA_ID(N'dbo') AND ty.name=N'varchar';
+    OPEN text_columns;
+    FETCH NEXT FROM text_columns INTO @table,@column,@length,@nullable;
+    WHILE @@FETCH_STATUS=0
+    BEGIN
+        SET @statement=N'ALTER TABLE dbo.'+QUOTENAME(@table)+N' ALTER COLUMN '+QUOTENAME(@column)
+            +N' NVARCHAR('+CASE WHEN @length=-1 THEN N'MAX' ELSE CONVERT(NVARCHAR(10),@length) END+N') '
+            +CASE WHEN @nullable=1 THEN N'NULL' ELSE N'NOT NULL' END+N';';
+        EXEC sp_executesql @statement;
+        FETCH NEXT FROM text_columns INTO @table,@column,@length,@nullable;
+    END;
+    CLOSE text_columns;
+    DEALLOCATE text_columns;
+    COMMIT;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT>0 ROLLBACK;
+    THROW;
+END CATCH;
+
+GO
+
+-- database/migrations/008_nvarchar_con_lai.sql
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy script.',1;
+-- Chỉ chạy trên database test; triển khai thật phải bật session context rõ ràng.
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+    THROW 51000,N'Database không được phép chạy migration.',1;
+SET XACT_ABORT ON;
+BEGIN TRY
+    BEGIN TRANSACTION;
+    -- Giữ mã, enum, username/password băm và actor (username); còn lại dùng Unicode.
+    SELECT t.object_id,t.name table_name,c.column_id,c.name column_name,
+           c.max_length,c.is_nullable,ty.name type_name,c.collation_name
+    INTO #unicode_columns
+    FROM sys.tables t JOIN sys.columns c ON c.object_id=t.object_id
+    JOIN sys.types ty ON ty.user_type_id=c.user_type_id
+    WHERE t.schema_id=SCHEMA_ID(N'dbo') AND ty.name IN(N'varchar',N'char',N'text')
+      AND c.name NOT IN (N'code',N'customer_code',N'employee_code',N'invoice_code',N'order_code',
+          N'voucher_code',N'order_type',N'status',N'payment_method',N'payment_status',N'discount_type',
+          N'username',N'password',N'actor')
+      AND NOT (t.name=N'roles' AND c.name=N'name');
+
+    -- Giữ nguyên tính duy nhất, thứ tự khóa, INCLUDE và bộ lọc của index phụ thuộc.
+    SELECT DISTINCT i.object_id,i.index_id,t.name table_name,i.name index_name,
+        CAST(CASE WHEN i.is_unique_constraint=1 THEN
+            N'ALTER TABLE dbo.'+QUOTENAME(t.name)+N' DROP CONSTRAINT '+QUOTENAME(i.name)+N';'
+            ELSE N'DROP INDEX '+QUOTENAME(i.name)+N' ON dbo.'+QUOTENAME(t.name)+N';' END AS NVARCHAR(MAX)) drop_sql,
+        CAST(CASE WHEN i.is_unique_constraint=1 THEN
+            N'ALTER TABLE dbo.'+QUOTENAME(t.name)+N' ADD CONSTRAINT '+QUOTENAME(i.name)+N' UNIQUE '
+            ELSE N'CREATE '+CASE WHEN i.is_unique=1 THEN N'UNIQUE ' ELSE N'' END END
+            +CASE WHEN i.type=1 THEN N'CLUSTERED ' ELSE N'NONCLUSTERED ' END
+            +CASE WHEN i.is_unique_constraint=1 THEN N'' ELSE N'INDEX '+QUOTENAME(i.name)+N' ON dbo.'+QUOTENAME(t.name)+N' ' END
+            +N'('+keys.cols+N')'
+            +CASE WHEN included.cols IS NULL THEN N'' ELSE N' INCLUDE ('+included.cols+N')' END
+            +CASE WHEN i.filter_definition IS NULL THEN N'' ELSE N' WHERE '+i.filter_definition END+N';' AS NVARCHAR(MAX)) create_sql
+    INTO #unicode_indexes
+    FROM sys.indexes i JOIN sys.tables t ON t.object_id=i.object_id
+    CROSS APPLY (SELECT STRING_AGG(CAST(QUOTENAME(c.name)+CASE WHEN ic.is_descending_key=1 THEN N' DESC' ELSE N' ASC' END AS NVARCHAR(MAX)),N',') WITHIN GROUP(ORDER BY ic.key_ordinal) cols
+        FROM sys.index_columns ic JOIN sys.columns c ON c.object_id=ic.object_id AND c.column_id=ic.column_id
+        WHERE ic.object_id=i.object_id AND ic.index_id=i.index_id AND ic.key_ordinal>0) keys
+    OUTER APPLY (SELECT STRING_AGG(CAST(QUOTENAME(c.name) AS NVARCHAR(MAX)),N',') WITHIN GROUP(ORDER BY ic.index_column_id) cols
+        FROM sys.index_columns ic JOIN sys.columns c ON c.object_id=ic.object_id AND c.column_id=ic.column_id
+        WHERE ic.object_id=i.object_id AND ic.index_id=i.index_id AND ic.is_included_column=1) included
+    WHERE i.is_primary_key=0 AND i.type IN(1,2)
+      AND EXISTS(SELECT 1 FROM sys.index_columns ic JOIN #unicode_columns u ON u.object_id=ic.object_id AND u.column_id=ic.column_id
+                 WHERE ic.object_id=i.object_id AND ic.index_id=i.index_id);
+
+    DECLARE @statement NVARCHAR(MAX),@table SYSNAME,@column SYSNAME,@length INT,@nullable BIT,@type SYSNAME,@collation SYSNAME;
+    DECLARE drop_indexes CURSOR LOCAL FAST_FORWARD FOR SELECT drop_sql FROM #unicode_indexes;
+    OPEN drop_indexes; FETCH NEXT FROM drop_indexes INTO @statement;
+    WHILE @@FETCH_STATUS=0 BEGIN EXEC sp_executesql @statement; FETCH NEXT FROM drop_indexes INTO @statement; END;
+    CLOSE drop_indexes; DEALLOCATE drop_indexes;
+    DECLARE columns_to_convert CURSOR LOCAL FAST_FORWARD FOR
+        SELECT table_name,column_name,max_length,is_nullable,type_name,collation_name FROM #unicode_columns ORDER BY table_name,column_id;
+    OPEN columns_to_convert; FETCH NEXT FROM columns_to_convert INTO @table,@column,@length,@nullable,@type,@collation;
+    WHILE @@FETCH_STATUS=0
+    BEGIN
+        SET @statement=N'ALTER TABLE dbo.'+QUOTENAME(@table)+N' ALTER COLUMN '+QUOTENAME(@column)+N' NVARCHAR('
+            +CASE WHEN @length=-1 OR @length>4000 OR @type=N'text' THEN N'MAX' ELSE CONVERT(NVARCHAR(10),@length) END+N')'
+            +CASE WHEN @collation IS NULL THEN N'' ELSE N' COLLATE '+@collation END
+            +CASE WHEN @nullable=1 THEN N' NULL;' ELSE N' NOT NULL;' END;
+        EXEC sp_executesql @statement;
+        FETCH NEXT FROM columns_to_convert INTO @table,@column,@length,@nullable,@type,@collation;
+    END;
+    CLOSE columns_to_convert; DEALLOCATE columns_to_convert;
+    DECLARE create_indexes CURSOR LOCAL FAST_FORWARD FOR SELECT create_sql FROM #unicode_indexes;
+    OPEN create_indexes; FETCH NEXT FROM create_indexes INTO @statement;
+    WHILE @@FETCH_STATUS=0 BEGIN EXEC sp_executesql @statement; FETCH NEXT FROM create_indexes INTO @statement; END;
+    CLOSE create_indexes; DEALLOCATE create_indexes;
+    SELECT COUNT(*) converted_columns FROM #unicode_columns;
+    DROP TABLE #unicode_indexes;
+    DROP TABLE #unicode_columns;
+    COMMIT;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT>0 ROLLBACK;
+    THROW;
+END CATCH;
+
 GO

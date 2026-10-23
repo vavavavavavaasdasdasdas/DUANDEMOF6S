@@ -14,7 +14,7 @@ public class ProductImage {
     @JoinColumn(name="product_id", nullable=false)
     private Product product;
     @Column(name="duong_dan", nullable=false, length=2048, columnDefinition="nvarchar(2048)")
-    private String path;
+    @org.hibernate.annotations.Nationalized private String path;
     @Column(name="thu_tu", nullable=false)
     private int position;
     @Column(name="la_anh_chinh", nullable=false)

@@ -25,13 +25,13 @@ public class OrderDetail {
 
     // Snapshot fields
     @Column(name = "product_name")
-    private String productName;
+    @org.hibernate.annotations.Nationalized private String productName;
 
     @Column(name = "size_name")
-    private String sizeName;
+    @org.hibernate.annotations.Nationalized private String sizeName;
 
     @Column(name = "ten_chat_lieu", columnDefinition = "nvarchar(100)")
-    private String materialName;
+    @org.hibernate.annotations.Nationalized private String materialName;
 
     public String getDisplayMaterialName() { return materialName == null || materialName.isBlank() ? "—" : materialName; }
 

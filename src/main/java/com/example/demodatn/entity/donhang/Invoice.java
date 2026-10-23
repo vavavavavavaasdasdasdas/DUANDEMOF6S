@@ -20,11 +20,11 @@ public class Invoice {
     @Column(name = "issued_at", nullable = false)
     private LocalDateTime issuedAt;
     @Column(name = "customer_name", nullable = false)
-    private String customerName;
+    @org.hibernate.annotations.Nationalized private String customerName;
     @Column(name = "customer_phone")
-    private String customerPhone;
+    @org.hibernate.annotations.Nationalized private String customerPhone;
     @Column(name = "employee_name")
-    private String employeeName;
+    @org.hibernate.annotations.Nationalized private String employeeName;
     @Column(name = "cash_received")
     private BigDecimal cashReceived;
     @Column(name = "change_amount")

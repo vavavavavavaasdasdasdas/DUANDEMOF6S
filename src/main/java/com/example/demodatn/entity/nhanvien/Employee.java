@@ -20,13 +20,13 @@ public class Employee {
     private String fullName;
 
     @Column(unique = true)
-    private String phone;
+    @org.hibernate.annotations.Nationalized private String phone;
 
-    private String email;
+    @org.hibernate.annotations.Nationalized private String email;
 
-    private String address;
+    @org.hibernate.annotations.Nationalized private String address;
 
-    private String position;
+    @org.hibernate.annotations.Nationalized private String position;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)

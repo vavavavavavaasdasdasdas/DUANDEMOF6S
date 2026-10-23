@@ -27,6 +27,10 @@ class StatisticsIntegrationTest {
     private void line(int order,int variant,int quantity,String amount) {
         jdbc.update("INSERT INTO order_details(order_id,product_variant_id,price,quantity,total_price) VALUES(?,?,?,?,?)",order,variant,new BigDecimal(amount).divide(BigDecimal.valueOf(quantity)),quantity,new BigDecimal(amount));
     }
+    private int variant() {
+        int product=jdbc.queryForObject("INSERT INTO products(code,name,status) OUTPUT INSERTED.id VALUES(?,N'Sản phẩm kiểm thử thống kê',1)",Integer.class,"STAT-"+UUID.randomUUID());
+        return jdbc.queryForObject("INSERT INTO product_variants(product_id,size_id,chat_lieu_id,price,quantity,status) OUTPUT INSERTED.id SELECT ?,MIN(s.id),MIN(m.id),100000,5,1 FROM sizes s CROSS JOIN chat_lieu m",Integer.class,product);
+    }
     @Test
     void metricsRankingsBoundariesChannelsAndStatusesUseSnapshotMoney() {
         var day=LocalDate.of(2042,1,1);
@@ -35,7 +39,7 @@ class StatisticsIntegrationTest {
         order("POS","DELIVERED","UNPAID","2042-01-01T12:00:00","999");
         order("POS","CANCELLED","PAID","2042-01-01T12:00:00","999");
         order("POS","DELIVERED","PAID","2042-01-02T00:00:00","999");
-        var ids=jdbc.queryForList("SELECT TOP(2) MIN(id) AS id FROM product_variants GROUP BY product_id ORDER BY product_id",Integer.class);
+        var ids=List.of(variant(),variant());
         line(online,ids.get(0),2,"100.50");line(pos,ids.get(1),1,"220.25");
         var all=service.load(day,day,"ALL");assertEquals(2L,((Number)all.get("orders")).longValue());
         assertEquals("2042-01-01",((List<Map<String,Object>>)all.get("daily")).get(0).get("day"));

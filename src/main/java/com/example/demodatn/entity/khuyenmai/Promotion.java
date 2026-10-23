@@ -15,7 +15,7 @@ public class Promotion {
     private Integer id;
 
     @Column(nullable = false)
-    private String name;
+    @org.hibernate.annotations.Nationalized private String name;
 
     @Column(name = "discount_type", nullable = false)
     private String discountType;

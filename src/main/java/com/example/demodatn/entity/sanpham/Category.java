@@ -13,7 +13,7 @@ public class Category {
     private Integer id;
 
     @Column(nullable = false)
-    private String name;
+    @org.hibernate.annotations.Nationalized private String name;
 
     private Boolean status = true;
 }

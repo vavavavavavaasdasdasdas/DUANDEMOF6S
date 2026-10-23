@@ -17,16 +17,16 @@ public class Product {
     private String code;
 
     @Column(nullable = false)
-    private String name;
+    @org.hibernate.annotations.Nationalized private String name;
 
-    private String description;
+    @org.hibernate.annotations.Nationalized private String description;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
     @Column(name = "image_url")
-    private String imageUrl;
+    @org.hibernate.annotations.Nationalized private String imageUrl;
 
     private Boolean status = true;
     public String getDisplayImageUrl() { return ProductMedia.source(imageUrl); }

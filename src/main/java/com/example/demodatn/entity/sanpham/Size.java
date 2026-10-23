@@ -13,5 +13,5 @@ public class Size {
     private Integer id;
 
     @Column(name = "size_value", nullable = false, unique = true)
-    private String sizeValue;
+    @org.hibernate.annotations.Nationalized private String sizeValue;
 }

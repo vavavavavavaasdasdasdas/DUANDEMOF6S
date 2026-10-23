@@ -17,14 +17,14 @@ public class Customer {
     private String customerCode;
 
     @Column(name = "full_name", nullable = false)
-    private String fullName;
+    @org.hibernate.annotations.Nationalized private String fullName;
 
     @Column(unique = true)
-    private String phone;
+    @org.hibernate.annotations.Nationalized private String phone;
 
-    private String email;
+    @org.hibernate.annotations.Nationalized private String email;
 
-    private String address;
+    @org.hibernate.annotations.Nationalized private String address;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

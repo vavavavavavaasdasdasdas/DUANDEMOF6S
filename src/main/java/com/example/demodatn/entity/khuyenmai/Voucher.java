@@ -19,7 +19,7 @@ public class Voucher {
     private String code;
 
     @Column(nullable = false)
-    private String name;
+    @org.hibernate.annotations.Nationalized private String name;
 
     @Column(name = "discount_type", nullable = false)
     private String discountType;
