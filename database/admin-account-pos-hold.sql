@@ -1,3 +1,6 @@
+IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
+    THROW 51000,N'Database không được phép chạy migration.',1;
 -- Apply explicitly to the intended database. Verification uses shop_verify only.
 IF COL_LENGTH('users','full_name') IS NULL ALTER TABLE users ADD full_name nvarchar(255) NULL;
 IF COL_LENGTH('users','email') IS NULL ALTER TABLE users ADD email nvarchar(255) NULL;

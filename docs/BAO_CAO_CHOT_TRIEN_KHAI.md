@@ -1,6 +1,6 @@
 # Chốt trước khi triển khai — giai đoạn 6
 
-Nhánh `don-dep`. Bằng chứng thô: `C:/Users/ADMIN/AppData/Local/Temp/release-20261023/`. Chỉ dùng `shop_verify`, `shop_fresh`, `shopbangiay_thu`; không truy cập `shopbangiay`.
+Nhánh `don-dep`. Bằng chứng thô: `C:/Users/ADMIN/AppData/Local/Temp/release-20261023/`. Migration và kiểm thử chỉ dùng `shop_verify`, `shop_fresh`, `shopbangiay_thu`. Theo quyền bạn cấp bổ sung, đã BACKUP COPY_ONLY `shopbangiay` để dựng bản sao; không sửa dữ liệu/schema nguồn.
 
 | Hạng mục | Cách kiểm tra | Kết quả thực tế | PASS/FAIL/NOT TESTED |
 |---|---|---|---|
@@ -13,8 +13,10 @@ Nhánh `don-dep`. Bằng chứng thô: `C:/Users/ADMIN/AppData/Local/Temp/releas
 | A — dọn database tạm | DROP shop_fresh sau form và baseline, SELECT sys.databases | Không còn shop_fresh; `a-drop-fresh-final.sql`, `a-fresh-removed.txt` | PASS |
 | B — doanh thu | Đơn chuyển khoản PAID → CONFIRMED → PREPARING → SHIPPING → DELIVERY_FAILED; SELECT độc lập so HTML | Doanh thu 930000 → 700000, số đơn 3 → 2; Dashboard/Statistics khớp; Home bán chạy loại sản phẩm đơn thất bại; kho 10 → 9 → 10; `b-proof.json`, `b-paid-*.sql/.txt`, `b-failed-*.sql/.txt` | PASS |
 | C — hạn chuyển khoản | Tạo đơn chuyển khoản, SELECT DATEADD(hour,24,created_at), GET success/detail User và detail Admin | Cả 3 HTTP 200, nhãn đúng `21:44 24/10/2026`; sau PAID ẩn; Admin đã xác nhận không hứa tự hủy vì job chỉ xử lý PENDING; `c-proof.json`, `c-deadline-sql.sql/.txt` | PASS |
-| D — bản sao thật | Kết nối localhost:1433, shopbangiay_thu | Không có database này trên instance được cấu hình; “Cannot open database shopbangiay_thu”; đã hỏi vị trí bản sao | NOT TESTED |
-| E — cấu hình/tài liệu | Chưa hoàn tất | Đang thực hiện | NOT TESTED |
+| D — backup/restore | BACKUP COPY_ONLY CHECKSUM, RESTORE VERIFYONLY, RESTORE WITH MOVE | 1193 pages; “The backup set on file 1 is valid”; restore thành shopbangiay_thu mới; `d-backup.txt`, `d-backup-verify.txt`, `d-restore.txt` | PASS |
+| D — migration bản sao | sqlcmd -I -b, thứ tự 004–008; COUNT_BIG từng bảng trước/sau | Cả 5 exit 0; mọi bảng cũ giữ nguyên COUNT; thêm 8 chất liệu, 6 ảnh; `d-count-before.json`, `d-count-after.json`, `d-preflight-*.txt` | PASS |
+| D — COD và crawl | JAR profile verify ddl-auto=none trên shopbangiay_thu; đặt → xác nhận → hủy; 15 URL User + 25 Admin | Đơn 675: tồn giữ nguyên khi đặt, giảm 1 khi xác nhận, hoàn 1 khi hủy; có InventoryLog; 40 URL không 4xx/5xx, thêm 5 trang chi tiết/thống kê 200; `d-flow-proof.json`, `d-cod-*.sql/.txt` | PASS |
+| E — cấu hình/tài liệu | Biến môi trường bắt buộc, cấu hình mẫu, gitignore, chuyển báo cáo | Đã sửa; kiểm tra build cuối đang thực hiện | NOT TESTED |
 
 ## Các cột VARCHAR còn lại sau 008 trên shop_verify
 

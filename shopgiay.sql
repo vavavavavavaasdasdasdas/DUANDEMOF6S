@@ -1,6 +1,6 @@
 -- Khởi tạo schema mới trong database đã chọn bằng sqlcmd -d; không tạo/chuyển database.
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 IF OBJECT_ID(N'dbo.users',N'U') IS NOT NULL THROW 51001,N'Database đã có schema; hãy dùng migrations.',1;
 GO
@@ -161,7 +161,7 @@ GO
 
 -- database/phase6.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 -- Phase 6: additive/idempotent migration. Run against the existing shopbangiay database.
 -- Does not drop tables or alter prices/stock/order totals.
@@ -203,7 +203,7 @@ GO
 
 -- database/phase7.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 -- Phase 7: additive account/profile integrity. Run on the existing shopbangiay DB.
 SET XACT_ABORT ON;
@@ -231,7 +231,7 @@ GO
 
 -- database/phase8.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 SET XACT_ABORT ON;
 BEGIN TRANSACTION;
@@ -245,7 +245,7 @@ GO
 
 -- database/phase9.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 SET XACT_ABORT ON;
 BEGIN TRANSACTION;
@@ -273,7 +273,7 @@ GO
 
 -- database/admin-account-pos-hold.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 -- Apply explicitly to the intended database. Verification uses shop_verify only.
 IF COL_LENGTH('users','full_name') IS NULL ALTER TABLE users ADD full_name nvarchar(255) NULL;
@@ -308,7 +308,7 @@ GO
 
 -- database/migrations/004_anh_san_pham.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
@@ -343,7 +343,7 @@ GO
 
 -- database/migrations/005_chat_lieu.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 -- SQL Server; chạy trên bản sao kiểm thử trước. Không tự động chọn database.
 SET XACT_ABORT ON;
@@ -389,7 +389,7 @@ GO
 
 -- database/migrations/006_luat_ton_kho.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 -- SQL Server. Chạy sau migration 005 trên database đã được sao lưu.
 -- Chỉ bù cờ một lần; chạy lại không thay đổi cờ của các đơn theo luật mới.
@@ -416,7 +416,7 @@ GO
 
 -- database/migrations/007_tieng_viet_unicode.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 -- SQL Server. Chạy sau 006, sau khi sao lưu database.
 -- Chuyển các cột văn bản hiển thị sang NVARCHAR, giữ độ dài và NULL/NOT NULL.
@@ -465,11 +465,11 @@ GO
 
 -- database/migrations/008_nvarchar_con_lai.sql
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy script.',1;
 -- Chỉ chạy trên database test; triển khai thật phải bật session context rõ ràng.
 IF DB_NAME() NOT IN (N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
-   AND NOT (DB_NAME()=N'shopbangiay' AND TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration'))=1)
+   AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
     THROW 51000,N'Database không được phép chạy migration.',1;
 SET XACT_ABORT ON;
 BEGIN TRY
