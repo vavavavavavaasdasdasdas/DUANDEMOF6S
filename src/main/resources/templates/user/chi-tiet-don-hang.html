@@ -4,6 +4,7 @@
         <a href="/orders" class="btn btn-outline-secondary">Quay lại danh sách</a>
     </div>
 
+<th:block th:replace="~{fragments/han-chuyen-khoan :: deadline(${order},false)}"></th:block>
     <div class="row">
         <div class="col-md-4">
             <div class="p-3 border rounded bg-light shadow-sm">
@@ -13,18 +14,19 @@
                 <p class="mb-1"><strong>Địa chỉ:</strong> <span th:text="${order.shippingAddress}"></span></p>
                 <hr>
                 <p class="mb-1"><strong>Ngày đặt:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
-                <p class="mb-1"><strong>Trạng thái:</strong> <span class="badge bg-primary" th:text="${order.status}"></span></p>
+                <p class="mb-1"><strong>Trạng thái:</strong> <span class="badge bg-primary" th:text="${statusLabels[order.status] ?: order.status}"></span></p>
             </div>
         </div>
 
         <div class="col-md-8">
             <div class="p-3 border rounded shadow-sm bg-white">
                 <h5>Sản phẩm đã mua</h5>
+                <form th:if="${canCancel}" th:action="@{/orders/{id}/cancel(id=${order.id})}" method="post" class="mb-3" data-cancel-order><button type="submit" class="btn btn-outline-danger" data-confirm data-confirm-title="Hủy đơn hàng" data-confirm-message="Bạn muốn hủy đơn hàng này? Hàng đã trừ sẽ được hoàn kho.">Hủy đơn hàng</button></form>
                 <div class="table-responsive"><table class="table mt-3">
                     <thead>
                         <tr>
                             <th>Sản phẩm</th>
-                            <th>Size</th>
+                            <th>Size</th><th>Chất liệu</th>
                             <th>Số lượng</th>
                             <th>Đơn giá</th>
                             <th class="text-end">Thành tiền</th>
@@ -34,14 +36,14 @@
                         <tr th:each="detail : ${orderDetails}">
                             <td><img class="product-thumbnail" th:src="${detail.productVariant.product.displayImageUrl}" th:alt="${detail.productName}+' — ảnh chính'" width="56" height="56"><span th:text="${detail.productName != null ? detail.productName : detail.productVariant.product.name}"></span></td>
                             <td th:text="${detail.sizeName != null ? detail.sizeName : detail.productVariant.size.sizeValue}"></td>
-                            <td th:text="${detail.quantity}"></td>
+                            <td th:text="${detail.displayMaterialName}"></td><td th:text="${detail.quantity}"></td>
                             <td th:text="${@money.format(detail.price)} + ' đ'"></td>
                             <td class="text-end fw-bold" th:text="${@money.format(detail.totalPrice)} + ' đ'"></td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="4" class="text-end fw-bold">Tổng cộng:</td>
+                            <td colspan="5" class="text-end fw-bold">Tổng cộng:</td>
                             <td class="text-end fw-bold text-danger fs-5" th:text="${@money.format(order.finalAmount)} + ' đ'"></td>
                         </tr>
                     </tfoot>
