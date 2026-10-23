@@ -11,7 +11,7 @@ public class InventoryLog {
     @Column(name="quantity_change",nullable=false) private Integer quantityChange;
     @Column(name="quantity_before",nullable=false) private Integer quantityBefore;
     @Column(name="quantity_after",nullable=false) private Integer quantityAfter;
-    @Column(nullable=false,length=500) private String reason;
+    @Column(nullable=false,length=500,columnDefinition="nvarchar(500)") private String reason;
     @Column(nullable=false,length=255) private String actor;
     @Column(name="created_at",nullable=false) private LocalDateTime createdAt;
 }

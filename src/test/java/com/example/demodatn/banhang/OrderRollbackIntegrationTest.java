@@ -30,6 +30,7 @@ class OrderRollbackIntegrationTest {
     @Autowired ProductRepository products;
     @Autowired ProductVariantRepository variants;
     @Autowired SizeRepository sizes;
+    @Autowired MaterialRepository materials;
     @Autowired VoucherRepository vouchers;
     @Autowired JdbcTemplate jdbc;
     @Autowired WebApplicationContext context;
@@ -45,10 +46,10 @@ class OrderRollbackIntegrationTest {
         product = products.saveAndFlush(product);
         var sizeList = sizes.findAll();
         var first = new ProductVariant();
-        first.setProduct(product); first.setSize(sizeList.get(0)); first.setPrice(new BigDecimal("200000")); first.setQuantity(10); first.setStatus(true);
+        first.setProduct(product); first.setSize(sizeList.get(0)); first.setMaterial(materials.findAll().get(0)); first.setPrice(new BigDecimal("200000")); first.setQuantity(10); first.setStatus(true);
         first = variants.saveAndFlush(first);
         var second = new ProductVariant();
-        second.setProduct(product); second.setSize(sizeList.get(1)); second.setPrice(new BigDecimal("200000")); second.setQuantity(10); second.setStatus(true);
+        second.setProduct(product); second.setSize(sizeList.get(1)); second.setMaterial(materials.findAll().get(0)); second.setPrice(new BigDecimal("200000")); second.setQuantity(10); second.setStatus(true);
         second = variants.saveAndFlush(second);
         var voucher = new Voucher();
         voucher.setCode("P12-TX-" + UUID.randomUUID()); voucher.setName("Transaction fixture");
@@ -95,7 +96,7 @@ class OrderRollbackIntegrationTest {
             var mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
             mvc.perform(post("/checkout/place").session(session).with(csrf())
                     .param("receiverName", "QA rollback").param("phone", "0901234567").param("email", "qa@example.test")
-                    .param("shippingAddress", "QA address").param("paymentMethod", "COD").param("voucherCode", f.voucher().getCode()))
+                    .param("shippingAddress", "QA address").param("paymentMethod", "BANK_TRANSFER").param("voucherCode", f.voucher().getCode()))
                     .andExpect(status().isFound()).andExpect(redirectedUrl("/checkout"))
                     .andExpect(flash().attribute("error", org.hamcrest.Matchers.containsString("Không đủ tồn kho")));
             assertNotNull(before.get());

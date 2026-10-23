@@ -14,13 +14,15 @@ public class AdminVariantController {
     private final AdminCatalogQuery query;
     private final ProductRepository products;
     private final SizeRepository sizes;
+    private final MaterialRepository materials;
     @GetMapping("/admin/variants")
-    public String list(@RequestParam(required=false) Integer productId, @RequestParam(defaultValue="0") int page, Model model) { return listFor(productId,page,model); }
+    public String list(@RequestParam(required=false) Integer productId, @RequestParam(defaultValue="0") String page, @RequestParam(required=false) Integer materialId, Model model) { return listFor(productId,page,materialId,model); }
     @GetMapping("/admin/products-crud/{productId}/variants")
-    public String productVariants(@PathVariable Integer productId, @RequestParam(defaultValue="0") int page, Model model) { return listFor(productId,page,model); }
-    private String listFor(Integer productId, int page, Model model) {
-        var result=query.variantsPage(productId,"all",0,page,20);
+    public String productVariants(@PathVariable Integer productId, @RequestParam(defaultValue="0") String page, @RequestParam(required=false) Integer materialId, Model model) { return listFor(productId,page,materialId,model); }
+    private String listFor(Integer productId, String page, Integer materialId, Model model) {
+        var result=query.variantsPage(productId,"all",0,page,materialId);
         model.addAttribute("variants",result.getContent()); model.addAttribute("dataPage",result);
+        model.addAttribute("materials",materials.findAll()); model.addAttribute("materialId",materialId);
         model.addAttribute("selectedProduct",productId==null?null:catalog.product(productId));
         model.addAttribute("products",products.findAll()); model.addAttribute("productId",productId);
         return "admin/bien-the/danh-sach";
@@ -33,7 +35,7 @@ public class AdminVariantController {
     @GetMapping("/admin/variants/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
         ProductVariant variant=catalog.variant(id); VariantForm form=new VariantForm();
-        form.setId(id); form.setProductId(variant.getProduct().getId()); form.setSizeId(variant.getSize().getId());
+        form.setId(id); form.setProductId(variant.getProduct().getId()); form.setSizeId(variant.getSize().getId()); form.setMaterialId(variant.getMaterial().getId());
         form.setPrice(variant.getPrice()); form.setQuantity(variant.getQuantity()); form.setExpectedQuantity(variant.getQuantity()); form.setStatus(variant.getStatus());
         model.addAttribute("variant",form); return form(model);
     }
@@ -45,12 +47,12 @@ public class AdminVariantController {
                 flash.addFlashAttribute("message","Đã lưu variant. Mọi thay đổi tồn kho đã được ghi lịch sử.");
                 return "redirect:/admin/products-crud/"+saved.getProduct().getId()+"/variants";
             } catch(CatalogValidationException ex) { result.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
-              catch(DataIntegrityViolationException ex) { result.rejectValue("sizeId","duplicate","Cặp sản phẩm–size đã tồn tại hoặc dữ liệu vừa thay đổi."); }
+              catch(DataIntegrityViolationException ex) { result.rejectValue("materialId","duplicate","Bộ ba sản phẩm, size và chất liệu đã tồn tại hoặc dữ liệu vừa thay đổi."); }
         }
         return form(model);
     }
     private String form(Model model) {
-        model.addAttribute("products",products.findAll()); model.addAttribute("sizes",sizes.findAll());
+        model.addAttribute("products",products.findAll()); model.addAttribute("sizes",sizes.findAll()); model.addAttribute("materials",materials.findByStatusTrueOrderByNameAscIdAsc());
         return "admin/bien-the/bieu-mau";
     }
 }

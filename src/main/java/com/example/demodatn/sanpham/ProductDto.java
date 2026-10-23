@@ -40,6 +40,9 @@ public class ProductDto {
     public static class VariantDto {
         private Integer id;
         private String sizeValue;
+        private Integer sizeId;
+        private Integer materialId;
+        private String materialName;
         private int quantity;
     }
 }

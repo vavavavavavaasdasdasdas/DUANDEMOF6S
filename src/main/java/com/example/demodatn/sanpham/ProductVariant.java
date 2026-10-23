@@ -28,6 +28,10 @@ public class ProductVariant {
     @JoinColumn(name = "size_id")
     private Size size;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "chat_lieu_id", nullable = false)
+    private Material material;
+
     @Column(nullable = false)
     private BigDecimal price;
 

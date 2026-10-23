@@ -39,6 +39,9 @@ public class Order {
     @Column(nullable = false) // PENDING, CONFIRMED, etc.
     private String status;
 
+    @Column(name = "da_tru_kho", nullable = false)
+    private Boolean daTruKho = false;
+
     @Column(name = "total_amount", nullable = false) // Subtotal
     private BigDecimal totalAmount;
 

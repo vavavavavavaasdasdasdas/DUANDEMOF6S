@@ -21,13 +21,12 @@ public class AdminEmployeeController {
     private final EmployeeRepository repository;
     private final PeopleService people;
 
+    private final com.example.demodatn.core.Pagination pagination;
+
     @GetMapping
-    public String list(@RequestParam(defaultValue="") String keyword,@RequestParam(defaultValue="0") int page,Model model) {
+    public String list(@RequestParam(defaultValue="") String keyword,@RequestParam(defaultValue="0") String page,Model model) {
         String query=keyword.trim();
-        var pageable=PageRequest.of(Math.max(0,page),10,Sort.by(Sort.Direction.DESC,"id"));
-        var result=repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,pageable);
-        if(result.getTotalPages()>0 && page>=result.getTotalPages())
-            result=repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,pageable.withPage(result.getTotalPages()-1));
+        var result=pagination.load(page,Sort.by(Sort.Direction.DESC,"id"),request->repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,request));
         model.addAttribute("peoplePage",result);model.addAttribute("keyword",keyword);
         return "admin/nhan-vien/danh-sach";
     }
@@ -40,7 +39,7 @@ public class AdminEmployeeController {
         model.addAttribute("employee",form);return "admin/nhan-vien/bieu-mau";
     }
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable Integer id,@RequestParam(defaultValue="0") int page,Model model) {
+    public String detail(@PathVariable Integer id,@RequestParam(defaultValue="0") String page,Model model) {
         var item=people.employee(id);model.addAttribute("person",item);model.addAttribute("self",people.isSelf(item.getUser()));
         return "admin/nhan-vien/chi-tiet";
     }

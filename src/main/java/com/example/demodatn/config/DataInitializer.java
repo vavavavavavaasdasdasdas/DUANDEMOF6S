@@ -23,6 +23,7 @@ public class DataInitializer implements CommandLineRunner {
     private final EmployeeRepository employeeRepository;
     private final CategoryRepository categoryRepository;
     private final SizeRepository sizeRepository;
+    private final MaterialRepository materialRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -59,6 +60,10 @@ public class DataInitializer implements CommandLineRunner {
         Category catNike = createCategoryIfNotFound(1, "Nike");
         Category catAdidas = createCategoryIfNotFound(2, "Adidas");
         Category catConverse = createCategoryIfNotFound(3, "Converse");
+
+        for (String name : java.util.List.of("Da thật","Da tổng hợp","Da lộn","Vải canvas","Vải lưới","Vải dệt kim","Cao su","Khác")) {
+            if (!materialRepository.existsByName(name)) { Material material = new Material(); material.setName(name); materialRepository.save(material); }
+        }
 
         // 4. Sizes
         Size size39 = createSizeIfNotFound(4, "39");

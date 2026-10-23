@@ -13,22 +13,23 @@ import org.springframework.data.jpa.domain.Specification;
 @RequiredArgsConstructor
 public class AdminOrderController {
     private final OrderRepository orderRepository;
-    private final OrderService orderService;
+    private final OrderStatusService orderService;
     private final InvoiceRepository invoices;
-    public static final java.util.Map<String,String> STATUS_LABELS=java.util.Map.of(
-        "PENDING","Chờ xử lý","CONFIRMED","Đã xác nhận","PREPARING","Đang chuẩn bị",
-        "SHIPPING","Đang giao","DELIVERED","Hoàn tất","CANCELLED","Đã hủy");
+    public static final java.util.Map<String,String> STATUS_LABELS=OrderStatusService.LABELS;
 
     @ModelAttribute public void labels(Model model) { model.addAttribute("statusLabels",STATUS_LABELS); }
 
+    private final com.example.demodatn.core.Pagination pagination;
+
     @GetMapping
     public String list(@RequestParam(required=false) String status,@RequestParam(defaultValue="") String q,
-            @RequestParam(defaultValue="0") int page,Model model) {
+            @RequestParam(defaultValue="0") String page,Model model) {
         Specification<Order> filter=(r,x,c)->c.conjunction();
         if(status!=null && !status.isBlank()) filter=filter.and((r,x,c)->c.equal(r.get("status"),status));
         if(!q.isBlank()) { String code=q.trim().toUpperCase(java.util.Locale.ROOT);
             filter=filter.and((r,x,c)->c.like(c.upper(r.get("orderCode")), "%"+code.replace("!","!!").replace("%","!%").replace("_","!_")+"%", '!')); }
-        model.addAttribute("orders",orderRepository.findAll(filter,PageRequest.of(Math.max(0,page),20,Sort.by(Sort.Order.desc("createdAt"),Sort.Order.desc("id")))));
+        final var selection=filter;
+        model.addAttribute("orders",pagination.load(page,Sort.by(Sort.Order.desc("createdAt"),Sort.Order.desc("id")),request->orderRepository.findAll(selection,request)));
         model.addAttribute("q",q);model.addAttribute("status",status);
         return "admin/don-hang/danh-sach";
     }

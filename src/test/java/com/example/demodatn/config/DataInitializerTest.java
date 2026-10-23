@@ -16,6 +16,10 @@ class DataInitializerTest {
         EmployeeRepository employees = mock(EmployeeRepository.class);
         CategoryRepository categories = mock(CategoryRepository.class);
         SizeRepository sizes = mock(SizeRepository.class);
+        MaterialRepository materials = mock(MaterialRepository.class);
+        Set<String> materialRows = new HashSet<>();
+        when(materials.existsByName(anyString())).thenAnswer(i -> materialRows.contains(i.getArgument(0)));
+        when(materials.save(any())).thenAnswer(i -> { Material m=i.getArgument(0); materialRows.add(m.getName()); return m; });
         PasswordEncoder passwords = mock(PasswordEncoder.class);
         Map<String, Role> roleRows = new HashMap<>();
         Map<String, User> userRows = new HashMap<>();
@@ -30,13 +34,15 @@ class DataInitializerTest {
         when(sizes.findAll()).thenAnswer(i -> new ArrayList<>(sizeRows));
         when(sizes.save(any())).thenAnswer(i -> { Size s=i.getArgument(0); sizeRows.add(s); return s; });
         when(passwords.encode("admin123")).thenReturn("hashed");
-        DataInitializer initializer = new DataInitializer(roles, users, employees, categories, sizes, passwords);
+        DataInitializer initializer = new DataInitializer(roles, users, employees, categories, sizes, materials, passwords);
         initializer.run();
         initializer.run();
         assertEquals(Set.of("ROLE_ADMIN", "ROLE_USER"), roleRows.keySet());
         assertEquals(Set.of("admin"), userRows.keySet());
         assertEquals(3, categoryRows.size());
         assertEquals(3, sizeRows.size());
+        assertEquals(8, materialRows.size());
+        verify(materials,times(8)).save(any());
         verify(employees, times(1)).save(any());
         verify(passwords, times(1)).encode("admin123");
     }

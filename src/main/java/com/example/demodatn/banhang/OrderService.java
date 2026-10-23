@@ -10,14 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    private final OrderRepository orderRepository;
     @org.springframework.beans.factory.annotation.Value("${shop.shipping.fee:30000}") private BigDecimal configuredShippingFee;
     @org.springframework.beans.factory.annotation.Value("${shop.shipping.free-threshold:500000}") private BigDecimal freeShippingThreshold;
     private final VoucherService voucherService;
@@ -25,15 +23,16 @@ public class OrderService {
     private final com.example.demodatn.sanpham.InventoryService inventoryService;
 
     private final InvoiceRepository invoices;
+    private final OrderStatusService statuses;
 
     @Transactional(rollbackFor = Exception.class)
     public Order placeOrder(CheckoutRequest request, List<CartItemDto> cartItems, Customer customer, BigDecimal ignoredShippingFee) {
         Order order = new Order();
         order.setCustomer(customer);
         order.setOrderType("ONLINE");
-        order.setStatus("PENDING");
+
         order.setPaymentMethod(request.getPaymentMethod());
-        order.setPaymentStatus("UNPAID");
+
         order.setReceiverName(request.getReceiverName());
         order.setPhoneNumber(request.getPhone());
         order.setEmail(request.getEmail());
@@ -54,9 +53,9 @@ public class OrderService {
         order.setCustomer(customer);
         order.setEmployee(employee);
         order.setOrderType("POS");
-        order.setStatus("CONFIRMED");
+
         order.setPaymentMethod(paymentMethod);
-        order.setPaymentStatus("CASH".equals(paymentMethod) ? "PAID" : "UNPAID");
+
         order.setShippingAddress(address);
         return saveSale(order, items, voucherCode, cashReceived);
     }
@@ -71,6 +70,7 @@ public class OrderService {
             detail.setProductVariant(variant);
             detail.setProductName(variant.getProduct().getName());
             detail.setSizeName(variant.getSize().getSizeValue());
+            detail.setMaterialName(variant.getMaterial().getName());
             detail.setPrice(price);
             detail.setQuantity(item.getQuantity());
             detail.setTotalPrice(price.multiply(BigDecimal.valueOf(item.getQuantity())));
@@ -91,10 +91,7 @@ public class OrderService {
                 && (cashReceived == null || cashReceived.compareTo(order.getFinalAmount()) < 0))
             throw new IllegalArgumentException("Tiền khách đưa phải đủ thanh toán tổng đơn hàng.");
         order.setOrderCode("DH-" + UUID.randomUUID());
-        orderRepository.save(order);
-        order.setOrderCode(String.format("DH%06d", order.getId()));
-        for (CartItemDto item : sorted)
-            inventoryService.sell(item.getVariantId(), item.getQuantity(), order.getOrderCode());
+        statuses.place(order);
         Invoice invoice = new Invoice();
         invoice.setOrder(order);
         invoice.setInvoiceCode(String.format("HD%06d", order.getId()));
@@ -111,25 +108,9 @@ public class OrderService {
         return order;
     }
 
-    public List<String> allowedStatuses(Order order) {
-        return switch (order.getStatus()) {
-            case "PENDING" -> List.of("CONFIRMED", "CANCELLED");
-            case "CONFIRMED" -> "POS".equals(order.getOrderType())
-                    ? List.of("DELIVERED", "CANCELLED") : List.of("SHIPPING", "CANCELLED");
-            case "PREPARING" -> List.of("SHIPPING", "CANCELLED");
-            case "SHIPPING" -> List.of("DELIVERED", "CANCELLED");
-            default -> List.of();
-        };
-    }
-
-    @Transactional
-    public void confirmPayment(Integer id) {
-        Order order = orderRepository.findForUpdate(id).orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
-        if ("CANCELLED".equals(order.getStatus()) || !java.util.Set.of("TRANSFER", "BANK_TRANSFER").contains(order.getPaymentMethod()))
-            throw new IllegalArgumentException("Chỉ xác nhận chuyển khoản cho đơn chưa hủy.");
-        order.setPaymentStatus("PAID");
-        order.setUpdatedAt(LocalDateTime.now());
-    }
+    public List<String> allowedStatuses(Order order) { return statuses.allowedStatuses(order); }
+    public void confirmPayment(Integer id) { statuses.confirmPayment(id); }
+    public void updateStatus(Integer id,String status) { statuses.updateStatus(id,status); }
 
     private List<CartItemDto> sortedItems(List<CartItemDto> items) {
         if (items == null || items.isEmpty() || items.stream().anyMatch(i -> i == null || i.getVariantId() == null || i.getQuantity() == null || i.getQuantity() <= 0))
@@ -137,25 +118,4 @@ public class OrderService {
         return items.stream().sorted(java.util.Comparator.comparing(CartItemDto::getVariantId)).toList();
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void updateStatus(Integer id, String status) {
-        if (!java.util.Set.of("PENDING","CONFIRMED","PREPARING","SHIPPING","DELIVERED","CANCELLED").contains(status))
-            throw new IllegalArgumentException("Trạng thái đơn hàng không hợp lệ.");
-        Order order = orderRepository.findForUpdate(id).orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
-        if (status.equals(order.getStatus())) return;
-        if (!allowedStatuses(order).contains(status))
-            throw new IllegalArgumentException("Không thể chuyển trạng thái theo luồng này.");
-        if ("DELIVERED".equals(status)) {
-            if (java.util.Set.of("TRANSFER", "BANK_TRANSFER").contains(order.getPaymentMethod()) && !"PAID".equals(order.getPaymentStatus()))
-                throw new IllegalArgumentException("Cần xác nhận đã nhận chuyển khoản trước khi hoàn tất.");
-            order.setPaymentStatus("PAID");
-        }
-        if ("CANCELLED".equals(status)) {
-            for (OrderDetail detail : order.getOrderDetails().stream().sorted(java.util.Comparator.comparing(d -> d.getProductVariant().getId())).toList()) {
-                inventoryService.restore(detail.getProductVariant().getId(),detail.getQuantity(),order.getOrderCode());
-            }
-        }
-        order.setStatus(status);
-        order.setUpdatedAt(LocalDateTime.now());
-    }
 }

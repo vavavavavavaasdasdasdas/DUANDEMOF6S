@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductController {
 
-    @org.springframework.beans.factory.annotation.Value("${shop.page-size:12}")
-    private int pageSize;
+    private final com.example.demodatn.core.Pagination pagination;
 
     private final ProductService productService;
     private final PricingService pricingService;
     private final ProductFilterService productFilterService;
     private final CategoryRepository categoryRepository;
     private final SizeRepository sizeRepository;
+    private final MaterialRepository materialRepository;
     private final ProductGalleryService gallery;
 
     @GetMapping({"/products", "/search"})
@@ -35,17 +35,20 @@ public class ProductController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Integer sizeId,
+            @RequestParam(required = false) Integer materialId,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Boolean promotion,
             @RequestParam(defaultValue = "newest") String sort,
-            @RequestParam(defaultValue = "0") int page, Model model) {
+            @RequestParam(defaultValue = "0") String page, Model model) {
         
-        Page<ProductDto> productPage = productFilterService.filterProducts(keyword, categoryId, sizeId, minPrice, maxPrice, promotion, sort, page, pageSize);
+        Page<ProductDto> productPage = productFilterService.filterProducts(keyword, categoryId, sizeId, minPrice, maxPrice, promotion, sort, pagination.index(page), pagination.getSize(), materialId);
         
         model.addAttribute("productPage", productPage);
         model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("sizes", sizeRepository.findAll());
+        model.addAttribute("materials",materialRepository.findByStatusTrueOrderByNameAscIdAsc());
+        model.addAttribute("materialId",materialId);
         model.addAttribute("keyword", keyword);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("sizeId", sizeId);
@@ -58,12 +61,9 @@ public class ProductController {
     }
     
     @GetMapping("/category/{id}")
-    public String categoryList(@PathVariable Integer id, Model model, jakarta.servlet.http.HttpServletResponse response) {
-        if (!categoryRepository.existsById(id)) {
-            response.setStatus(404);
-            return "loi/404";
-        }
-        return list(null, id, null, null, null, null, "newest", 0, model);
+    public String categoryList(@PathVariable Integer id,@RequestParam(required=false) String keyword,@RequestParam(required=false) Integer sizeId,@RequestParam(required=false) Integer materialId,@RequestParam(required=false) BigDecimal minPrice,@RequestParam(required=false) BigDecimal maxPrice,@RequestParam(required=false) Boolean promotion,@RequestParam(defaultValue="newest") String sort,@RequestParam(defaultValue="0") String page,Model model,jakarta.servlet.http.HttpServletResponse response) {
+        if(!categoryRepository.existsById(id)){response.setStatus(404);return "loi/404";}
+        return list(keyword,id,sizeId,materialId,minPrice,maxPrice,promotion,sort,page,model);
     }
 
     @GetMapping("/products/{id}")
@@ -90,6 +90,7 @@ public class ProductController {
         model.addAttribute("productImages", gallery.list(id));
         model.addAttribute("variants", variants);
         model.addAttribute("variantPrices", variantPrices);
+        model.addAttribute("productMaterials", variants.stream().map(ProductVariant::getMaterial).collect(Collectors.toMap(Material::getId,m -> m,(a,b) -> a,java.util.LinkedHashMap::new)).values());
         model.addAttribute("relatedProducts", relatedProducts);
         
         return "user/chi-tiet-san-pham";

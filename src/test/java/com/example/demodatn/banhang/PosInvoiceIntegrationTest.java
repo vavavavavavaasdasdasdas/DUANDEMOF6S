@@ -28,13 +28,14 @@ class PosInvoiceIntegrationTest {
     @Autowired ProductRepository products;
     @Autowired ProductVariantRepository variants;
     @Autowired SizeRepository sizes;
+    @Autowired MaterialRepository materials;
     @Autowired EmployeeRepository employees;
     @Autowired JdbcTemplate jdbc;
     @Autowired WebApplicationContext context;
 
     private ProductVariant variant() {
         var p=new Product();p.setName("Kiểm thử Phase 9");p.setCode("P9-"+UUID.randomUUID());products.save(p);
-        var v=new ProductVariant();v.setProduct(p);v.setSize(sizes.findAll().get(0));v.setPrice(new BigDecimal("150000"));v.setQuantity(5);return variants.saveAndFlush(v);
+        var v=new ProductVariant();v.setProduct(p);v.setSize(sizes.findAll().get(0));v.setMaterial(materials.findAll().get(0));v.setPrice(new BigDecimal("150000"));v.setQuantity(5);return variants.saveAndFlush(v);
     }
     private CartItemDto item(ProductVariant v) {
         return new CartItemDto(v.getProduct().getId(),v.getId(),v.getProduct().getName(),v.getSize().getSizeValue(),BigDecimal.ONE,2);
@@ -56,12 +57,12 @@ class PosInvoiceIntegrationTest {
         var o=service.placeOrder(r,List.of(item(v)),null,BigDecimal.ZERO);
         assertTrue(invoices.findByOrder_Id(o.getId()).isPresent());
         assertThrows(IllegalArgumentException.class,()->service.updateStatus(o.getId(),"DELIVERED"));
-        service.updateStatus(o.getId(),"CONFIRMED");service.updateStatus(o.getId(),"SHIPPING");service.updateStatus(o.getId(),"DELIVERED");
+        service.updateStatus(o.getId(),"CONFIRMED");service.updateStatus(o.getId(),"PREPARING");service.updateStatus(o.getId(),"SHIPPING");service.updateStatus(o.getId(),"DELIVERED");
         assertEquals("PAID",o.getPaymentStatus());assertThrows(IllegalArgumentException.class,()->service.updateStatus(o.getId(),"CANCELLED"));
     }
     @Test @Transactional
     void transferRequiresConfirmationBeforeCompletionAndCancelRestocksOnce() {
-        var v=variant();var o=sale(v,"TRANSFER",null);assertEquals("UNPAID",o.getPaymentStatus());
+        var v=variant();var o=sale(v,"TRANSFER",null);assertEquals("PAID",o.getPaymentStatus());
         assertThrows(IllegalArgumentException.class,()->service.updateStatus(o.getId(),"DELIVERED"));
         service.confirmPayment(o.getId());assertEquals("PAID",o.getPaymentStatus());
         service.updateStatus(o.getId(),"CANCELLED");service.updateStatus(o.getId(),"CANCELLED");assertEquals(5,v.getQuantity());
@@ -92,7 +93,7 @@ class PosInvoiceIntegrationTest {
         var v=variant();v.setPrice(new BigDecimal("150000.25"));variants.flush();var o=sale(v,"CASH",new BigDecimal("400000"));
         var mvc=MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
         mvc.perform(get("/admin/orders/"+o.getId())).andExpect(status().isOk())
-            .andExpect(content().string(org.hamcrest.Matchers.containsString("Hoàn tất")))
+            .andExpect(content().string(org.hamcrest.Matchers.containsString("Đang chuẩn bị")))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("300.000,5")))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("/admin/invoices/")));
     }

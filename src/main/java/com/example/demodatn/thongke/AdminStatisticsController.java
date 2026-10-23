@@ -21,7 +21,7 @@ public class AdminStatisticsController {
             "/admin/reports/revenue","/admin/reports/best-sellers"})
     public String report(@RequestParam(required=false) LocalDate from,@RequestParam(required=false) LocalDate to,
             @RequestParam(defaultValue="") String period,@RequestParam(defaultValue="ALL") String channel,
-            HttpServletRequest request,Model model) {
+            @RequestParam(defaultValue="0") String page,@RequestParam(required=false) String quantityPage,@RequestParam(required=false) String revenuePage,HttpServletRequest request,Model model) {
         LocalDate end=to==null ? LocalDate.now(ZoneId.of(timeZone)) : to;
         LocalDate start=from!=null ? from : switch(period) {
             case "today" -> end;
@@ -36,7 +36,7 @@ public class AdminStatisticsController {
                 ChronoUnit.DAYS.between(start,end)>3660 ? "Vui lòng chọn khoảng ngày không quá 10 năm." :
                 !Set.of("ALL","ONLINE","POS").contains(channel) ? "Kênh bán không hợp lệ." : null;
         model.addAttribute("filterError",error);
-        if(error==null) model.addAttribute("stats",statistics.load(start,end,channel));
+        if(error==null) model.addAttribute("stats",statistics.load(start,end,channel,page,quantityPage==null?page:quantityPage,revenuePage==null?page:revenuePage));
         return "admin/thong-ke/thong-ke";
     }
 }

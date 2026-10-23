@@ -17,16 +17,19 @@ public class AdminInvoiceController {
     @org.springframework.beans.factory.annotation.Value("${shop.address:}") private String shopAddress;
     @org.springframework.beans.factory.annotation.Value("${shop.phone:}") private String shopPhone;
 
+    private final com.example.demodatn.core.Pagination pagination;
+
     @GetMapping
     public String list(@RequestParam(defaultValue="") String q,@RequestParam(required=false) LocalDate from,
-            @RequestParam(required=false) LocalDate to,@RequestParam(defaultValue="0") int page,Model model) {
+            @RequestParam(required=false) LocalDate to,@RequestParam(defaultValue="0") String page,Model model) {
         Specification<Invoice> filter=(root,query,cb)->cb.conjunction();
         if(!q.isBlank()) { String code=q.trim().toUpperCase(java.util.Locale.ROOT);
             filter=filter.and((r,x,c)->c.like(c.upper(r.get("invoiceCode")), "%"+code.replace("!","!!").replace("%","!%").replace("_","!_")+"%", '!')); }
         if(from!=null) filter=filter.and((r,x,c)->c.greaterThanOrEqualTo(r.get("issuedAt"),from.atStartOfDay()));
         if(to!=null) filter=filter.and((r,x,c)->c.lessThan(r.get("issuedAt"),to.plusDays(1).atStartOfDay()));
         if(from!=null && to!=null && to.isBefore(from)) model.addAttribute("error","Ngày kết thúc phải từ ngày bắt đầu.");
-        model.addAttribute("invoices",invoices.findAll(filter,PageRequest.of(Math.max(0,page),20,Sort.by(Sort.Order.desc("issuedAt"),Sort.Order.desc("id")))));
+        final var selection=filter;
+        model.addAttribute("invoices",pagination.load(page,Sort.by(Sort.Order.desc("issuedAt"),Sort.Order.desc("id")),request->invoices.findAll(selection,request)));
         model.addAttribute("q",q);model.addAttribute("from",from);model.addAttribute("to",to);
         return "admin/hoa-don/danh-sach";
     }

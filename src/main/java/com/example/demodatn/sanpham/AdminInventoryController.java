@@ -13,12 +13,14 @@ public class AdminInventoryController {
     private final AdminCatalogQuery query;
     private final AdminCatalogService catalog;
     private final InventoryService inventory;
+    private final MaterialRepository materials;
     @Value("${shop.low-stock-threshold:5}") private int threshold;
     @GetMapping
-    public String list(@RequestParam(defaultValue="all") String stock,@RequestParam(required=false) Integer variantId,@RequestParam(defaultValue="0") int page,Model model) {
-        var result=query.variantsPage(null,stock,Math.max(0,threshold),page,20);
+    public String list(@RequestParam(defaultValue="all") String stock,@RequestParam(required=false) Integer variantId,@RequestParam(defaultValue="0") String page,@RequestParam(defaultValue="0") String historyPage,@RequestParam(required=false) Integer materialId,Model model) {
+        var result=query.variantsPage(null,stock,Math.max(0,threshold),page,materialId);
+        model.addAttribute("materials",materials.findAll()); model.addAttribute("materialId",materialId);
         model.addAttribute("variants",result.getContent()); model.addAttribute("dataPage",result); model.addAttribute("stock",stock);
-        model.addAttribute("threshold",Math.max(0,threshold)); model.addAttribute("history",query.history(variantId));
+        model.addAttribute("threshold",Math.max(0,threshold)); var logs=query.history(variantId,historyPage,materialId);model.addAttribute("history",logs.getContent());model.addAttribute("historyPage",logs);
         model.addAttribute("historyVariant",variantId); return "admin/ton-kho/danh-sach";
     }
     @GetMapping("/adjust/{id}")

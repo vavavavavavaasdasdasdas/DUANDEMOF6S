@@ -9,7 +9,7 @@ import com.example.demodatn.thongke.*;
 import com.example.demodatn.sanpham.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository extends JpaRepository<Product, Integer> {
+public interface ProductRepository extends JpaRepository<Product, Integer>, org.springframework.data.jpa.repository.JpaSpecificationExecutor<Product> {
     @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
     @org.springframework.data.jpa.repository.Query("select p from Product p where p.id=:id")
     java.util.Optional<Product> lockById(@org.springframework.data.repository.query.Param("id") Integer id);

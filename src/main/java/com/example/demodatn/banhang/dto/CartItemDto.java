@@ -19,6 +19,11 @@ public class CartItemDto {
 
     private String productName;
     private String size;
+    private String materialName;
+
+    public CartItemDto(Integer productId, Integer variantId, String productName, String size, BigDecimal price, Integer quantity) {
+        this(productId,variantId,productName,size,null,price,quantity);
+    }
 
     @NotNull(message = "Price is required")
     @Min(value = 0, message = "Price must be non-negative")

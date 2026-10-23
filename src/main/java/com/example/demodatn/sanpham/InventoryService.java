@@ -12,6 +12,7 @@ import java.time.ZoneId;
 public class InventoryService {
     private final ProductVariantRepository variants;
     private final InventoryLogRepository logs;
+    private final com.example.demodatn.banhang.OrderRepository orders;
     private final jakarta.persistence.EntityManager entityManager;
     @org.springframework.beans.factory.annotation.Value("${shop.time-zone:Asia/Ho_Chi_Minh}") private String timeZone;
 
@@ -34,19 +35,55 @@ public class InventoryService {
         change(variant, target, form.getReason());
     }
     @Transactional
-    public ProductVariant sell(Integer variantId, int quantity, String reference) {
-        ProductVariant variant = lock(variantId);
-        if (quantity <= 0 || !Boolean.TRUE.equals(variant.getStatus()) || !Boolean.TRUE.equals(variant.getProduct().getStatus()))
-            throw new IllegalArgumentException("Sản phẩm đã ngừng bán hoặc số lượng không hợp lệ.");
-        if (variant.getQuantity() < quantity) throw new IllegalArgumentException("Không đủ tồn kho: " + variant.getProduct().getName() + " / " + variant.getSize().getSizeValue());
-        change(variant, (long) variant.getQuantity() - quantity, "Bán hàng: " + reference);
-        return variant;
+    public void truKhoChoDon(com.example.demodatn.banhang.Order order) {
+        var lockedOrder = lockOrder(order);
+        if (Boolean.TRUE.equals(lockedOrder.getDaTruKho())) return;
+        for (var line : quantities(lockedOrder).entrySet()) {
+            ProductVariant variant = lock(line.getKey());
+            if (!Boolean.TRUE.equals(variant.getStatus()) || !Boolean.TRUE.equals(variant.getProduct().getStatus()))
+                throw new IllegalArgumentException("Sản phẩm đã ngừng bán: " + variant.getProduct().getName());
+            int before = variant.getQuantity();
+            int changed = entityManager.createNativeQuery("UPDATE product_variants SET quantity=quantity-:q WHERE id=:id AND quantity>=:q")
+                    .setParameter("q",line.getValue()).setParameter("id",line.getKey()).executeUpdate();
+            if (changed != 1)
+                throw new IllegalArgumentException("Không đủ tồn kho: " + variant.getProduct().getName() + " / Size " + variant.getSize().getSizeValue()
+                        + " / " + variant.getMaterial().getName() + ". Cần " + line.getValue() + ", còn " + before + ". Đơn chưa được xác nhận.");
+            entityManager.refresh(variant);
+            record(variant,before,variant.getQuantity(),"Trừ kho đơn " + lockedOrder.getOrderCode() + " · " + lockedOrder.getOrderType() + " / " + lockedOrder.getPaymentMethod());
+        }
+        lockedOrder.setDaTruKho(true);
     }
     @Transactional
-    public void restore(Integer variantId, int quantity, String reference) {
-        if (quantity <= 0) throw new IllegalArgumentException("Số lượng hoàn kho không hợp lệ.");
-        ProductVariant variant = lock(variantId);
-        change(variant, (long) variant.getQuantity() + quantity, "Hủy đơn: " + reference);
+    public void hoanKhoChoDon(com.example.demodatn.banhang.Order order) {
+        var lockedOrder = lockOrder(order);
+        if (!Boolean.TRUE.equals(lockedOrder.getDaTruKho())) return;
+        for (var line : quantities(lockedOrder).entrySet()) {
+            ProductVariant variant = lock(line.getKey());
+            int before = variant.getQuantity();
+            int changed = entityManager.createNativeQuery("UPDATE product_variants SET quantity=quantity+:q WHERE id=:id AND quantity<=:maximum")
+                    .setParameter("q",line.getValue()).setParameter("id",line.getKey())
+                    .setParameter("maximum",Integer.MAX_VALUE-line.getValue()).executeUpdate();
+            if (changed != 1) throw new IllegalArgumentException("Tồn kho sau hoàn vượt giới hạn hợp lệ.");
+            entityManager.refresh(variant);
+            record(variant,before,variant.getQuantity(),"Hoàn kho đơn " + lockedOrder.getOrderCode() + " · hủy hoặc giao hàng thất bại");
+        }
+        lockedOrder.setDaTruKho(false);
+    }
+    private com.example.demodatn.banhang.Order lockOrder(com.example.demodatn.banhang.Order order) {
+        if(order==null || order.getId()==null)throw new IllegalArgumentException("Đơn hàng chưa được lưu.");
+        var locked=orders.findForUpdate(order.getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
+        // Refresh only the flag: refreshing the entire graph also reloads immutable sale snapshots.
+        Object flag=entityManager.createNativeQuery("SELECT da_tru_kho FROM orders WHERE id=:id").setParameter("id",order.getId()).getSingleResult();
+        locked.setDaTruKho(Boolean.TRUE.equals(flag));return locked;
+    }
+    private java.util.Map<Integer,Integer> quantities(com.example.demodatn.banhang.Order order) {
+        java.util.Map<Integer,Integer> result=new java.util.TreeMap<>();
+        for(var detail:order.getOrderDetails()) {
+            if(detail.getQuantity()==null || detail.getQuantity()<=0)throw new IllegalArgumentException("Số lượng đơn hàng không hợp lệ.");
+            result.merge(detail.getProductVariant().getId(),detail.getQuantity(),Math::addExact);
+        }
+        if(result.isEmpty())throw new IllegalArgumentException("Đơn hàng không có sản phẩm.");
+        return result;
     }
     // Called only with a managed locked variant, or a newly inserted variant, in a transaction.
     public void change(ProductVariant variant, long target, String reason) {
@@ -56,6 +93,9 @@ public class InventoryService {
         if (before == target) return;
         variant.setQuantity((int) target);
         variants.save(variant);
+        record(variant,before,(int)target,reason);
+    }
+    private void record(ProductVariant variant,int before,int target,String reason) {
         InventoryLog log = new InventoryLog();
         log.setVariant(variant);
         log.setQuantityBefore(before);

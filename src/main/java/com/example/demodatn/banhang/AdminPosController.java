@@ -29,6 +29,12 @@ public class AdminPosController {
     private final OrderService orders;
     private final InvoiceRepository invoices;
     private final PosHoldService holds;
+    private final PosCatalogQuery catalogQuery;
+    private final com.example.demodatn.sanpham.CategoryRepository categories;
+
+    @GetMapping("/customers")
+    public String customerSearch(@RequestParam(defaultValue="") String customerQuery,@RequestParam(defaultValue="0") String customerPage,Model model){model.addAttribute("customerPage",catalogQuery.customers(customerQuery,customerPage));return "admin/ban-tai-quay/khach-hang :: results";}
+
 
     private void clearCart(HttpSession session) {
         for(String key:List.of("posCart","posCheckoutToken","posLoadedHold","posHeldRequest","posHoldReview"))session.removeAttribute(key);
@@ -49,18 +55,15 @@ public class AdminPosController {
     }
 
     @GetMapping
-    public String page(@RequestParam(defaultValue="") String q, @RequestParam(required=false) Integer category,
+    public String page(@RequestParam(defaultValue="") String q, @RequestParam(required=false) Integer category,@RequestParam(defaultValue="0") String page,@RequestParam(defaultValue="") String customerQuery,@RequestParam(defaultValue="0") String customerPage,
             HttpSession session, Principal principal, Model model) {
         synchronized(session) {
             var cart = cart(session);
-            var available = variants.findByStatusTrueAndProduct_StatusTrue();
-            var products = available.stream().map(v -> v.getProduct()).distinct().toList();
-            model.addAttribute("categories", products.stream().map(p -> p.getCategory()).filter(Objects::nonNull).distinct().toList());
-            var filtered = available.stream().filter(v -> category == null || v.getProduct().getCategory()!=null
-                    && category.equals(v.getProduct().getCategory().getId()))
-                    .filter(v -> (v.getProduct().getName()+" "+v.getProduct().getCode()).toLowerCase(Locale.ROOT).contains(q.trim().toLowerCase(Locale.ROOT))).toList();
-            model.addAttribute("products", filtered.stream().map(v->v.getProduct()).distinct().toList());
-            model.addAttribute("variants", filtered.stream().filter(v -> v.getQuantity()>0).toList());
+            var productPage=catalogQuery.products(q,category,page);
+            var available=productPage.isEmpty()?List.<com.example.demodatn.sanpham.ProductVariant>of():variants.findByProduct_IdInAndStatusTrueAndProduct_StatusTrue(productPage.getContent().stream().map(p->p.getId()).toList());
+            model.addAttribute("categories",categories.findAll(org.springframework.data.domain.Sort.by("name","id")));
+            model.addAttribute("products",productPage.getContent());model.addAttribute("productPage",productPage);
+            model.addAttribute("variants",available.stream().filter(v->v.getQuantity()>0).toList());
             model.addAttribute("variantPrices", available.stream().collect(java.util.stream.Collectors.toMap(v->v.getId(), pricing::calculatePrice)));
             model.addAttribute("productPrices", available.stream().collect(java.util.stream.Collectors.toMap(v->v.getProduct().getId(),v->pricing.calculatePrice(v).getFinalPrice(),BigDecimal::min)));
             model.addAttribute("q", q); model.addAttribute("category", category);
@@ -105,7 +108,7 @@ public class AdminPosController {
                 model.addAttribute("posCheckoutRequest", request);
             }
             model.addAttribute("checkoutToken", session.getAttribute("posCheckoutToken"));
-            model.addAttribute("customers", customers.findAll().stream().filter(c->Boolean.TRUE.equals(c.getStatus())).toList());
+            model.addAttribute("customerPage",catalogQuery.customers(customerQuery,customerPage));model.addAttribute("customerQuery",customerQuery);
         }
         return "admin/ban-tai-quay/ban-tai-quay";
     }
@@ -121,7 +124,7 @@ public class AdminPosController {
                 var item = cart.stream().filter(i->i.getVariantId().equals(variantId)).findFirst().orElse(null);
                 long totalQty = quantity + (item == null ? 0L : item.getQuantity());
                 if(totalQty > v.getQuantity()) throw new IllegalArgumentException("Số lượng vượt quá tồn kho.");
-                if(item == null) cart.add(new CartItemDto(v.getProduct().getId(),v.getId(),v.getProduct().getName(),v.getSize().getSizeValue(),pricing.calculatePrice(v).getFinalPrice(),quantity));
+                if(item == null) cart.add(new CartItemDto(v.getProduct().getId(),v.getId(),v.getProduct().getName(),v.getSize().getSizeValue(),v.getMaterial().getName(),pricing.calculatePrice(v).getFinalPrice(),quantity));
                 else item.setQuantity((int)totalQty);
                 session.removeAttribute("posCheckoutToken");
             } catch(IllegalArgumentException ex) { flash.addFlashAttribute("error",ex.getMessage()); }

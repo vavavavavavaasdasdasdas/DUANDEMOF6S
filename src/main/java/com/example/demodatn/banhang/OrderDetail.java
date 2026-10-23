@@ -32,6 +32,11 @@ public class OrderDetail {
     @Column(name = "size_name")
     private String sizeName;
 
+    @Column(name = "ten_chat_lieu", columnDefinition = "nvarchar(100)")
+    private String materialName;
+
+    public String getDisplayMaterialName() { return materialName == null || materialName.isBlank() ? "—" : materialName; }
+
     @Column(nullable = false)
     private BigDecimal price;
 

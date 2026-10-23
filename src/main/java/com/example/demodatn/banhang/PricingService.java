@@ -28,6 +28,7 @@ public class PricingService {
         for(var item:cart) {
             var variant=variants.findById(item.getVariantId()).orElseThrow(()->new IllegalArgumentException("Sản phẩm không tồn tại."));
             if(!Boolean.TRUE.equals(variant.getStatus()) || !Boolean.TRUE.equals(variant.getProduct().getStatus()) || item.getQuantity()==null || item.getQuantity()<=0 || variant.getQuantity()<item.getQuantity()) throw new IllegalArgumentException("Sản phẩm đã ngừng bán hoặc không đủ tồn kho: "+variant.getProduct().getName());
+            item.setMaterialName(variant.getMaterial().getName());
             item.setPrice(calculatePrice(variant).getFinalPrice());
             total=total.add(item.getTotalPrice());
         }

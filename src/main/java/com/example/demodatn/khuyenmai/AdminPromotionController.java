@@ -16,7 +16,8 @@ public class AdminPromotionController {
     private final PromotionDetailRepository details;
     private final ProductRepository products;
     private final DiscountAdminService discounts;
-    @GetMapping public String list(Model model) { model.addAttribute("promotions",promotions.findAll(org.springframework.data.domain.Sort.by("id").descending()));return "admin/khuyen-mai/danh-sach"; }
+    private final com.example.demodatn.core.Pagination pagination;
+    @GetMapping public String list(@RequestParam(defaultValue="0") String page,Model model) { var result=pagination.load(page,org.springframework.data.domain.Sort.by("id").descending(),promotions::findAll);model.addAttribute("promotions",result.getContent());model.addAttribute("dataPage",result);return "admin/khuyen-mai/danh-sach"; }
     @GetMapping("/create") public String create(Model model) { model.addAttribute("promotion",new PromotionDto());return "admin/khuyen-mai/bieu-mau"; }
     @GetMapping("/edit/{id}") public String edit(@PathVariable Integer id,Model model) { PromotionDto f=new PromotionDto();BeanUtils.copyProperties(discounts.promotion(id),f);model.addAttribute("promotion",f);return "admin/khuyen-mai/bieu-mau"; }
     @PostMapping("/save") public String save(@Valid @ModelAttribute("promotion") PromotionDto f,BindingResult errors,RedirectAttributes flash) {
@@ -24,14 +25,18 @@ public class AdminPromotionController {
         catch(DiscountValidationException ex) { errors.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
         return "admin/khuyen-mai/bieu-mau";
     }
-    @GetMapping("/{id}/products") public String selection(@PathVariable Integer id,Model model) {
-        model.addAttribute("promotion",discounts.promotion(id));model.addAttribute("products",products.findAll(org.springframework.data.domain.Sort.by("name")));
-        model.addAttribute("selected",details.findByPromotion_Id(id).stream().map(d->d.getProduct().getId()).collect(Collectors.toSet()));return "admin/khuyen-mai/san-pham-ap-dung";
+    @GetMapping("/{id}/products") public String selection(@PathVariable Integer id,@RequestParam(defaultValue="") String q,@RequestParam(defaultValue="0") String page,Model model) {
+        model.addAttribute("promotion",discounts.promotion(id));
+        org.springframework.data.jpa.domain.Specification<com.example.demodatn.sanpham.Product> filter=(r,x,c)->c.or(c.like(c.lower(r.get("name")),like(q),'!'),c.like(c.lower(r.get("code")),like(q),'!'));
+        var result=pagination.load(page,org.springframework.data.domain.Sort.by("name","id"),request->products.findAll(filter,request));
+        model.addAttribute("products",result.getContent());model.addAttribute("productPage",result);model.addAttribute("q",q);
+        model.addAttribute("selected",details.findByPromotion_IdAndProduct_IdIn(id,result.getContent().stream().map(p->p.getId()).toList()).stream().map(d->d.getProduct().getId()).collect(Collectors.toSet()));return "admin/khuyen-mai/san-pham-ap-dung";
     }
-    @PostMapping("/{id}/products") public String select(@PathVariable Integer id,@RequestParam(required=false) List<Integer> productIds,RedirectAttributes flash) {
-        try { discounts.selectProducts(id,productIds==null ? List.of() : productIds);flash.addFlashAttribute("message","Đã lưu sản phẩm áp dụng."); }
+    @PostMapping("/{id}/products") public String select(@PathVariable Integer id,@RequestParam(required=false) List<Integer> productIds,@RequestParam(required=false) List<Integer> visibleIds,@RequestParam(defaultValue="0") String page,@RequestParam(defaultValue="") String q,RedirectAttributes flash) {
+        try { discounts.selectProductPage(id,visibleIds==null?List.of():visibleIds,productIds==null?List.of():productIds);flash.addFlashAttribute("message","Đã lưu sản phẩm áp dụng."); }
         catch(IllegalArgumentException ex) { flash.addFlashAttribute("error",ex.getMessage()); }
-        return "redirect:/admin/promotions/"+id+"/products";
+        return "redirect:/admin/promotions/"+id+"/products?page="+java.net.URLEncoder.encode(page,java.nio.charset.StandardCharsets.UTF_8)+"&q="+java.net.URLEncoder.encode(q,java.nio.charset.StandardCharsets.UTF_8);
     }
+    private String like(String q){return "%"+q.trim().toLowerCase(java.util.Locale.ROOT).replace("!","!!").replace("%","!%").replace("_","!_").replace("[","![")+"%";}
     @PostMapping("/delete/{id}") public String delete(@PathVariable Integer id,RedirectAttributes flash) { discounts.deletePromotion(id);flash.addFlashAttribute("message","Đã xóa đợt giảm giá; giá đơn đã đặt được giữ nguyên.");return "redirect:/admin/promotions"; }
 }

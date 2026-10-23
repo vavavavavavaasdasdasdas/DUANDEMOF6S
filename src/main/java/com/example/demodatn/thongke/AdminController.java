@@ -19,8 +19,8 @@ public class AdminController {
     }
 
     @GetMapping("/products")
-    public String products(Model model) {
-        return "redirect:/admin/products-crud";
+    public String products(Model model,jakarta.servlet.http.HttpServletRequest request) {
+        return "redirect:/admin/products-crud"+(request.getQueryString()==null?"":"?"+request.getQueryString());
     }
 
 }

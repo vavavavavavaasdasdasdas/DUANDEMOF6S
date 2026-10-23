@@ -34,6 +34,7 @@ class CatalogIntegrationTest {
     @Autowired ProductVariantRepository variants;
     @Autowired CategoryRepository categories;
     @Autowired SizeRepository sizes;
+    @Autowired MaterialRepository materials;
     @Autowired OrderService orders;
     @Autowired com.example.demodatn.nhanvien.EmployeeRepository employees;
     @Autowired OrderRepository orderRepository;
@@ -56,7 +57,7 @@ class CatalogIntegrationTest {
     }
     private Product product() { return catalog.saveProduct(productForm("T6-"+UUID.randomUUID())); }
     private VariantForm variantForm(Product p,int quantity) {
-        VariantForm f=new VariantForm();f.setProductId(p.getId());f.setSizeId(sizes.findAll().get(0).getId());
+        VariantForm f=new VariantForm();f.setProductId(p.getId());f.setSizeId(sizes.findAll().get(0).getId());f.setMaterialId(materials.findAll().get(0).getId());
         f.setPrice(new BigDecimal("150000"));f.setQuantity(quantity);return f;
     }
     private InventoryForm adjustment(ProductVariant v,String mode,int amount,String reason) {
@@ -127,6 +128,8 @@ class CatalogIntegrationTest {
         request.setPaymentMethod("COD");request.setReceiverName("Phase 6 test");
         request.setPhone("0900000000");request.setShippingAddress("Địa chỉ kiểm thử");
         Order order=orders.placeOrder(request,List.of(item(v,2)),null,BigDecimal.ZERO);
+        assertEquals(5,v.getQuantity());
+        orders.updateStatus(order.getId(),"CONFIRMED");
         assertEquals(3,v.getQuantity());
         assertTrue(query.history(v.getId()).get(0).get("reason").toString().contains(order.getOrderCode()));
         orders.updateStatus(order.getId(),"CANCELLED");
@@ -148,7 +151,7 @@ class CatalogIntegrationTest {
     void duplicateCodeAndSizeHaveFieldErrorsAndNegativePriceFailsValidation() throws Exception {
         Product p=product();catalog.saveVariant(variantForm(p,10));
         assertEquals("code",assertThrows(CatalogValidationException.class,()->catalog.saveProduct(productForm(p.getCode()))).getField());
-        assertEquals("sizeId",assertThrows(CatalogValidationException.class,()->catalog.saveVariant(variantForm(p,1))).getField());
+        assertEquals("materialId",assertThrows(CatalogValidationException.class,()->catalog.saveVariant(variantForm(p,1))).getField());
         VariantForm invalid=variantForm(p,0);invalid.setPrice(new BigDecimal("-1"));
         assertTrue(validator.validate(invalid).stream().anyMatch(v->v.getPropertyPath().toString().equals("price")));
         var mvc=MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
@@ -167,12 +170,12 @@ class CatalogIntegrationTest {
     @Test @Transactional
     void productPaginationFilteringAndSortRunInSql() {
         String prefix="P6PAGE-"+UUID.randomUUID().toString().substring(0,8);
-        for(int i=0;i<12;i++){AdminProductForm f=productForm(prefix+"-"+String.format("%02d",i));f.setName("Pagination "+i);catalog.saveProduct(f);}
-        var first=query.products(prefix,null,true,"code",0,10);
-        var second=query.products(prefix,null,true,"code",1,10);
-        assertEquals(12,first.getTotalElements());assertEquals(10,first.getNumberOfElements());assertEquals(2,second.getNumberOfElements());
+        for(int i=0;i<30;i++){AdminProductForm f=productForm(prefix+"-"+String.format("%02d",i));f.setName("Pagination "+i);catalog.saveProduct(f);}
+        var first=query.products(prefix,null,true,"code",0);
+        var second=query.products(prefix,null,true,"code",1);
+        assertEquals(30,first.getTotalElements());assertEquals(12,first.getNumberOfElements());assertEquals(12,second.getNumberOfElements());
         assertTrue(first.getContent().get(0).get("code").toString().endsWith("-00"));
-        assertEquals(1,query.products(prefix,null,true,"code",999,10).getNumber());
+        assertEquals(2,query.products(prefix,null,true,"code",999).getNumber());
     }
     @Test
     void failedCheckoutRollsBackProductStockOrderAndLogsTogether() {

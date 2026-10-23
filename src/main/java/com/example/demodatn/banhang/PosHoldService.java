@@ -86,7 +86,7 @@ public class PosHoldService {
         var h=locked(username,id);var request=new PosCheckoutRequest();
         request.setCustomerId(h.getCustomer()==null ? null : h.getCustomer().getId());
         request.setVoucherCode(h.getVoucherCode());request.setPaymentMethod(h.getPaymentMethod());request.setNote(h.getNote());
-        var cart=h.getItems().stream().map(i->{var v=i.getVariant();return new CartItemDto(v.getProduct().getId(),v.getId(),v.getProduct().getName(),v.getSize().getSizeValue(),pricing.calculatePrice(v).getFinalPrice(),i.getQuantity());}).toList();
+        var cart=h.getItems().stream().map(i->{var v=i.getVariant();return new CartItemDto(v.getProduct().getId(),v.getId(),v.getProduct().getName(),v.getSize().getSizeValue(),v.getMaterial().getName(),pricing.calculatePrice(v).getFinalPrice(),i.getQuantity());}).toList();
         return new Loaded(h.getId(),h.getCode(),new ArrayList<>(cart),request);
     }
 

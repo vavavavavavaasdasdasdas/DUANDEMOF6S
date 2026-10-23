@@ -22,13 +22,12 @@ public class AdminCustomerController {
     private final PeopleService people;
     private final com.example.demodatn.banhang.OrderRepository orders;
 
+    private final com.example.demodatn.core.Pagination pagination;
+
     @GetMapping
-    public String list(@RequestParam(defaultValue="") String keyword,@RequestParam(defaultValue="0") int page,Model model) {
+    public String list(@RequestParam(defaultValue="") String keyword,@RequestParam(defaultValue="0") String page,Model model) {
         String query=keyword.trim();
-        var pageable=PageRequest.of(Math.max(0,page),10,Sort.by(Sort.Direction.DESC,"id"));
-        var result=repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,pageable);
-        if(result.getTotalPages()>0 && page>=result.getTotalPages())
-            result=repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,pageable.withPage(result.getTotalPages()-1));
+        var result=pagination.load(page,Sort.by(Sort.Direction.DESC,"id"),request->repository.findByFullNameContainingIgnoreCaseOrPhoneContainingOrEmailContainingIgnoreCase(query,query,query,request));
         model.addAttribute("peoplePage",result);model.addAttribute("keyword",keyword);
         return "admin/khach-hang/danh-sach";
     }
@@ -40,9 +39,9 @@ public class AdminCustomerController {
         model.addAttribute("customer",form);return "admin/khach-hang/bieu-mau";
     }
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable Integer id,@RequestParam(defaultValue="0") int page,Model model) {
+    public String detail(@PathVariable Integer id,@RequestParam(defaultValue="0") String page,Model model) {
         var item=people.customer(id);model.addAttribute("person",item);model.addAttribute("self",people.isSelf(item.getUser()));
-        model.addAttribute("orderPage",orders.findByCustomer_IdOrderByCreatedAtDescIdDesc(id,org.springframework.data.domain.PageRequest.of(Math.max(0,page),10)));
+        model.addAttribute("orderPage",pagination.load(page,Sort.unsorted(),request->orders.findByCustomer_IdOrderByCreatedAtDescIdDesc(id,request)));
         return "admin/khach-hang/chi-tiet";
     }
     @PostMapping("/save")

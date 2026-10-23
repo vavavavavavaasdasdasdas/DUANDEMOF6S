@@ -10,6 +10,7 @@ import com.example.demodatn.banhang.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Order, Integer>, org.springframework.data.jpa.repository.JpaSpecificationExecutor<Order> {
+    org.springframework.data.domain.Page<Order> findByCustomer_IdAndOrderTypeOrderByCreatedAtDescIdDesc(Integer id,String type,org.springframework.data.domain.Pageable pageable);
     boolean existsByCustomer_Id(Integer id);
     boolean existsByEmployee_Id(Integer id);
     boolean existsByVoucher_Id(Integer id);

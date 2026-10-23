@@ -48,6 +48,7 @@ public class CartController {
             item.setQuantity(dto.getQuantity());
 
             ProductVariant variant = productService.getVariantById(dto.getVariantId());
+            item.setMaterialName(variant == null ? dto.getMaterialName() : variant.getMaterial().getName());
             if (variant == null || Boolean.FALSE.equals(variant.getStatus()) || 
                 variant.getProduct() == null || Boolean.FALSE.equals(variant.getProduct().getStatus())) {
                 item.setWarningMessage("Sản phẩm đã ngừng bán hoặc không tồn tại.");
@@ -231,6 +232,7 @@ public class CartController {
         private String productName;
         private String imageUrl;
         private String size;
+        private String materialName;
         private BigDecimal price;
         private BigDecimal originalPrice;
         private boolean hasPromotion;

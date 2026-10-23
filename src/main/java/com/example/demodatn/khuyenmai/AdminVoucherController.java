@@ -14,7 +14,8 @@ public class AdminVoucherController {
     private final VoucherRepository vouchers;
     private final CustomerRepository customers;
     private final DiscountAdminService discounts;
-    @GetMapping public String list(Model model) { model.addAttribute("vouchers",vouchers.findAll(org.springframework.data.domain.Sort.by("id").descending()));return "admin/voucher/danh-sach"; }
+    private final com.example.demodatn.core.Pagination pagination;
+    @GetMapping public String list(@RequestParam(defaultValue="0") String page,Model model) { var result=pagination.load(page,org.springframework.data.domain.Sort.by("id").descending(),vouchers::findAll);model.addAttribute("vouchers",result.getContent());model.addAttribute("dataPage",result);return "admin/voucher/danh-sach"; }
     private String form(Model model) { model.addAttribute("customers",customers.findAll());return "admin/voucher/bieu-mau"; }
     @GetMapping("/create") public String create(Model model) { model.addAttribute("voucher",new VoucherDto());return form(model); }
     @GetMapping("/edit/{id}") public String edit(@PathVariable Integer id,Model model) {

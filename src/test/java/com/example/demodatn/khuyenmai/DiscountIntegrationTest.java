@@ -35,6 +35,7 @@ class DiscountIntegrationTest {
     @Autowired ProductRepository products;
     @Autowired ProductVariantRepository variants;
     @Autowired SizeRepository sizes;
+    @Autowired MaterialRepository materials;
     @Autowired CustomerRepository customers;
     @Autowired PricingService pricing;
     @Autowired OrderService orders;
@@ -50,7 +51,7 @@ class DiscountIntegrationTest {
     }
     private ProductVariant variant() {
         var p=new Product();p.setCode("P8-"+UUID.randomUUID());p.setName("Kiểm thử Phase 8");p=products.saveAndFlush(p);
-        var v=new ProductVariant();v.setProduct(p);v.setSize(sizes.findAll().get(0));v.setPrice(new BigDecimal("200000"));v.setQuantity(10);return variants.saveAndFlush(v);
+        var v=new ProductVariant();v.setProduct(p);v.setSize(sizes.findAll().get(0));v.setMaterial(materials.findAll().get(0));v.setPrice(new BigDecimal("200000"));v.setQuantity(10);return variants.saveAndFlush(v);
     }
     private CartItemDto item(ProductVariant v) { return new CartItemDto(v.getProduct().getId(),v.getId(),v.getProduct().getName(),v.getSize().getSizeValue(),BigDecimal.ONE,1); }
     private CheckoutRequest request(String code) { var r=new CheckoutRequest();r.setReceiverName("Kiểm thử");r.setPhone("0987000000");r.setEmail("p8@example.invalid");r.setShippingAddress("Địa chỉ kiểm thử");r.setPaymentMethod("COD");r.setVoucherCode(code);return r; }
@@ -115,8 +116,8 @@ class DiscountIntegrationTest {
             for(int id:List.of(ids[0],ids[2])) futures.add(pool.submit(()->{var a=variants.findById(id).orElseThrow();var i=item(a);ready.countDown();start.await();try { orders.placeOrder(request(code),List.of(i),null,BigDecimal.ZERO);return "success"; } catch(IllegalArgumentException ex) { return ex.getMessage(); }}));
             assertTrue(ready.await(10,TimeUnit.SECONDS));start.countDown();var results=List.of(futures.get(0).get(30,TimeUnit.SECONDS),futures.get(1).get(30,TimeUnit.SECONDS));
             assertEquals(1,results.stream().filter("success"::equals).count());assertEquals(1,results.stream().filter(r->r.contains("hết lượt")).count());assertEquals(1,voucherRepo.findById(ids[4]).orElseThrow().getUsedCount());
-            assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM orders WHERE voucher_id=?",Integer.class,ids[4]));assertEquals(19,jdbc.queryForObject("SELECT SUM(quantity) FROM product_variants WHERE id IN (?,?)",Integer.class,ids[0],ids[2]));
-            System.out.println("PHASE8 CONCURRENCY: "+results+" | SQL used_count=1, orders=1, stock_sum=19");
+            assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM orders WHERE voucher_id=?",Integer.class,ids[4]));assertEquals(20,jdbc.queryForObject("SELECT SUM(quantity) FROM product_variants WHERE id IN (?,?)",Integer.class,ids[0],ids[2]));
+            System.out.println("PHASE8 CONCURRENCY: "+results+" | SQL used_count=1, orders=1, stock_sum=20 (COD chưa xác nhận)");
         } finally { start.countDown();pool.shutdownNow();cleanup(ids[4],List.of(ids[0],ids[2]),List.of(ids[1],ids[3])); }
     }
     private void cleanup(Integer voucherId,List<Integer> variantIds,List<Integer> productIds) {

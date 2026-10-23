@@ -17,6 +17,7 @@ public class AdminPageAdvice {
         new NavItem("", "Variant", "/admin/variants", "variants"),
         new NavItem("", "Danh mục", "/admin/categories", "categories"),
         new NavItem("", "Size", "/admin/sizes", "sizes"),
+        new NavItem("", "Chất liệu", "/admin/materials", "materials"),
         new NavItem("", "Tồn kho", "/admin/inventory", "inventory"),
         new NavItem("KHÁCH HÀNG", "Khách hàng", "/admin/customers", "customers"),
         new NavItem("", "Nhân viên", "/admin/employees", "employees"),
@@ -32,6 +33,7 @@ public class AdminPageAdvice {
         if (!path.equals("/admin") && !path.startsWith("/admin/")) return;
         NavItem active = NAV.stream().filter(n -> path.equals(n.route()) || path.startsWith(n.route() + "/"))
                 .findFirst().orElse(NAV.get(0));
+        model.addAttribute("statusLabels",com.example.demodatn.banhang.OrderStatusService.LABELS);
         model.addAttribute("adminNav", NAV);
         model.addAttribute("adminActive", active.key());
         model.addAttribute("adminTitle", active.title());

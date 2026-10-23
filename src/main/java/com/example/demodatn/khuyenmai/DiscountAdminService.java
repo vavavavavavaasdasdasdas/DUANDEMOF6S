@@ -73,6 +73,15 @@ public class DiscountAdminService {
         for(var product:chosen) { var d=new PromotionDetail();d.setPromotion(p);d.setProduct(product);details.save(d); }
     }
     @Transactional
+    public void selectProductPage(Integer id,List<Integer> visible,List<Integer> chosen) {
+        Promotion promotion=promotions.findForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if(!visible.containsAll(chosen))throw new IllegalArgumentException("Danh sách sản phẩm không hợp lệ.");
+        var selected=products.findAllById(new HashSet<>(chosen));
+        if(selected.size()!=new HashSet<>(chosen).size())throw new IllegalArgumentException("Có sản phẩm không tồn tại.");
+        details.deleteAll(details.findByPromotion_IdAndProduct_IdIn(id,visible));details.flush();
+        for(var product:selected){var row=new PromotionDetail();row.setPromotion(promotion);row.setProduct(product);details.save(row);}
+    }
+    @Transactional
     public void deletePromotion(Integer id) {
         Promotion p=promotions.findForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
         details.deleteByPromotion_Id(id);details.flush();promotions.delete(p);

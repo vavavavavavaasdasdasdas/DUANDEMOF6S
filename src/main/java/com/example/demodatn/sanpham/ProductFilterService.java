@@ -29,6 +29,7 @@ public class ProductFilterService {
     public static final String CANCELLED = "CANCELLED";
 
     private final ProductRepository productRepository;
+    private final com.example.demodatn.core.Pagination pagination;
     private final ProductVariantRepository productVariantRepository;
     private final PricingService pricingService;
     private final OrderDetailRepository orderDetailRepository;
@@ -42,7 +43,12 @@ public class ProductFilterService {
     public Page<ProductDto> filterProducts(String keyword, Integer categoryId, Integer sizeId,
                                            BigDecimal minPrice, BigDecimal maxPrice, Boolean promotion,
                                            String sort, int page, int size) {
-        if (size <= 0) size = 12;
+        return filterProducts(keyword,categoryId,sizeId,minPrice,maxPrice,promotion,sort,page,size,null);
+    }
+
+    public Page<ProductDto> filterProducts(String keyword, Integer categoryId, Integer sizeId,
+            BigDecimal minPrice, BigDecimal maxPrice, Boolean promotion, String sort, int page, int size, Integer materialId) {
+        if (size <= 0) size = pagination.getSize();
         if (page < 0) page = 0;
 
         List<Product> allProducts = productRepository.findAll();
@@ -69,6 +75,8 @@ public class ProductFilterService {
             List<ProductVariant> variants = productVariantRepository.findByProduct_IdAndStatusTrue(p.getId());
             if (variants.isEmpty()) continue;
 
+            if (materialId != null) variants = variants.stream().filter(v -> v.getMaterial().getId().equals(materialId)).toList();
+            if (variants.isEmpty()) continue;
             if (sizeId != null) {
                 boolean hasSize = variants.stream().anyMatch(v -> v.getSize() != null && v.getSize().getId().equals(sizeId));
                 if (!hasSize) continue;
@@ -88,6 +96,8 @@ public class ProductFilterService {
 
                 ProductDto.VariantDto vDto = new ProductDto.VariantDto();
                 vDto.setId(v.getId());
+                vDto.setMaterialId(v.getMaterial().getId()); vDto.setMaterialName(v.getMaterial().getName());
+                vDto.setSizeId(v.getSize().getId());
                 vDto.setSizeValue(v.getSize() != null ? v.getSize().getSizeValue() : "");
                 vDto.setQuantity(q);
                 varDtos.add(vDto);
@@ -137,9 +147,6 @@ public class ProductFilterService {
             dtoList.sort(newest);
         }
 
-        int start = page * size;
-        int end = Math.min(start + size, dtoList.size());
-        List<ProductDto> pageContent = start < dtoList.size() ? new ArrayList<>(dtoList.subList(start, end)) : new ArrayList<>();
-        return new PageImpl<>(pageContent, PageRequest.of(page, size), dtoList.size());
+        return pagination.slice(dtoList,page,size);
     }
 }

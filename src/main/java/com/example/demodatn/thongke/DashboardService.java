@@ -33,6 +33,7 @@ public class DashboardService {
         data.put("labels", labels);
         data.put("values", values);
         data.put("statuses", repository.statuses());
+        data.put("statusLabels",com.example.demodatn.banhang.OrderStatusService.LABELS);
         data.put("bestSellers", repository.bestSellers(from, until));
         data.put("recent", repository.recent());
         data.put("lowStock", repository.lowStock(Math.max(0, threshold)));

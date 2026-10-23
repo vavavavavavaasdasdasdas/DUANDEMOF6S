@@ -10,7 +10,9 @@ import com.example.demodatn.sanpham.ProductVariant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, Integer> {
-    boolean existsByProduct_IdAndSize_IdAndIdNot(Integer productId, Integer sizeId, Integer id);
+    java.util.List<ProductVariant> findByProduct_IdInAndStatusTrueAndProduct_StatusTrue(java.util.Collection<Integer> ids);
+    boolean existsByProduct_IdAndSize_IdAndMaterial_IdAndIdNot(Integer productId, Integer sizeId, Integer materialId, Integer id);
+    boolean existsByMaterial_Id(Integer materialId);
     boolean existsBySize_Id(Integer sizeId);
     boolean existsByProduct_Id(Integer productId);
     java.util.List<ProductVariant> findByProduct_IdAndStatusTrue(Integer productId);

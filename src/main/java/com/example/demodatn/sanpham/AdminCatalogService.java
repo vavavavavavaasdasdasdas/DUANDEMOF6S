@@ -14,6 +14,7 @@ public class AdminCatalogService {
     private final ProductVariantRepository variants;
     private final CategoryRepository categories;
     private final SizeRepository sizes;
+    private final MaterialRepository materials;
     private final OrderDetailRepository details;
     private final PromotionDetailRepository promotions;
     private final InventoryLogRepository inventoryLogs;
@@ -60,8 +61,9 @@ public class AdminCatalogService {
     public ProductVariant saveVariant(VariantForm form) {
         Product product = product(form.getProductId());
         Size size = sizes.findById(form.getSizeId()).orElseThrow(() -> new CatalogValidationException("sizeId","Size không tồn tại."));
-        if (variants.existsByProduct_IdAndSize_IdAndIdNot(product.getId(),size.getId(),form.getId()==null ? -1 : form.getId()))
-            throw new CatalogValidationException("sizeId","Sản phẩm đã có variant với size này.");
+        Material material = materials.findById(form.getMaterialId()).filter(m -> Boolean.TRUE.equals(m.getStatus())).orElseThrow(() -> new CatalogValidationException("materialId","Chọn chất liệu đang hoạt động."));
+        if (variants.existsByProduct_IdAndSize_IdAndMaterial_IdAndIdNot(product.getId(),size.getId(),material.getId(),form.getId()==null ? -1 : form.getId()))
+            throw new CatalogValidationException("materialId","Bộ ba sản phẩm, size và chất liệu đã tồn tại.");
         ProductVariant variant = form.getId() == null ? new ProductVariant() : inventory.lock(form.getId());
         if (form.getId() != null && !variant.getProduct().getId().equals(product.getId()))
             throw new CatalogValidationException("productId","Không thể chuyển variant sang sản phẩm khác.");
@@ -70,7 +72,7 @@ public class AdminCatalogService {
             throw new CatalogValidationException("quantity","Tồn kho đã thay đổi. Tải lại trang trước khi lưu.");
         if (form.getId() != null && before != form.getQuantity() && (form.getReason()==null || form.getReason().isBlank()))
             throw new CatalogValidationException("reason","Nhập lý do khi thay đổi số lượng.");
-        variant.setProduct(product); variant.setSize(size); variant.setPrice(form.getPrice()); variant.setStatus(form.getStatus());
+        variant.setProduct(product); variant.setSize(size); variant.setMaterial(material); variant.setPrice(form.getPrice()); variant.setStatus(form.getStatus());
         variants.saveAndFlush(variant);
         inventory.change(variant, form.getQuantity(), form.getId() == null ? "Khởi tạo variant" : (form.getReason()==null || form.getReason().isBlank() ? "Lưu variant không đổi tồn" : form.getReason()));
         return variant;
@@ -84,6 +86,11 @@ public class AdminCatalogService {
                 throw new CatalogValidationException("value","Size đã tồn tại.");
             Size size = form.getId()==null ? new Size() : sizes.findById(form.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
             size.setSizeValue(value); sizes.saveAndFlush(size);
+        } else if ("materials".equals(kind)) {
+            if (materials.existsByNameIgnoreCaseAndIdNot(value,form.getId()==null ? -1 : form.getId()))
+                throw new CatalogValidationException("value","Tên chất liệu đã tồn tại.");
+            Material material = form.getId()==null ? new Material() : materials.findById(form.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            material.setName(value); material.setStatus(Boolean.TRUE.equals(form.getStatus())); materials.saveAndFlush(material);
         } else {
             if (categories.existsByNameIgnoreCaseAndIdNot(value,form.getId()==null ? -1 : form.getId()))
                 throw new CatalogValidationException("value","Danh mục đã tồn tại.");
@@ -96,6 +103,10 @@ public class AdminCatalogService {
         if ("sizes".equals(kind)) {
             if (variants.existsBySize_Id(id)) return "Không thể xóa size đang được variant tham chiếu.";
             sizes.deleteById(id); sizes.flush(); return "Đã xóa size.";
+        }
+        if ("materials".equals(kind)) {
+            if (variants.existsByMaterial_Id(id)) return "Không thể xóa chất liệu đang được biến thể tham chiếu.";
+            materials.deleteById(id); materials.flush(); return "Đã xóa chất liệu.";
         }
         if (products.existsByCategory_Id(id)) return "Không thể xóa danh mục đang được sản phẩm tham chiếu.";
         categories.deleteById(id); categories.flush(); return "Đã xóa danh mục.";

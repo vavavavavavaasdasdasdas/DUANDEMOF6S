@@ -161,19 +161,32 @@ public class OrderController {
         }
     }
 
+    @org.springframework.beans.factory.annotation.Autowired private com.example.demodatn.core.Pagination pagination;
+
     @GetMapping("/orders")
-    public String history(Principal principal, Model model) {
+    public String history(Principal principal,@RequestParam(defaultValue="0") String page,Model model) {
         Customer customer = getCustomer(principal);
-        model.addAttribute("orders",customer==null ? List.of() : orderRepository
-                .findByCustomer_IdOrderByCreatedAtDescIdDesc(customer.getId(),org.springframework.data.domain.Pageable.unpaged())
-                .getContent().stream().filter(o -> "ONLINE".equals(o.getOrderType())).toList());
+        var result=customer==null ? new org.springframework.data.domain.PageImpl<Order>(List.of(),pagination.request(page,0,org.springframework.data.domain.Sort.unsorted()),0) : pagination.load(page,org.springframework.data.domain.Sort.unsorted(),request->orderRepository.findByCustomer_IdAndOrderTypeOrderByCreatedAtDescIdDesc(customer.getId(),"ONLINE",request));
+        model.addAttribute("statusLabels",OrderStatusService.LABELS);
+        model.addAttribute("orders",result.getContent());model.addAttribute("orderPage",result);
         return "user/don-hang";
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired private OrderStatusService statuses;
+
+    @PostMapping("/orders/{id}/cancel")
+    public String cancel(@PathVariable Integer id,Principal principal,RedirectAttributes flash) {
+        try { statuses.cancelByCustomer(id,principal.getName()); flash.addFlashAttribute("message","Đã hủy đơn hàng. Hàng đã trừ được hoàn kho một lần."); }
+        catch(IllegalArgumentException ex) { flash.addFlashAttribute("error",ex.getMessage()); }
+        return "redirect:/orders/"+id;
     }
 
     @GetMapping("/orders/{id}")
     public String detail(@PathVariable Integer id, Principal principal, Model model) {
         Order order = customerOrder(id,principal);
         model.addAttribute("order",order);model.addAttribute("orderDetails",order.getOrderDetails());
+        model.addAttribute("statusLabels",OrderStatusService.LABELS);
+        model.addAttribute("canCancel",statuses.allowedStatuses(order).contains("CANCELLED"));
         return "user/chi-tiet-don-hang";
     }
 
