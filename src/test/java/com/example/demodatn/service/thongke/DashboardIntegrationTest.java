@@ -34,6 +34,7 @@ class DashboardIntegrationTest {
         addOrder("2040-01-02T00:00:00", "PAID", "DELIVERED", 999);
         addOrder("2040-01-01T12:00:00", "UNPAID", "PENDING", 999);
         addOrder("2040-01-01T12:00:00", "PAID", "CANCELLED", 999);
+        addOrder("2040-01-01T12:00:00", "PAID", "DELIVERY_FAILED", 999);
         assertEquals(0, before.add(new BigDecimal("12400")).compareTo((BigDecimal) repository.revenue(start, end)));
     }
 

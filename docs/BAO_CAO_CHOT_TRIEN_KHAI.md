@@ -11,7 +11,7 @@ Nhánh `don-dep`. Bằng chứng thô: `C:/Users/ADMIN/AppData/Local/Temp/releas
 | A — chuỗi qua form | Nhập đúng “Nguyễn Thị Ánh - Đà Nẵng - Hủy đơn” ở sản phẩm, danh mục, chất liệu, khách, nhân viên, voucher, promotion, địa chỉ đơn, ghi chú hold, lý do kho | Cả 10: SQL đúng chuỗi, UNICODE ký tự thứ 5=7877, VARBINARY khớp UTF-16LE từng byte, HTML 200 và đúng chuỗi sau giải mã entity; `a-unicode-proof.json` | PASS |
 | A — baseline SQL | Tạo lại shop_fresh, chạy shopgiay.sql bằng sqlcmd -b | Thành công; baseline không còn tự tạo/chuyển tới shopbangiay, không seed khách/sản phẩm/đơn hoặc hash giả | PASS |
 | A — dọn database tạm | DROP shop_fresh sau form và baseline, SELECT sys.databases | Không còn shop_fresh; `a-drop-fresh-final.sql`, `a-fresh-removed.txt` | PASS |
-| B — doanh thu | Chưa chạy | Đang thực hiện | NOT TESTED |
+| B — doanh thu | Đơn chuyển khoản PAID → CONFIRMED → PREPARING → SHIPPING → DELIVERY_FAILED; SELECT độc lập so HTML | Doanh thu 930000 → 700000, số đơn 3 → 2; Dashboard/Statistics khớp; Home bán chạy loại sản phẩm đơn thất bại; kho 10 → 9 → 10; `b-proof.json`, `b-paid-*.sql/.txt`, `b-failed-*.sql/.txt` | PASS |
 | C — hạn chuyển khoản | Chưa chạy | Đang thực hiện | NOT TESTED |
 | D — bản sao thật | Kết nối localhost:1433, shopbangiay_thu | Không có database này trên instance được cấu hình; “Cannot open database shopbangiay_thu”; đã hỏi vị trí bản sao | NOT TESTED |
 | E — cấu hình/tài liệu | Chưa hoàn tất | Đang thực hiện | NOT TESTED |

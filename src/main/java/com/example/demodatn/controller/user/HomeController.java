@@ -27,7 +27,7 @@ public class HomeController {
                 .filter(c -> !Boolean.FALSE.equals(c.getStatus()))
                 .collect(Collectors.toList());
 
-        // Ban chay = tong quantity OrderDetail cua don khong CANCELLED; chi lay SP da ban > 0
+        // Bán chạy dùng cùng điều kiện doanh thu; chỉ lấy sản phẩm có lượng bán hợp lệ.
         List<ProductDto> bestSellers = productFilterService
                 .filterProducts(null, null, null, null, null, null, "best_seller", 0, SECTION_SIZE)
                 .getContent().stream().filter(p -> p.getTotalSold() > 0).collect(Collectors.toList());

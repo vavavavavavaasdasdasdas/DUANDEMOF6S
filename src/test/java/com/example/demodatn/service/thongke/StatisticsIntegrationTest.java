@@ -38,9 +38,11 @@ class StatisticsIntegrationTest {
         int pos=order("POS","CONFIRMED","PAID","2042-01-01T23:59:59","210.25");
         order("POS","DELIVERED","UNPAID","2042-01-01T12:00:00","999");
         order("POS","CANCELLED","PAID","2042-01-01T12:00:00","999");
+        int failed=order("ONLINE","DELIVERY_FAILED","PAID","2042-01-01T12:00:00","999");
         order("POS","DELIVERED","PAID","2042-01-02T00:00:00","999");
         var ids=List.of(variant(),variant());
         line(online,ids.get(0),2,"100.50");line(pos,ids.get(1),1,"220.25");
+        line(failed,ids.get(0),10,"999.00");
         var all=service.load(day,day,"ALL");assertEquals(2L,((Number)all.get("orders")).longValue());
         assertEquals("2042-01-01",((List<Map<String,Object>>)all.get("daily")).get(0).get("day"));
         assertEquals(new BigDecimal("300.75"),all.get("revenue"));assertEquals(new BigDecimal("150.38"),all.get("average"));
@@ -48,7 +50,7 @@ class StatisticsIntegrationTest {
         assertEquals(new BigDecimal("210.25"),service.load(day,day,"POS").get("revenue"));
         var quantities=(List<Map<String,Object>>)all.get("topQuantity");var revenues=(List<Map<String,Object>>)all.get("topRevenue");
         assertEquals(2L,((Number)quantities.get(0).get("quantity")).longValue());assertEquals(new BigDecimal("220.25"),revenues.get(0).get("amount"));
-        var statuses=(List<Map<String,Object>>)all.get("statuses");assertEquals(4L,statuses.stream().mapToLong(s->((Number)s.get("total")).longValue()).sum());
+        var statuses=(List<Map<String,Object>>)all.get("statuses");assertEquals(5L,statuses.stream().mapToLong(s->((Number)s.get("total")).longValue()).sum());
         var empty=service.load(day.minusDays(2),day.minusDays(1),"ALL");assertEquals(0L,((Number)empty.get("orders")).longValue());assertEquals(BigDecimal.ZERO,empty.get("average"));assertEquals(2,((List<?>)empty.get("daily")).size());
     }
     @Test @WithMockUser(roles="ADMIN")

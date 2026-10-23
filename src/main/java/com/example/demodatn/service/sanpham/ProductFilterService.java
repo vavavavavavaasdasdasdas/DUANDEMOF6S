@@ -1,7 +1,6 @@
 package com.example.demodatn.service.sanpham;
 import com.example.demodatn.dto.donhang.PriceInfo;
 import com.example.demodatn.dto.sanpham.ProductDto;
-import com.example.demodatn.entity.donhang.OrderDetail;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.repository.donhang.OrderDetailRepository;
@@ -28,8 +27,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductFilterService {
 
-    public static final String CANCELLED = "CANCELLED";
-
     private final ProductRepository productRepository;
     private final com.example.demodatn.util.Pagination pagination;
     private final ProductVariantRepository productVariantRepository;
@@ -55,12 +52,9 @@ public class ProductFilterService {
 
         List<Product> allProducts = productRepository.findAll();
 
-        // best_seller: tong quantity trong OrderDetail cua cac don KHONG bi CANCELLED
-        Map<Integer, Long> variantSoldMap = orderDetailRepository.findAll().stream()
-                .filter(od -> od.getProductVariant() != null && od.getQuantity() != null)
-                .filter(od -> od.getOrder() == null || !CANCELLED.equalsIgnoreCase(od.getOrder().getStatus()))
-                .collect(Collectors.groupingBy(od -> od.getProductVariant().getId(),
-                        Collectors.summingLong(OrderDetail::getQuantity)));
+        Map<Integer, Long> variantSoldMap = orderDetailRepository.eligibleSoldQuantities().stream()
+                .collect(Collectors.toMap(row -> ((Number) row.get("variantId")).intValue(),
+                        row -> ((Number) row.get("quantity")).longValue()));
 
         List<ProductDto> dtoList = new ArrayList<>();
 
