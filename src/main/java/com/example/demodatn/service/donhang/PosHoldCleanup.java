@@ -1,4 +1,4 @@
-package com.example.demodatn.banhang;
+package com.example.demodatn.service.donhang;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

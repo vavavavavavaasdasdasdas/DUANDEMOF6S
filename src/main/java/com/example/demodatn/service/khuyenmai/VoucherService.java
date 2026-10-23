@@ -1,4 +1,4 @@
-package com.example.demodatn.khuyenmai;
+package com.example.demodatn.service.khuyenmai;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.khuyenmai.Voucher;
 import com.example.demodatn.repository.khuyenmai.VoucherRepository;

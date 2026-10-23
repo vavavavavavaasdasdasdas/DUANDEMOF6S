@@ -1,7 +1,8 @@
-package com.example.demodatn.nhanvien;
+package com.example.demodatn.service.nhanvien;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.nhanvien.Role;
 import com.example.demodatn.entity.nhanvien.User;
+import com.example.demodatn.nhanvien.RegisterRequest;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import com.example.demodatn.repository.nhanvien.RoleRepository;
 import com.example.demodatn.repository.nhanvien.UserRepository;
@@ -21,8 +22,8 @@ public class AuthService {
     @Transactional
     public void register(RegisterRequest request) {
         request.setUsername(request.getUsername().trim().toLowerCase(java.util.Locale.ROOT));
-        request.setEmail(com.example.demodatn.core.PeopleService.email(request.getEmail()));
-        request.setPhone(com.example.demodatn.core.PeopleService.phone(request.getPhone()));
+        request.setEmail(com.example.demodatn.service.PeopleService.email(request.getEmail()));
+        request.setPhone(com.example.demodatn.service.PeopleService.phone(request.getPhone()));
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("Mật khẩu xác nhận không khớp");
         }

@@ -2,6 +2,8 @@ package com.example.demodatn.sanpham;
 import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.repository.sanpham.AdminCatalogQuery;
 import com.example.demodatn.repository.sanpham.MaterialRepository;
+import com.example.demodatn.service.sanpham.AdminCatalogService;
+import com.example.demodatn.service.sanpham.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

@@ -33,7 +33,7 @@ public class AdminPageAdvice {
         if (!path.equals("/admin") && !path.startsWith("/admin/")) return;
         NavItem active = NAV.stream().filter(n -> path.equals(n.route()) || path.startsWith(n.route() + "/"))
                 .findFirst().orElse(NAV.get(0));
-        model.addAttribute("statusLabels",com.example.demodatn.banhang.OrderStatusService.LABELS);
+        model.addAttribute("statusLabels",com.example.demodatn.service.donhang.OrderStatusService.LABELS);
         model.addAttribute("adminNav", NAV);
         model.addAttribute("adminActive", active.key());
         model.addAttribute("adminTitle", active.title());

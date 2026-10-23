@@ -2,6 +2,7 @@ package com.example.demodatn.khuyenmai;
 import com.example.demodatn.entity.khuyenmai.Voucher;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import com.example.demodatn.repository.khuyenmai.VoucherRepository;
+import com.example.demodatn.service.khuyenmai.DiscountAdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;

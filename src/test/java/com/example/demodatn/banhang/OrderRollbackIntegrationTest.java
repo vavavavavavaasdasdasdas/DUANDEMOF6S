@@ -8,6 +8,7 @@ import com.example.demodatn.repository.sanpham.MaterialRepository;
 import com.example.demodatn.repository.sanpham.ProductRepository;
 import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import com.example.demodatn.repository.sanpham.SizeRepository;
+import com.example.demodatn.service.donhang.PricingService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

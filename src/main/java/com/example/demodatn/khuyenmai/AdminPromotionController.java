@@ -3,6 +3,7 @@ import com.example.demodatn.entity.khuyenmai.Promotion;
 import com.example.demodatn.repository.khuyenmai.PromotionDetailRepository;
 import com.example.demodatn.repository.khuyenmai.PromotionRepository;
 import com.example.demodatn.repository.sanpham.ProductRepository;
+import com.example.demodatn.service.khuyenmai.DiscountAdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;

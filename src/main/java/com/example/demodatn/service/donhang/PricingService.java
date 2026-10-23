@@ -1,4 +1,5 @@
-package com.example.demodatn.banhang;
+package com.example.demodatn.service.donhang;
+import com.example.demodatn.banhang.PriceInfo;
 import com.example.demodatn.entity.khuyenmai.Promotion;
 import com.example.demodatn.entity.khuyenmai.PromotionDetail;
 import com.example.demodatn.entity.sanpham.ProductVariant;

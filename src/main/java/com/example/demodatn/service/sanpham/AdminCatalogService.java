@@ -1,4 +1,4 @@
-package com.example.demodatn.sanpham;
+package com.example.demodatn.service.sanpham;
 import com.example.demodatn.entity.sanpham.Category;
 import com.example.demodatn.entity.sanpham.Material;
 import com.example.demodatn.entity.sanpham.Product;
@@ -12,6 +12,10 @@ import com.example.demodatn.repository.sanpham.MaterialRepository;
 import com.example.demodatn.repository.sanpham.ProductRepository;
 import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import com.example.demodatn.repository.sanpham.SizeRepository;
+import com.example.demodatn.sanpham.AdminProductForm;
+import com.example.demodatn.sanpham.CatalogValidationException;
+import com.example.demodatn.sanpham.LookupForm;
+import com.example.demodatn.sanpham.VariantForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

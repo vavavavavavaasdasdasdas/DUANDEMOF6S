@@ -1,7 +1,7 @@
 package com.example.demodatn.khachhang;
-import com.example.demodatn.core.PeopleService;
 import com.example.demodatn.core.PeopleValidationException;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
+import com.example.demodatn.service.PeopleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;

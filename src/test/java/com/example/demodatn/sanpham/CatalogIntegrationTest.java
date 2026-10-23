@@ -1,5 +1,4 @@
 package com.example.demodatn.sanpham;
-import com.example.demodatn.banhang.OrderService;
 import com.example.demodatn.banhang.dto.CartItemDto;
 import com.example.demodatn.banhang.dto.CheckoutRequest;
 import com.example.demodatn.entity.donhang.Order;
@@ -13,6 +12,10 @@ import com.example.demodatn.repository.sanpham.MaterialRepository;
 import com.example.demodatn.repository.sanpham.ProductRepository;
 import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import com.example.demodatn.repository.sanpham.SizeRepository;
+import com.example.demodatn.service.donhang.OrderService;
+import com.example.demodatn.service.sanpham.AdminCatalogService;
+import com.example.demodatn.service.sanpham.InventoryService;
+import com.example.demodatn.service.sanpham.ProductImageStorage;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

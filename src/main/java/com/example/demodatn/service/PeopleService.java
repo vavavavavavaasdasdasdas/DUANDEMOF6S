@@ -1,4 +1,5 @@
-package com.example.demodatn.core;
+package com.example.demodatn.service;
+import com.example.demodatn.core.PeopleValidationException;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.nhanvien.Employee;
 import com.example.demodatn.entity.nhanvien.Role;

@@ -2,7 +2,7 @@ package com.example.demodatn.core;
 import com.example.demodatn.entity.sanpham.Category;
 import com.example.demodatn.repository.sanpham.CategoryRepository;
 import com.example.demodatn.sanpham.ProductDto;
-import com.example.demodatn.sanpham.ProductFilterService;
+import com.example.demodatn.service.sanpham.ProductFilterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

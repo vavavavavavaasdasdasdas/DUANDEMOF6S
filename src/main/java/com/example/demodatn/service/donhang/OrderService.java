@@ -1,4 +1,4 @@
-package com.example.demodatn.banhang;
+package com.example.demodatn.service.donhang;
 import com.example.demodatn.banhang.dto.CartItemDto;
 import com.example.demodatn.banhang.dto.CheckoutRequest;
 import com.example.demodatn.entity.donhang.Invoice;
@@ -7,8 +7,8 @@ import com.example.demodatn.entity.donhang.OrderDetail;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.nhanvien.Employee;
 import com.example.demodatn.entity.sanpham.ProductVariant;
-import com.example.demodatn.khuyenmai.VoucherService;
 import com.example.demodatn.repository.donhang.InvoiceRepository;
+import com.example.demodatn.service.khuyenmai.VoucherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +24,7 @@ public class OrderService {
     @org.springframework.beans.factory.annotation.Value("${shop.shipping.free-threshold:500000}") private BigDecimal freeShippingThreshold;
     private final VoucherService voucherService;
     private final PricingService pricingService;
-    private final com.example.demodatn.sanpham.InventoryService inventoryService;
+    private final com.example.demodatn.service.sanpham.InventoryService inventoryService;
 
     private final InvoiceRepository invoices;
     private final OrderStatusService statuses;

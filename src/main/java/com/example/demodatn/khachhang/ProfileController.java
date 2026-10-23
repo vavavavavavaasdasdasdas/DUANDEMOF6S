@@ -40,8 +40,8 @@ public class ProfileController {
         String username = auth.getName();
         Customer customer = customerRepository.findByUser_Username(username).orElse(null);
         if (customer != null) {
-            phone=com.example.demodatn.core.PeopleService.phone(phone);
-            email=com.example.demodatn.core.PeopleService.email(email);
+            phone=com.example.demodatn.service.PeopleService.phone(phone);
+            email=com.example.demodatn.service.PeopleService.email(email);
             if(customerRepository.existsByEmailIgnoreCaseAndIdNot(email,customer.getId())
                     || customerRepository.existsByPhoneAndIdNot(phone,customer.getId())) {
                 ra.addFlashAttribute("error","Email hoặc số điện thoại đã tồn tại.");

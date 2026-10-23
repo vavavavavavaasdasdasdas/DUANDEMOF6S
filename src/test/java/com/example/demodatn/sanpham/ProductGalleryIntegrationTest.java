@@ -3,6 +3,8 @@ import com.example.demodatn.entity.sanpham.ProductImage;
 import com.example.demodatn.repository.sanpham.CategoryRepository;
 import com.example.demodatn.repository.sanpham.ProductImageRepository;
 import com.example.demodatn.repository.sanpham.ProductRepository;
+import com.example.demodatn.service.sanpham.AdminCatalogService;
+import com.example.demodatn.service.sanpham.ProductGalleryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,6 +1,5 @@
-package com.example.demodatn.thongke;
+package com.example.demodatn.service.thongke;
 import com.example.demodatn.repository.thongke.DashboardRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,7 @@ public class DashboardService {
         data.put("labels", labels);
         data.put("values", values);
         data.put("statuses", repository.statuses());
-        data.put("statusLabels",com.example.demodatn.banhang.OrderStatusService.LABELS);
+        data.put("statusLabels",com.example.demodatn.service.donhang.OrderStatusService.LABELS);
         data.put("bestSellers", repository.bestSellers(from, until));
         data.put("recent", repository.recent());
         data.put("lowStock", repository.lowStock(Math.max(0, threshold)));

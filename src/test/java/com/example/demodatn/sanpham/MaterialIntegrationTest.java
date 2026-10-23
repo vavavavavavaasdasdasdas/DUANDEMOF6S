@@ -1,5 +1,4 @@
 package com.example.demodatn.sanpham;
-import com.example.demodatn.banhang.OrderService;
 import com.example.demodatn.banhang.dto.CartItemDto;
 import com.example.demodatn.entity.sanpham.Material;
 import com.example.demodatn.entity.sanpham.Product;
@@ -11,6 +10,9 @@ import com.example.demodatn.repository.sanpham.MaterialRepository;
 import com.example.demodatn.repository.sanpham.ProductRepository;
 import com.example.demodatn.repository.sanpham.ProductVariantRepository;
 import com.example.demodatn.repository.sanpham.SizeRepository;
+import com.example.demodatn.service.donhang.OrderService;
+import com.example.demodatn.service.sanpham.AdminCatalogService;
+import com.example.demodatn.service.sanpham.ProductFilterService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

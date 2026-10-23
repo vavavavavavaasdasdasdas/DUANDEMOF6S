@@ -1,8 +1,10 @@
-package com.example.demodatn.sanpham;
+package com.example.demodatn.service.sanpham;
 import com.example.demodatn.entity.sanpham.InventoryLog;
 import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.repository.sanpham.InventoryLogRepository;
 import com.example.demodatn.repository.sanpham.ProductVariantRepository;
+import com.example.demodatn.sanpham.CatalogValidationException;
+import com.example.demodatn.sanpham.InventoryForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

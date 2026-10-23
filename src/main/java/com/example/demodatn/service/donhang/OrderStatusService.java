@@ -1,7 +1,7 @@
-package com.example.demodatn.banhang;
+package com.example.demodatn.service.donhang;
 import com.example.demodatn.entity.donhang.Order;
 import com.example.demodatn.repository.donhang.OrderRepository;
-import com.example.demodatn.sanpham.InventoryService;
+import com.example.demodatn.service.sanpham.InventoryService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

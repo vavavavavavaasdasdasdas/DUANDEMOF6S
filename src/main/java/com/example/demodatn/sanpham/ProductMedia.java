@@ -1,4 +1,5 @@
 package com.example.demodatn.sanpham;
+import com.example.demodatn.service.sanpham.ProductGalleryService;
 
 public final class ProductMedia {
     private ProductMedia() { }

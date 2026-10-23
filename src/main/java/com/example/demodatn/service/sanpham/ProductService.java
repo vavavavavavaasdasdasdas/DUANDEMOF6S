@@ -1,4 +1,4 @@
-package com.example.demodatn.sanpham;
+package com.example.demodatn.service.sanpham;
 import com.example.demodatn.entity.sanpham.Product;
 import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.repository.sanpham.ProductRepository;
