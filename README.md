@@ -1,109 +1,59 @@
-# Cửa hàng giày — hướng dẫn chạy dự án
+# Cửa hàng giày
 
-Dự án Java 17, Spring Boot, Thymeleaf, Spring Security, JPA và SQL Server, phục vụ cửa hàng trực tuyến cùng khu vực quản trị và bán hàng tại quầy (POS).
+Ứng dụng Java 17, Spring Boot, Thymeleaf, Spring Security, JPA và SQL Server; gồm cửa hàng trực tuyến, quản trị, POS và thống kê.
 
-## Yêu cầu
+## Chuẩn bị
 
-- JDK 17 và SQL Server có kết nối JDBC.
-- Dùng Maven Wrapper trong repository, không cần cài Maven riêng.
-- PowerShell trên Windows; dùng `curl.exe` khi kiểm tra HTTP.
-- Node.js/Playwright chỉ cần cho kiểm tra trình duyệt, không cần để chạy ứng dụng.
+JDK 17, Maven Wrapper trong repository, SQL Server và tài khoản có quyền trên database đích. Trên Windows dùng PowerShell và `curl.exe`. Node/Playwright chỉ phục vụ kiểm thử trình duyệt.
 
-## Database và cấu hình
+Không chạy kiểm thử trên `shopbangiay`. Dùng `shop_verify`; diễn tập migration trên bản sao riêng. Sao lưu database và thư mục upload trước triển khai.
 
-Đợt dọn dẹp chỉ kiểm thử trên `shop_verify`. Bạn không cần và không nên chạy kiểm thử trên database thật `shopbangiay`.
+## Khởi tạo database thử mới
 
-Nếu cần một database kiểm thử mới, tạo `shop_verify` bằng SSMS hoặc lệnh SQL:
+Tạo `shop_verify` bằng SSMS. Chạy `shopgiay.sql` với database đích đã chọn; script chứa schema hiện tại và chặn database ngoài danh sách cho phép. Không chạy trên database đã có bảng `users`. Script không seed khách, sản phẩm, đơn hàng mẫu; ứng dụng khởi tạo vai trò, quản trị viên và danh mục cơ bản khi chưa tồn tại.
 
-```sql
-IF DB_ID(N'shop_verify') IS NULL CREATE DATABASE [shop_verify];
+```powershell
+sqlcmd -S 'localhost,1433' -E -C -I -b -d shop_verify -i shopgiay.sql
 ```
 
-Schema và dữ liệu mẫu nằm trong `shopgiay.sql`; các bổ sung nằm trong `database/phase6.sql`, `phase7.sql`, `phase8.sql`, `phase9.sql` và `database/admin-account-pos-hold.sql`. **Bản gốc `shopgiay.sql` có `CREATE DATABASE shopbangiay` và `USE shopbangiay`. Bạn phải mở một bản sao ngoài repository, đổi đúng database đích sang `shop_verify` và kiểm tra toàn bộ script trước khi chạy. Không chạy bản gốc vào SQL Server đang chứa database thật.** Với database đã có dữ liệu, không chạy lại seed hoặc các lệnh tạo bảng; chỉ áp dụng migration còn thiếu sau khi xem xét schema hiện tại.
+Với database hiện có, làm theo [hướng dẫn triển khai](docs/HUONG_DAN_TRIEN_KHAI.md): kiểm kê trước, migration **004 → 005 → 006 → 007 → 008**, đối chiếu dữ liệu sau. **003 xóa dữ liệu nghiệp vụ**, không thuộc quy trình nâng cấp thông thường.
 
-Không bật tự cập nhật schema để che lỗi thiếu migration. Giữ `spring.jpa.hibernate.ddl-auto=none`. Script database, DataInitializer và dữ liệu mẫu được giữ nguyên trong đợt này; khởi tạo database mới từ đầu chưa được nghiệm thu lại, nên mục đó là **NOT TESTED**.
+## Cấu hình và chạy
 
-Đặt cấu hình bằng biến môi trường trong PowerShell. Không ghi mật khẩu thật vào Git:
+Xem `application-example.properties`. Ba biến datasource bắt buộc; không có mật khẩu thật mặc định trong cấu hình nguồn. Nhập bí mật qua môi trường, không commit file cấu hình cục bộ.
 
 ```powershell
 $env:JAVA_HOME = 'DUONG_DAN_JDK_17'
 $env:SPRING_DATASOURCE_URL = 'jdbc:sqlserver://localhost:1433;databaseName=shop_verify;encrypt=false;trustServerCertificate=true'
 $env:SPRING_DATASOURCE_USERNAME = 'TAI_KHOAN_SQL_SERVER'
-$env:SPRING_DATASOURCE_PASSWORD = 'MAT_KHAU_CUA_BAN'
+$taskSecret = Read-Host 'Mật khẩu SQL Server' -AsSecureString
+$env:SPRING_DATASOURCE_PASSWORD = [System.Net.NetworkCredential]::new('', $taskSecret).Password
 $env:SPRING_PROFILES_ACTIVE = 'verify'
-$env:SPRING_CONFIG_ADDITIONAL_LOCATION = 'file:./application-verify.properties'
 $env:SPRING_JPA_HIBERNATE_DDL_AUTO = 'none'
-```
-
-`application-verify.properties` là cấu hình cục bộ dùng datasource `shop_verify`, cổng 8081 và thư mục upload thử nghiệm. File này không chứa mật khẩu thật trong README; bạn phải kiểm tra cấu hình cục bộ trước khi chạy. Cấu hình gốc không được đợt dọn dẹp sửa đổi.
-
-## Cách chạy và kiểm thử
-
-```powershell
 .\mvnw.cmd clean test
-.\mvnw.cmd spring-boot:run
-```
-
-Với môi trường verify ở trên, bạn truy cập `http://localhost:8081`; khu vực quản trị là `/admin`, POS là `/admin/pos`. Ở cấu hình chạy thông thường, cổng mặc định là 8080.
-
-Đóng gói khi muốn tạo JAR:
-
-```powershell
 .\mvnw.cmd clean package
-java -jar target\DemoDATN-0.0.1-SNAPSHOT.jar --spring.profiles.active=verify --spring.config.additional-location=file:./application-verify.properties
+java -jar target\DemoDATN-0.0.1-SNAPSHOT.jar --spring.profiles.active=verify --server.port=8081
 ```
 
-Không dùng `-DskipTests` để coi build là thành công. Mốc hiện tại có **75 test, 1 failure, 2 errors**, nên `clean test` đang thất bại và `clean package` chưa được xác nhận thành công. Chi tiết nằm trong [báo cáo lỗi](docs/BUG_PHAT_HIEN.md). Không xóa test hoặc sửa logic trong phạm vi dọn dẹp.
+Giữ `ddl-auto=none` với database đã chuẩn bị schema. `update` chỉ dùng nghiệm thu schema mới trên database tạm. Cổng thường là 8080; lệnh trên dùng 8081. Chờ log `Started DemoDatnApplication in ...` trước kiểm tra.
 
-## Tài khoản mẫu
+Tài khoản khởi tạo khi chưa có: `admin/admin123`. Đổi mật khẩu trước đưa lên môi trường thật. Khách hàng tự đăng ký tại `/register`; không có cam kết tài khoản mẫu `user/user123` trên database mới.
 
-Khi seed/khởi tạo mẫu đúng và tài khoản chưa bị đổi mật khẩu:
-
-| Vai trò | Tên đăng nhập | Mật khẩu mẫu |
-|---|---|---|
-| Quản trị viên | `admin` | `admin123` |
-| Khách hàng | `user` | `user123` |
-
-Đây là tài khoản mẫu, không phải thông tin xác thực SQL Server. Đợt dọn không đổi mật khẩu, vai trò hoặc trạng thái tài khoản. Tài khoản nhân viên tạo qua quản trị phải gắn Employee đúng như nghiệp vụ hiện có.
-
-## Cấu trúc thư mục
+## Cấu trúc
 
 ```text
 src/main/java/com/example/demodatn/
-  banhang/       đơn hàng, POS, hóa đơn và hóa đơn chờ
-  sanpham/       sản phẩm, biến thể, danh mục, Size và tồn kho
-  khachhang/     khách hàng và hồ sơ
-  nhanvien/      tài khoản, nhân viên và phân quyền
-  khuyenmai/     Voucher và đợt giảm giá
-  thongke/       bảng điều khiển, thống kê và điều hướng quản trị
-  core/         phần dùng chung
-  config/       cấu hình và phục vụ tài nguyên
-  security/     xác thực và bảo vệ truy cập
+  DemoDatnApplication.java
+  config/ security/ controller/ service/ repository/
+  entity/ dto/ enums/ exception/ util/
 src/main/resources/
-  templates/
-    user/       cửa hàng và các trang người dùng
-    admin/      các thư mục nghiệp vụ có tên tiếng Việt không dấu
-    fragments/  phần dùng chung và bo-cuc/
-    auth/       dang-nhap.html, dang-ky.html
-    loi/        nội dung trang 403, 404, 500
-    error/      view cầu nối giữ convention Spring Boot
-  static/
-    css/        he-thong-thiet-ke.css, quan-tri.css
-    js/         hành vi trang và script dùng chung
-    anh/        ảnh tĩnh
-src/test/       các test hiện có, không xóa
-database/       script schema/migration được giữ nguyên
-docs/           kế hoạch, báo cáo dọn dẹp và lỗi phát hiện
-_cho_xoa/       tệp cách ly cục bộ, được gitignore
-verify/         script/bằng chứng còn được giữ theo các mục HỎI
+  templates/     user, admin, auth, loi và fragments
+  static/        css, js, anh
+src/test/java/   kiểm thử theo lớp và nghiệp vụ
+database/        schema bổ sung, migrations, kiểm kê triển khai
+docs/            báo cáo và hướng dẫn
 ```
 
-Tên class Java, package nghiệp vụ, URL, enum, bảng/cột giữ nguyên. Các URL tài nguyên cũ `/images/**`, tên CSS/JS cũ vẫn được phục vụ tương thích; dữ liệu ảnh lưu trong database không bị sửa. Không có stylesheet riêng cho từng trang mới.
+Xem [cấu trúc dự án](docs/CAU_TRUC_DU_AN.md) và [báo cáo chốt triển khai](docs/BAO_CAO_CHOT_TRIEN_KHAI.md) để biết kết quả thực chạy và giới hạn nghiệm thu. Giá trị enum trong database giữ nguyên; nhãn giao diện dùng tiếng Việt. Văn bản nghiệp vụ mới lưu NVARCHAR; dữ liệu đã mất dấu trước đó cần nhập lại từ nguồn đúng.
 
-Các mục HỎI chưa được chọn — báo cáo lịch sử, seed, script QA hữu ích, class nghi không dùng và placeholder mồ côi — được giữ nguyên. `_cho_xoa` có thể chứa cookie/token và dữ liệu kiểm thử, không commit hay chia sẻ công khai. Bạn chỉ nên xóa vĩnh viễn sau khi tự kiểm tra và có quyết định riêng.
-
-## Kết quả và giới hạn
-
-Nhóm Việt hóa đã bị revert vì phát sinh lỗi Thymeleaf. Giao diện hiện giữ trạng thái trước nhóm đó; chưa đạt yêu cầu không còn tiếng Anh. Không hạ bảo vệ Thymeleaf, không sửa bug hay logic để hoàn tất dọn dẹp. [Báo cáo dọn dẹp](docs/BAO_CAO_DON_DEP.md) ghi commit từng nhóm, so sánh test/HTTP, từ tiếng Anh còn lại và các mục NOT TESTED.
-
-Bạn nên đọc [kế hoạch đã duyệt](docs/KE_HOACH_DON_DEP.md) trước khi chọn các mục HỎI hoặc triển khai lại Việt hóa. Nhánh `don-dep` chưa được merge.
+Thư mục upload thật, `target/`, `verify/`, log và cấu hình bí mật cục bộ không đưa vào Git. Mật khẩu từng có trong lịch sử Git phải được thay mới; bỏ khỏi file hiện tại không xóa được lịch sử.

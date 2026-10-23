@@ -42,6 +42,11 @@ target/
 
 /uploads/
 /verify/uploads/
+/verify/
+/application-local.properties
+/application-verify.properties
+/deploy-local.sql
+/.env
 
 # Tệp cách ly sau đợt dọn dẹp, không đưa dữ liệu phiên hoặc capture lên Git.
 /_cho_xoa/
