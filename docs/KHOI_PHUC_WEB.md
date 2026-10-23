@@ -61,3 +61,59 @@ Log và output: recovery-clean-package.log, recovery-app.log, recovery-default.l
 - Máy khác: tạo application-local.properties từ application-example.properties rồi điền mật khẩu SQL trên máy, hoặc thiết lập ba biến datasource theo README. Không commit file local.
 
 Không merge; các thay đổi có sẵn từ trước được giữ nguyên.
+
+## Dọn file và dữ liệu kiểm thử sau hoàn thiện
+
+Thực hiện ngày 23/10/2026 theo yêu cầu dọn mới. Web cuối cùng tiếp tục chạy ở http://localhost:8080, JAR profile verify, database shop_verify. **Không có sản phẩm/đơn hàng sau dọn là kết quả chủ đích**, không phải mất dữ liệu thật. Không kết nối hay thay đổi shopbangiay trong lượt này; không xóa backup hoặc bản sao phục vụ quay lại.
+
+### Đã xóa
+
+- Trong project: **80 đường dẫn file sinh ra**, gồm 8 ảnh fixture trong verify/uploads, 6 capture/log trong .playwright-cli, 66 output test trong target/surefire-reports, test-classes, generated-test-sources và metadata testCompile. Output phát sinh lại ở lần build thứ hai cũng đã dọn. Không xóa JAR hoặc main classes.
+- Ngoài project: **1.276 file** HTML HTTP capture, header, form POST, cookie jar và bản credential tạm của đợt release-20261023. Không xóa cấu hình local đang được web sử dụng. Các báo cáo cũ có thể dẫn tới capture thô đã dọn theo yêu cầu mới; bảng HTTP/SQL tóm tắt còn trong báo cáo và JSON bằng chứng.
+- Database shop_verify: **472 bản ghi fixture** đã được kiểm kê trước. Dọn theo khóa ngoại trong một transaction, có DB_NAME guard và kiểm tra giữ nguyên admin/Employee của admin/roles; có bản backup COPY_ONLY CHECKSUM trước khi dọn và RESTORE VERIFYONLY thành công.
+
+| Bảng | Trước | Sau |
+|---|---:|---:|
+| products | 31 | 0 |
+| product_variants | 32 | 0 |
+| product_images | 2 | 0 |
+| orders | 40 | 0 |
+| order_details | 46 | 0 |
+| invoices | 40 | 0 |
+| inventory_logs | 52 | 0 |
+| pos_held_orders / pos_held_items | 1 / 1 | 0 / 0 |
+| customers | 30 | 0 |
+| employees | 30 | 1 |
+| users | 33 | 1 |
+| vouchers / promotions | 30 / 30 | 0 / 0 |
+| categories | 30 | 3 |
+| sizes | 30 | 3 |
+| chat_lieu | 30 | 8 |
+| roles | 2 | 2 |
+| promotion_details | 0 | 0 |
+
+Sau chạy lại test/build và smoke đăng ký, tài khoản smoke đã tự xóa. SELECT COUNT_BIG độc lập cuối cùng vẫn đúng bảng trên. Giữ admin hoạt động cùng NV-SYSTEM, 3 thương hiệu nền, size 39/40/41, 8 chất liệu nền và 2 role.
+
+Backup giữ tại `C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER\MSSQL\Backup\shop_verify_before_cleanup_20261023.bak`.
+
+### Giữ nguyên và chỉnh sửa tối thiểu
+
+Đã so SHA-256 cho **236 file** thuộc src, .mvn, .idea, pom.xml, wrappers, cấu hình local và script schema. Ở bước dọn, tất cả giữ nguyên. Kiểm tra UI trống sau đó phát hiện canvas rỗng Dashboard gây tràn ngang tablet (scrollWidth=793 tại width=768). Chỉ thêm **hai điều kiện th:if** tại admin/bang-dieu-khien.html để không render hai canvas không có dữ liệu; JavaScript vốn đã bỏ qua hai biểu đồ này khi rỗng. Sau sửa, 235 file bảo vệ khác vẫn giữ nguyên hash; không thay Java, CSS, JS, cấu hình hoặc migration. DESIGN.md ghi lại quy tắc trạng thái trống.
+
+Giữ toàn bộ src/test vì đây là bộ kiểm thử hồi quy bảo vệ dự án; chỉ xóa output do test sinh ra. Giữ .idea, .mvn, mvnw, pom.xml, cấu hình local đang chạy, database scripts (kể cả script cũ chưa chắc được phép bỏ), README và tài liệu cấu trúc/triển khai. Những file đã bị xóa hoặc sửa trước lượt này không bị khôi phục hay gom vào commit.
+
+### Nghiệm thu sau dọn
+
+| Hạng mục | Cách kiểm tra | Kết quả thực tế | Trạng thái |
+|---|---|---|---|
+| Build trước/sau sửa empty state | mvnw.cmd clean package trên shop_verify, không skip | Cả hai: 101 tests, 0 failures, 0 errors, 0 skipped; BUILD SUCCESS | PASS |
+| Khởi động JAR sau dọn output test | recovery-start.py | Cổng 8080, Started 18.255 giây; GET / HTTP 200; tiến trình tiếp tục chạy | PASS |
+| Trang trống | 42 URL công khai/Admin bằng curl.exe + cookie + CSRF | Không 4xx/5xx ở route hợp lệ; Dashboard, POS, Statistics, Inventory hoạt động khi không có dữ liệu | PASS |
+| Đăng ký/đăng nhập và quyền | Tài khoản cleanup_smoke, xóa sau kiểm tra | Orders/Profile/Cart 200; checkout giỏ trống redirect cart; User vào admin/pos/account 403; POST POS thiếu CSRF 403; logout xong Orders redirect login | PASS |
+| Responsive | Playwright, Home/Products/Cart/Login/Dashboard/Inventory/POS/Statistics × 375/768/1280 | 24 lượt đều HTTP 200; scrollWidth=360/753/1265, không vượt innerWidth; lỗi canvas tablet đã sửa và chạy lại toàn bộ lượt browser | PASS |
+| Console/tài nguyên | Bắt console error, pageerror và response >=400 trong 8 trang chính | errors=[], failed=[] | PASS |
+| Dữ liệu test còn sót | COUNT_BIG 19 bảng sau tất cả test/smoke | Đúng bảng trước/sau; chỉ admin và dữ liệu nền; ảnh fixture đã không còn trong DB/thư mục upload | PASS |
+| Không đổi code chính | SHA-256 trước/sau | 235 file giữ nguyên; chỉ 1 template có đúng 2 dòng sửa đã nêu | PASS |
+| Mọi luồng có dữ liệu được test lại thủ công | Không tạo lại toàn bộ catalog/đơn hàng sau dọn | Bộ 101 test đã chạy; không coi kiểm tra trạng thái trống là tái nghiệm thu mọi nghiệp vụ | NOT TESTED |
+
+Bằng chứng tóm tắt ngoài project: cleanup-before-counts.*, cleanup-final-actual-counts.*, cleanup-final-proof.json, cleanup-transaction.sql/.txt, cleanup-deleted-files.json, cleanup-deleted-sensitive.json, cleanup-clean-package.log, cleanup-smoke.json. Hash gốc: cleanup-protected-before.json. Không dùng bằng chứng này để cam kết tuyệt đối rằng mọi lỗi chưa kiểm tra đều không tồn tại.

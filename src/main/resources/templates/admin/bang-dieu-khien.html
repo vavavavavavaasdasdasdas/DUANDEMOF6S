@@ -34,7 +34,7 @@
 <div class="chart-box"><canvas id="revenue-chart" role="img" aria-label="Doanh thu theo ngày; xem bảng dữ liệu bên dưới"></canvas></div>
 <details class="mt-3"><summary class="text-muted small">Xem số liệu doanh thu</summary><div class="table-wrap"><table class="admin-table"><thead><tr><th>Ngày</th><th>Doanh thu (₫)</th></tr></thead><tbody><tr th:each="label, iter : ${dashboard.labels}"><td th:text="${label}"></td><td th:text="${dashboard.values[iter.index]}"></td></tr></tbody></table></div></details></article>
 <article class="admin-panel"><div class="panel-heading"><div><h2>Đơn hàng theo trạng thái</h2><p>Tất cả đơn hàng trong hệ thống</p></div></div>
-<div class="chart-box"><canvas id="status-chart" role="img" aria-label="Số đơn theo trạng thái; xem số liệu bên dưới"></canvas></div><p class="chart-empty" th:if="${#lists.isEmpty(dashboard.statuses)}">Chưa có đơn hàng.</p>
+<div class="chart-box" th:if="${!#lists.isEmpty(dashboard.statuses)}"><canvas id="status-chart" role="img" aria-label="Số đơn theo trạng thái; xem số liệu bên dưới"></canvas></div><p class="chart-empty" th:if="${#lists.isEmpty(dashboard.statuses)}">Chưa có đơn hàng.</p>
 <details class="mt-3"><summary class="text-muted small">Xem số liệu trạng thái</summary><ul><li th:each="row : ${dashboard.statuses}" th:text="${statusLabels[row.status] ?: row.status} + ': ' + ${row.total}"></li></ul></details></article>
 </div>
 <div class="chart-grid">
@@ -43,7 +43,7 @@
 <tr th:each="row : ${dashboard.recent}"><td><a th:href="@{/admin/orders/detail/{id}(id=${row.id})}" th:text="${row.order_code}"></a><small class="d-block text-muted" th:text="${#strings.substring(row.created_at.toString(),0,16)}"></small></td><td th:text="${row.customer}"></td><td><span class="status-pill" th:attr="data-status=${row.status}" th:text="${statusLabels[row.status] ?: row.status}"></span></td><td class="money" th:text="${@money.format(row.final_amount)} + ' ₫'"></td></tr>
 <tr th:if="${#lists.isEmpty(dashboard.recent)}"><td colspan="5" class="chart-empty">Chưa có đơn hàng.</td></tr></tbody></table></div></article>
 <article class="admin-panel"><div class="panel-heading"><div><h2>Top sản phẩm bán chạy</h2><p th:text="'Top 5 · ' + ${dashboard.days} + ' ngày · số lượng đã thanh toán'"></p></div></div>
-<div class="chart-box small"><canvas id="products-chart" role="img" aria-label="Số lượng bán của top 5 sản phẩm; xem số liệu bên dưới"></canvas></div>
+<div class="chart-box small" th:if="${!#lists.isEmpty(dashboard.bestSellers)}"><canvas id="products-chart" role="img" aria-label="Số lượng bán của top 5 sản phẩm; xem số liệu bên dưới"></canvas></div>
 <p class="chart-empty" th:if="${#lists.isEmpty(dashboard.bestSellers)}">Chưa có sản phẩm được thanh toán trong kỳ.</p>
 <details class="mt-3"><summary class="text-muted small">Xem số lượng bán</summary><ul><li th:each="row : ${dashboard.bestSellers}" th:text="${row.name} + ': ' + ${row.quantity}"></li></ul></details></article>
 </div>

@@ -27,3 +27,7 @@ Chi tiết đơn quản trị hiển thị “Đã trừ kho / Chưa trừ kho�
 ### Thời hạn chuyển khoản
 
 Fragment `fragments/han-chuyen-khoan` dùng alert hiện có, không có CSS riêng. User thấy “Vui lòng chuyển khoản trước HH:mm dd/MM/yyyy” cho đơn online chuyển khoản chưa trả tiền và chưa kết thúc. Admin chỉ thấy “Tự hủy lúc ...” khi đơn còn Chờ xử lý, đúng điều kiện job hiện có. Thời hạn dùng created_at cộng cấu hình timeout, không tính lại từ lúc tải trang; nhãn biến mất khi đã thanh toán/hủy/thất bại.
+
+### Dashboard chưa có dữ liệu
+
+Không render khung canvas cho trạng thái đơn và sản phẩm bán chạy khi danh sách tương ứng rỗng; dùng thông báo trống hiện có. Điều này tránh kích thước canvas mặc định gây tràn ngang trên tablet sau khi dọn dữ liệu thử. Khi có dữ liệu, biểu đồ giữ hành vi cũ.
