@@ -1,4 +1,5 @@
 package com.example.demodatn.khachhang;
+import com.example.demodatn.entity.khachhang.Customer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

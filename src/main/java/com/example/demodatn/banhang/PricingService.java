@@ -1,9 +1,9 @@
 package com.example.demodatn.banhang;
-
-import com.example.demodatn.khuyenmai.Promotion;
-import com.example.demodatn.khuyenmai.PromotionDetail;
+import com.example.demodatn.entity.khuyenmai.Promotion;
+import com.example.demodatn.entity.khuyenmai.PromotionDetail;
+import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.khuyenmai.PromotionDetailRepository;
-import com.example.demodatn.sanpham.ProductVariant;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;

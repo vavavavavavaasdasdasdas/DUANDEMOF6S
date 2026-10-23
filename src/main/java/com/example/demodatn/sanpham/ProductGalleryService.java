@@ -1,4 +1,6 @@
 package com.example.demodatn.sanpham;
+import com.example.demodatn.entity.sanpham.Product;
+import com.example.demodatn.entity.sanpham.ProductImage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,5 @@
 package com.example.demodatn.khuyenmai;
+import com.example.demodatn.entity.khuyenmai.Voucher;
 import com.example.demodatn.khachhang.CustomerRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

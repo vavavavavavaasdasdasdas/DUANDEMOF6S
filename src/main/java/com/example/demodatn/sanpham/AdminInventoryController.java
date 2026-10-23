@@ -1,4 +1,5 @@
 package com.example.demodatn.sanpham;
+import com.example.demodatn.entity.sanpham.ProductVariant;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

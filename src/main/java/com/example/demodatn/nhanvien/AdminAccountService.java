@@ -1,4 +1,5 @@
 package com.example.demodatn.nhanvien;
+import com.example.demodatn.entity.nhanvien.User;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

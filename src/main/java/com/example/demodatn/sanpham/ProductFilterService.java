@@ -1,13 +1,13 @@
 package com.example.demodatn.sanpham;
-
-import com.example.demodatn.banhang.OrderDetail;
 import com.example.demodatn.banhang.OrderDetailRepository;
 import com.example.demodatn.banhang.PriceInfo;
 import com.example.demodatn.banhang.PricingService;
+import com.example.demodatn.entity.donhang.OrderDetail;
+import com.example.demodatn.entity.sanpham.Product;
+import com.example.demodatn.entity.sanpham.ProductVariant;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package com.example.demodatn.banhang;
+package com.example.demodatn.entity.donhang;
 
 import jakarta.persistence.*;
 import lombok.Getter;

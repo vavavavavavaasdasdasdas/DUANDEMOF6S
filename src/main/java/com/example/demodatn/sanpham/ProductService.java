@@ -1,15 +1,6 @@
 package com.example.demodatn.sanpham;
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khuyenmai.*;
-import com.example.demodatn.thongke.*;
-
-import com.example.demodatn.sanpham.Product;
-import com.example.demodatn.sanpham.ProductVariant;
-import com.example.demodatn.sanpham.ProductRepository;
-import com.example.demodatn.sanpham.ProductVariantRepository;
+import com.example.demodatn.entity.sanpham.Product;
+import com.example.demodatn.entity.sanpham.ProductVariant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,9 +1,17 @@
 package com.example.demodatn.khuyenmai;
+import com.example.demodatn.banhang.OrderRepository;
+import com.example.demodatn.banhang.OrderService;
+import com.example.demodatn.banhang.PricingService;
+import com.example.demodatn.banhang.dto.CartItemDto;
+import com.example.demodatn.banhang.dto.CheckoutRequest;
+import com.example.demodatn.entity.sanpham.Product;
+import com.example.demodatn.entity.sanpham.ProductVariant;
+import com.example.demodatn.khachhang.CustomerRepository;
+import com.example.demodatn.sanpham.MaterialRepository;
+import com.example.demodatn.sanpham.ProductRepository;
+import com.example.demodatn.sanpham.ProductVariantRepository;
+import com.example.demodatn.sanpham.SizeRepository;
 
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.banhang.dto.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.khachhang.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

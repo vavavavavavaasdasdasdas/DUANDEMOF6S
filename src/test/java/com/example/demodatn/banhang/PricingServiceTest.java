@@ -1,10 +1,10 @@
 package com.example.demodatn.banhang;
-
-import com.example.demodatn.khuyenmai.Promotion;
-import com.example.demodatn.khuyenmai.PromotionDetail;
+import com.example.demodatn.entity.khuyenmai.Promotion;
+import com.example.demodatn.entity.khuyenmai.PromotionDetail;
+import com.example.demodatn.entity.sanpham.Product;
+import com.example.demodatn.entity.sanpham.ProductVariant;
 import com.example.demodatn.khuyenmai.PromotionDetailRepository;
-import com.example.demodatn.sanpham.Product;
-import com.example.demodatn.sanpham.ProductVariant;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

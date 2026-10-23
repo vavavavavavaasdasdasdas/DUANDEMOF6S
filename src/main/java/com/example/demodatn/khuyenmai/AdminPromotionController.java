@@ -1,4 +1,5 @@
 package com.example.demodatn.khuyenmai;
+import com.example.demodatn.entity.khuyenmai.Promotion;
 import com.example.demodatn.sanpham.ProductRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class AdminPromotionController {
     }
     @GetMapping("/{id}/products") public String selection(@PathVariable Integer id,@RequestParam(defaultValue="") String q,@RequestParam(defaultValue="0") String page,Model model) {
         model.addAttribute("promotion",discounts.promotion(id));
-        org.springframework.data.jpa.domain.Specification<com.example.demodatn.sanpham.Product> filter=(r,x,c)->c.or(c.like(c.lower(r.get("name")),like(q),'!'),c.like(c.lower(r.get("code")),like(q),'!'));
+        org.springframework.data.jpa.domain.Specification<com.example.demodatn.entity.sanpham.Product> filter=(r,x,c)->c.or(c.like(c.lower(r.get("name")),like(q),'!'),c.like(c.lower(r.get("code")),like(q),'!'));
         var result=pagination.load(page,org.springframework.data.domain.Sort.by("name","id"),request->products.findAll(filter,request));
         model.addAttribute("products",result.getContent());model.addAttribute("productPage",result);model.addAttribute("q",q);
         model.addAttribute("selected",details.findByPromotion_IdAndProduct_IdIn(id,result.getContent().stream().map(p->p.getId()).toList()).stream().map(d->d.getProduct().getId()).collect(Collectors.toSet()));return "admin/khuyen-mai/san-pham-ap-dung";

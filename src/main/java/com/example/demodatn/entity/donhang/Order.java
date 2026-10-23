@@ -1,8 +1,7 @@
-package com.example.demodatn.banhang;
-
-import com.example.demodatn.khachhang.Customer;
-import com.example.demodatn.nhanvien.Employee;
-import com.example.demodatn.khuyenmai.Voucher;
+package com.example.demodatn.entity.donhang;
+import com.example.demodatn.entity.khachhang.Customer;
+import com.example.demodatn.entity.khuyenmai.Voucher;
+import com.example.demodatn.entity.nhanvien.Employee;
 
 import jakarta.persistence.*;
 import lombok.*;

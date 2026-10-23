@@ -1,4 +1,4 @@
-package com.example.demodatn.sanpham;
+package com.example.demodatn.entity.sanpham;
 
 import jakarta.persistence.*;
 import lombok.*;

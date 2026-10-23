@@ -1,4 +1,6 @@
 package com.example.demodatn.sanpham;
+import com.example.demodatn.entity.sanpham.Category;
+import com.example.demodatn.entity.sanpham.Material;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;

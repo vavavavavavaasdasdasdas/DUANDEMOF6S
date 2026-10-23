@@ -1,4 +1,5 @@
-package com.example.demodatn.sanpham;
+package com.example.demodatn.entity.sanpham;
+import com.example.demodatn.sanpham.ProductMedia;
 
 import jakarta.persistence.*;
 import lombok.Getter;

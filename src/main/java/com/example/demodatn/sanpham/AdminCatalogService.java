@@ -1,5 +1,10 @@
 package com.example.demodatn.sanpham;
 import com.example.demodatn.banhang.OrderDetailRepository;
+import com.example.demodatn.entity.sanpham.Category;
+import com.example.demodatn.entity.sanpham.Material;
+import com.example.demodatn.entity.sanpham.Product;
+import com.example.demodatn.entity.sanpham.ProductVariant;
+import com.example.demodatn.entity.sanpham.Size;
 import com.example.demodatn.khuyenmai.PromotionDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -2,7 +2,6 @@ package com.example.demodatn.core;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 import java.util.*;
 
 @ControllerAdvice

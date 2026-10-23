@@ -1,18 +1,23 @@
 package com.example.demodatn.config;
+import com.example.demodatn.entity.nhanvien.Employee;
+import com.example.demodatn.entity.nhanvien.Role;
+import com.example.demodatn.entity.nhanvien.User;
+import com.example.demodatn.entity.sanpham.Category;
+import com.example.demodatn.entity.sanpham.Material;
+import com.example.demodatn.entity.sanpham.Size;
+import com.example.demodatn.nhanvien.EmployeeRepository;
+import com.example.demodatn.nhanvien.RoleRepository;
+import com.example.demodatn.nhanvien.UserRepository;
+import com.example.demodatn.sanpham.CategoryRepository;
+import com.example.demodatn.sanpham.MaterialRepository;
+import com.example.demodatn.sanpham.SizeRepository;
 
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.khuyenmai.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor

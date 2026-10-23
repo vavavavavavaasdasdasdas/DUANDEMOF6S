@@ -1,10 +1,11 @@
 package com.example.demodatn.banhang;
-
-import com.example.demodatn.banhang.dto.*;
+import com.example.demodatn.banhang.dto.CartItemDto;
+import com.example.demodatn.banhang.dto.PosCheckoutRequest;
 import com.example.demodatn.khachhang.CustomerRepository;
+import com.example.demodatn.khuyenmai.VoucherService;
 import com.example.demodatn.nhanvien.EmployeeRepository;
 import com.example.demodatn.sanpham.ProductVariantRepository;
-import com.example.demodatn.khuyenmai.VoucherService;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,7 @@ public class AdminPosController {
         synchronized(session) {
             var cart = cart(session);
             var productPage=catalogQuery.products(q,category,page);
-            var available=productPage.isEmpty()?List.<com.example.demodatn.sanpham.ProductVariant>of():variants.findByProduct_IdInAndStatusTrueAndProduct_StatusTrue(productPage.getContent().stream().map(p->p.getId()).toList());
+            var available=productPage.isEmpty()?List.<com.example.demodatn.entity.sanpham.ProductVariant>of():variants.findByProduct_IdInAndStatusTrueAndProduct_StatusTrue(productPage.getContent().stream().map(p->p.getId()).toList());
             model.addAttribute("categories",categories.findAll(org.springframework.data.domain.Sort.by("name","id")));
             model.addAttribute("products",productPage.getContent());model.addAttribute("productPage",productPage);
             model.addAttribute("variants",available.stream().filter(v->v.getQuantity()>0).toList());

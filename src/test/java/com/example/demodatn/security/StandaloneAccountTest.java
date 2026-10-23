@@ -1,7 +1,11 @@
 package com.example.demodatn.security;
-
-import com.example.demodatn.nhanvien.*;
+import com.example.demodatn.entity.nhanvien.Employee;
+import com.example.demodatn.entity.nhanvien.Role;
+import com.example.demodatn.entity.nhanvien.User;
 import com.example.demodatn.khachhang.CustomerRepository;
+import com.example.demodatn.nhanvien.EmployeeRepository;
+import com.example.demodatn.nhanvien.UserRepository;
+
 import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,10 +1,11 @@
 package com.example.demodatn.banhang;
-
 import com.example.demodatn.banhang.dto.CartItemDto;
 import com.example.demodatn.banhang.dto.CheckoutRequest;
-import com.example.demodatn.khachhang.Customer;
+import com.example.demodatn.entity.donhang.Order;
+import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.khachhang.CustomerRepository;
 import com.example.demodatn.khuyenmai.VoucherService;
+
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

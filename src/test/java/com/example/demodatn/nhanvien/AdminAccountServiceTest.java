@@ -1,4 +1,5 @@
 package com.example.demodatn.nhanvien;
+import com.example.demodatn.entity.nhanvien.User;
 
 import org.junit.jupiter.api.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

@@ -1,6 +1,6 @@
-package com.example.demodatn.banhang;
+package com.example.demodatn.entity.donhang;
+import com.example.demodatn.entity.sanpham.ProductVariant;
 
-import com.example.demodatn.sanpham.ProductVariant;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

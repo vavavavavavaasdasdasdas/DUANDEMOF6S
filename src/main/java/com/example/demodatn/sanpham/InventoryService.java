@@ -1,4 +1,6 @@
 package com.example.demodatn.sanpham;
+import com.example.demodatn.entity.sanpham.InventoryLog;
+import com.example.demodatn.entity.sanpham.ProductVariant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +37,7 @@ public class InventoryService {
         change(variant, target, form.getReason());
     }
     @Transactional
-    public void truKhoChoDon(com.example.demodatn.banhang.Order order) {
+    public void truKhoChoDon(com.example.demodatn.entity.donhang.Order order) {
         var lockedOrder = lockOrder(order);
         if (Boolean.TRUE.equals(lockedOrder.getDaTruKho())) return;
         for (var line : quantities(lockedOrder).entrySet()) {
@@ -54,7 +56,7 @@ public class InventoryService {
         lockedOrder.setDaTruKho(true);
     }
     @Transactional
-    public void hoanKhoChoDon(com.example.demodatn.banhang.Order order) {
+    public void hoanKhoChoDon(com.example.demodatn.entity.donhang.Order order) {
         var lockedOrder = lockOrder(order);
         if (!Boolean.TRUE.equals(lockedOrder.getDaTruKho())) return;
         for (var line : quantities(lockedOrder).entrySet()) {
@@ -69,14 +71,14 @@ public class InventoryService {
         }
         lockedOrder.setDaTruKho(false);
     }
-    private com.example.demodatn.banhang.Order lockOrder(com.example.demodatn.banhang.Order order) {
+    private com.example.demodatn.entity.donhang.Order lockOrder(com.example.demodatn.entity.donhang.Order order) {
         if(order==null || order.getId()==null)throw new IllegalArgumentException("Đơn hàng chưa được lưu.");
         var locked=orders.findForUpdate(order.getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
         // Refresh only the flag: refreshing the entire graph also reloads immutable sale snapshots.
         Object flag=entityManager.createNativeQuery("SELECT da_tru_kho FROM orders WHERE id=:id").setParameter("id",order.getId()).getSingleResult();
         locked.setDaTruKho(Boolean.TRUE.equals(flag));return locked;
     }
-    private java.util.Map<Integer,Integer> quantities(com.example.demodatn.banhang.Order order) {
+    private java.util.Map<Integer,Integer> quantities(com.example.demodatn.entity.donhang.Order order) {
         java.util.Map<Integer,Integer> result=new java.util.TreeMap<>();
         for(var detail:order.getOrderDetails()) {
             if(detail.getQuantity()==null || detail.getQuantity()<=0)throw new IllegalArgumentException("Số lượng đơn hàng không hợp lệ.");

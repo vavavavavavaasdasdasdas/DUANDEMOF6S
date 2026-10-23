@@ -1,12 +1,7 @@
 package com.example.demodatn.security;
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khuyenmai.*;
-import com.example.demodatn.thongke.*;
-
-import com.example.demodatn.nhanvien.User;
+import com.example.demodatn.entity.nhanvien.User;
+import com.example.demodatn.khachhang.CustomerRepository;
+import com.example.demodatn.nhanvien.EmployeeRepository;
 import com.example.demodatn.nhanvien.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

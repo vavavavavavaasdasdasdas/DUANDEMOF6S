@@ -1,11 +1,4 @@
-package com.example.demodatn.khachhang;
-import com.example.demodatn.banhang.*;
-import com.example.demodatn.khachhang.*;
-import com.example.demodatn.sanpham.*;
-import com.example.demodatn.nhanvien.*;
-import com.example.demodatn.khuyenmai.*;
-import com.example.demodatn.thongke.*;
-
+package com.example.demodatn.entity.khachhang;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -40,6 +33,6 @@ public class Customer {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private com.example.demodatn.nhanvien.User user;
+    private com.example.demodatn.entity.nhanvien.User user;
 }
 
