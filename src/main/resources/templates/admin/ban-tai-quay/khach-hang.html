@@ -1,0 +1,6 @@
+<!DOCTYPE html><html lang="vi" xmlns:th="http://www.thymeleaf.org"><body>
+<div th:fragment="results" id="pos-customer-results" aria-live="polite">
+ <div class="list-group" data-customer-options><button type="button" class="list-group-item list-group-item-action" th:each="c:${customerPage.content}" th:data-customer-id="${c.id}" th:data-customer-label="${c.full_name}+' · '+${c.phone}" th:text="${c.full_name}+' · '+${c.phone}"></button></div>
+ <p th:if="${customerPage.empty}" class="sales-muted">Không tìm thấy khách hàng phù hợp.</p>
+ <nav th:replace="~{fragments/phan-trang :: phan-trang(${customerPage},'customerPage')}"></nav>
+</div></body></html>

@@ -1,10 +1,14 @@
 (() => {
  const dialog=document.querySelector('#pos-product-dialog');
  const select=document.querySelector('#pos-variant'),quantity=document.querySelector('#pos-quantity');let opener=null;
+ const material=document.querySelector('#pos-material'),size=document.querySelector('#pos-size');let variantOptions=[];
+ function resolve(){const matches=variantOptions.filter(o=>o.dataset.materialId===material.value);size.replaceChildren();const seen=new Set();matches.forEach(o=>{if(!seen.has(o.dataset.sizeId)){size.add(new Option(o.dataset.sizeName,o.dataset.sizeId));seen.add(o.dataset.sizeId);}});choose();}
+ function choose(){const found=variantOptions.find(o=>o.dataset.materialId===material.value&&o.dataset.sizeId===size.value);select.replaceChildren(...(found?[found.cloneNode(true)]:[]));stock();}
+ material.addEventListener('change',resolve);size.addEventListener('change',choose);
  function stock(){quantity.max=select.selectedOptions[0]?.dataset.stock||1;quantity.value=1;}
  document.querySelectorAll('[data-pos-product]').forEach(button=>button.addEventListener('click',()=>{
    opener=button;document.querySelector('#pos-product-title').textContent=button.dataset.productName;
-   select.replaceChildren(document.querySelector('#pos-options-'+button.dataset.productId).content.cloneNode(true));stock();dialog.showModal();select.focus();
+   variantOptions=[...document.querySelector('#pos-options-'+button.dataset.productId).content.cloneNode(true).querySelectorAll('option')];material.replaceChildren();const names=new Map();variantOptions.forEach(o=>names.set(o.dataset.materialId,o.dataset.materialName));names.forEach((name,id)=>material.add(new Option(name,id)));resolve();dialog.showModal();select.focus();
  }));select.addEventListener('change',stock);dialog.querySelector('[data-pos-close]').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>{dialog.querySelector('form').dataset.dirty='false';opener?.focus();});
  const customer=document.querySelector('#customerId'),search=document.querySelector('#customerSearch');
  const options=Array.from(customer.options).slice(1).map(o=>o.cloneNode(true));

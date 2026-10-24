@@ -35,6 +35,10 @@ public class ProductDto {
     private long totalSold;
     
     private List<VariantDto> variants;
+    public String getMaterialNames() {
+        return variants == null ? "" : variants.stream().map(VariantDto::getMaterialName)
+                .filter(java.util.Objects::nonNull).distinct().sorted().collect(java.util.stream.Collectors.joining(", "));
+    }
     
     @Data
     public static class VariantDto {

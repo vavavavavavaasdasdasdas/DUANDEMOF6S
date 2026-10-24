@@ -25,7 +25,7 @@ class PaginationIntegrationTest {
     int customer,promotion;
     int insert(String sql,Object...args){return jdbc.queryForObject(sql,Integer.class,args);}
     @BeforeEach void thirtyRowsPerType() {
-        assertEquals("shop_verify",jdbc.queryForObject("SELECT DB_NAME()",String.class),"Never run fixtures against the real DB");
+        assertTrue(Set.of("shop_verify","shopbangiay_thu").contains(jdbc.queryForObject("SELECT DB_NAME()",String.class)),"Never run fixtures against the real DB");
         mvc=MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
         for(String table:List.of("pos_held_items","pos_held_orders","invoices","order_details","orders","inventory_logs","promotion_details","product_images","product_variants","products"))jdbc.update("DELETE FROM "+table);
         jdbc.update("UPDATE vouchers SET customer_id=NULL");

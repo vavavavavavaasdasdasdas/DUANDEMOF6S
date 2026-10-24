@@ -101,6 +101,13 @@ public class InventoryService {
         variants.save(variant);
         record(variant,before,(int)target,reason);
     }
+    // The newly inserted variant belongs to saveProduct's transaction, including zero stock.
+    public void initialize(ProductVariant variant, int quantity) {
+        if (quantity < 0) throw new CatalogValidationException("initialQuantity","Tồn kho ban đầu không được âm.");
+        variant.setQuantity(quantity);
+        variants.save(variant);
+        record(variant,0,quantity,"Khởi tạo");
+    }
     private void record(ProductVariant variant,int before,int target,String reason) {
         InventoryLog log = new InventoryLog();
         log.setVariant(variant);

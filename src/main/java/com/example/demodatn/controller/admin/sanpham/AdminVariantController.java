@@ -61,6 +61,14 @@ public class AdminVariantController {
     }
     private String form(Model model) {
         model.addAttribute("products",products.findAll()); model.addAttribute("sizes",sizes.findAll()); model.addAttribute("materials",materials.findByStatusTrueOrderByNameAscIdAsc());
+        VariantForm current=(VariantForm)model.getAttribute("variant");
+        if(current.getId()!=null) {
+            var existing=catalog.variant(current.getId()).getMaterial();
+            if(!Boolean.TRUE.equals(existing.getStatus())) {
+                var options=new java.util.ArrayList<>(materials.findByStatusTrueOrderByNameAscIdAsc());
+                options.add(existing); model.addAttribute("materials",options);
+            }
+        }
         return "admin/bien-the/bieu-mau";
     }
 }

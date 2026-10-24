@@ -47,20 +47,20 @@
                 <form id="addToCartForm" novalidate th:action="@{/cart/add}" method="post">
                     <!-- Size Selection (Buttons) -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold d-block">Chọn Size:</label>
-                        <div class="d-flex flex-wrap gap-2" id="size-container">
+                        <label class="form-label fw-bold d-block">Chọn size và chất liệu:</label>
+                        <div class="d-flex flex-wrap gap-2" id="size-container" data-material-picker>
                             <th:block th:each="v : ${variants}">
                                 <input type="radio" class="btn-check size-radio" name="variantId" th:id="'size-' + ${v.id}" th:value="${v.id}"
                                        th:disabled="${v.quantity <= 0}"
-                                       th:data-qty="${v.quantity}"
+                                       th:data-qty="${v.quantity}" th:data-size-id="${v.size.id}" th:data-size-name="${v.size.sizeValue}" th:data-material-id="${v.material.id}" th:data-material-name="${v.material.name}"
                                        th:data-finalprice="${variantPrices.get(v.id).finalPrice}"
                                        th:data-origprice="${variantPrices.get(v.id).originalPrice}"
                                        th:data-haspromo="${variantPrices.get(v.id).hasPromotion}"
                                        th:data-discount="${variantPrices.get(v.id).discountPercentage}">
-                                <label class="btn btn-outline-primary" th:for="'size-' + ${v.id}" th:classappend="${v.quantity <= 0 ? 'disabled' : ''}" th:text="${v.size.sizeValue}">39</label>
+                                <label class="btn btn-outline-primary" th:for="'size-' + ${v.id}" th:classappend="${v.quantity <= 0 ? 'disabled' : ''}" th:text="${v.size.sizeValue}+' · '+${v.material.name}">39</label>
                             </th:block>
                         </div>
-                        <div id="size-error" class="text-danger small mt-2 d-none">Vui lòng chọn size!</div>
+                        <div id="size-error" class="text-danger small mt-2 d-none">Vui lòng chọn size và chất liệu còn hàng!</div>
                     </div>
 
                     <!-- Quantity & Stock -->
@@ -71,7 +71,7 @@
                             <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" max="1" readonly>
                             <button class="btn btn-outline-secondary" type="button" id="btn-plus" aria-label="Tăng số lượng">+</button>
                         </div>
-                        <span class="ms-3 text-muted" id="stock-status">Vui lòng chọn size</span>
+                        <span class="ms-3 text-muted" id="stock-status">Vui lòng chọn size và chất liệu</span>
                     </div>
 
                     <!-- Action Buttons -->
@@ -106,7 +106,7 @@
                     <div class="tab-pane fade" id="info" role="tabpanel">
                         <ul>
                             <li><strong>Thương hiệu:</strong> Đang cập nhật</li>
-                            <li><strong>Chất liệu:</strong> Đang cập nhật</li>
+                            <li><strong>Chất liệu:</strong> <span th:each="m,it:${productMaterials}" th:text="${m.name} + (${it.last} ? '' : ', ')"></span></li>
                         </ul>
                     </div>
                 </div>
@@ -128,6 +128,7 @@
                             <a th:href="@{/products/{id}(id=${rp.id})}" class="text-decoration-none text-dark" th:text="${rp.name}">Tên SP</a>
                         </h6>
                         <div class="mt-auto" th:with="rpVariants=${@productService.getVariantsByProductId(rp.id)}">
+                            <p class="small text-muted mb-2" th:if="${!rpVariants.isEmpty()}" th:with="names=${#sets.toSet(rpVariants.![material.name])}">Chất liệu: <span th:each="name,it:${names}" th:text="${name}+(${it.last} ? '' : ', ')"></span></p>
                             <th:block th:if="${!rpVariants.isEmpty()}">
                                 <th:block th:with="rpPriceInfo=${@pricingService.calculatePrice(rpVariants[0])}">
                                     <div class="text-danger fw-bold" th:text="${@money.format(rpPriceInfo.finalPrice)} + ' ₫'">0 ₫</div>

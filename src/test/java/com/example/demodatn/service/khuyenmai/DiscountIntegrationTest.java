@@ -61,9 +61,9 @@ class DiscountIntegrationTest {
 
     private com.example.demodatn.entity.khachhang.Customer customer() {
         var customer = new com.example.demodatn.entity.khachhang.Customer();
-        customer.setCustomerCode("P8-" + UUID.randomUUID());
+        customer.setCustomerCode("P8-" + UUID.randomUUID().toString().substring(0, 15));
         customer.setFullName("Khách kiểm thử voucher");
-        customer.setPhone("P8-" + UUID.randomUUID());
+        customer.setPhone("P8-" + UUID.randomUUID().toString().substring(0, 15));
         customer.setEmail(UUID.randomUUID() + "@example.invalid");
         return customers.saveAndFlush(customer);
     }

@@ -45,6 +45,24 @@ public class AdminCatalogService {
     }
     @Transactional
     public Product saveProduct(AdminProductForm form) {
+        boolean initialize = form.getId() == null && form.getInitialSizeIds() != null && !form.getInitialSizeIds().isEmpty();
+        Material initialMaterial = null;
+        java.util.List<Size> initialSizes = new java.util.ArrayList<>();
+        if (initialize) {
+            if (form.getInitialMaterialId() == null)
+                throw new CatalogValidationException("initialMaterialId","Chọn chất liệu khi chọn size ban đầu.");
+            initialMaterial = materials.findById(form.getInitialMaterialId()).filter(m -> Boolean.TRUE.equals(m.getStatus()))
+                    .orElseThrow(() -> new CatalogValidationException("initialMaterialId","Chọn chất liệu đang hiển thị."));
+            if (form.getInitialPrice() == null || form.getInitialPrice().signum() <= 0 || form.getInitialPrice().scale() > 2
+                    || form.getInitialPrice().precision() - form.getInitialPrice().scale() > 16)
+                throw new CatalogValidationException("initialPrice","Nhập giá lớn hơn 0, tối đa 16 chữ số và 2 số thập phân.");
+            if (form.getInitialQuantity() == null || form.getInitialQuantity() < 0)
+                throw new CatalogValidationException("initialQuantity","Nhập tồn kho ban đầu từ 0 trở lên.");
+            for (Integer sizeId : new java.util.LinkedHashSet<>(form.getInitialSizeIds())) {
+                if (sizeId == null) throw new CatalogValidationException("initialSizeIds","Size không hợp lệ.");
+                initialSizes.add(sizes.findById(sizeId).orElseThrow(() -> new CatalogValidationException("initialSizeIds","Size không tồn tại.")));
+            }
+        }
         String code = form.getCode().trim();
         if (products.existsByCodeIgnoreCaseAndIdNot(code, form.getId() == null ? -1 : form.getId()))
             throw new CatalogValidationException("code","Mã sản phẩm đã tồn tại.");
@@ -54,6 +72,15 @@ public class AdminCatalogService {
         product.setCategory(category); product.setStatus(form.getStatus());
         products.saveAndFlush(product);
         gallery.save(product,form);
+        if (initialize) {
+            for (Size size : initialSizes) {
+                ProductVariant variant = new ProductVariant();
+                variant.setProduct(product); variant.setSize(size); variant.setMaterial(initialMaterial);
+                variant.setPrice(form.getInitialPrice()); variant.setStatus(true);
+                variants.saveAndFlush(variant);
+                inventory.initialize(variant,form.getInitialQuantity());
+            }
+        }
         return products.saveAndFlush(product);
     }
     @Transactional
@@ -76,10 +103,13 @@ public class AdminCatalogService {
     public ProductVariant saveVariant(VariantForm form) {
         Product product = product(form.getProductId());
         Size size = sizes.findById(form.getSizeId()).orElseThrow(() -> new CatalogValidationException("sizeId","Size không tồn tại."));
-        Material material = materials.findById(form.getMaterialId()).filter(m -> Boolean.TRUE.equals(m.getStatus())).orElseThrow(() -> new CatalogValidationException("materialId","Chọn chất liệu đang hoạt động."));
+        ProductVariant current = form.getId() == null ? null : inventory.lock(form.getId());
+        Material material = materials.findById(form.getMaterialId()).filter(m -> Boolean.TRUE.equals(m.getStatus())
+                || (current != null && current.getMaterial().getId().equals(m.getId())))
+                .orElseThrow(() -> new CatalogValidationException("materialId","Chọn chất liệu đang hiển thị."));
         if (variants.existsByProduct_IdAndSize_IdAndMaterial_IdAndIdNot(product.getId(),size.getId(),material.getId(),form.getId()==null ? -1 : form.getId()))
             throw new CatalogValidationException("materialId","Bộ ba sản phẩm, size và chất liệu đã tồn tại.");
-        ProductVariant variant = form.getId() == null ? new ProductVariant() : inventory.lock(form.getId());
+        ProductVariant variant = form.getId() == null ? new ProductVariant() : current;
         if (form.getId() != null && !variant.getProduct().getId().equals(product.getId()))
             throw new CatalogValidationException("productId","Không thể chuyển variant sang sản phẩm khác.");
         int before = variant.getQuantity();

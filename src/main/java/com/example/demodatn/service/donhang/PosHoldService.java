@@ -48,9 +48,10 @@ public class PosHoldService {
                 .filter(h->h.getExpiresAt().isAfter(now())).map(h->new HoldSummary(h.getId(),h.getCode(),
                     h.getItems().stream().mapToInt(PosHeldItem::getQuantity).sum(),
                     h.getItems().stream().map(i->pricing.calculatePrice(i.getVariant()).getFinalPrice().multiply(BigDecimal.valueOf(i.getQuantity()))).reduce(BigDecimal.ZERO,BigDecimal::add),
-                    h.getExpiresAt().atZone(clock.getZone()).toInstant().toEpochMilli())).toList();
+                    h.getExpiresAt().atZone(clock.getZone()).toInstant().toEpochMilli(),
+                    h.getItems().stream().map(i -> i.getVariant().getMaterial().getName()).distinct().sorted().collect(java.util.stream.Collectors.joining(", ")))).toList();
     }
-    public record HoldSummary(Long id,String code,int itemCount,BigDecimal subtotal,long expiresEpoch) {}
+    public record HoldSummary(Long id,String code,int itemCount,BigDecimal subtotal,long expiresEpoch,String materialNames) {}
     public record Loaded(Long id,String code,List<CartItemDto> cart,PosCheckoutRequest request) {}
 
     private PosHeldOrder locked(String username,Long id) {

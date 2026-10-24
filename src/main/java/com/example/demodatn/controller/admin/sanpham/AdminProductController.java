@@ -21,15 +21,19 @@ public class AdminProductController {
     private final AdminCatalogQuery query;
     private final CategoryRepository categories;
     private final ProductGalleryService gallery;
+    private final com.example.demodatn.repository.sanpham.MaterialRepository materials;
+    private final com.example.demodatn.repository.sanpham.SizeRepository sizes;
+    private final com.example.demodatn.repository.sanpham.ProductVariantRepository variants;
     private final com.example.demodatn.util.Pagination pagination;
     @org.springframework.beans.factory.annotation.Value("${shop.upload-max-bytes:5242880}") private long maxBytes;
 
     @GetMapping
     public String list(@RequestParam(defaultValue="") String keyword, @RequestParam(required=false) Integer categoryId,
-                       @RequestParam(required=false) Boolean status, @RequestParam(defaultValue="newest") String sort,
+                       @RequestParam(required=false) Integer materialId, @RequestParam(required=false) Boolean status, @RequestParam(defaultValue="newest") String sort,
                        @RequestParam(defaultValue="0") String page,  Model model) {
-        model.addAttribute("productPage",query.products(keyword,categoryId,status,sort,page));
+        model.addAttribute("productPage",query.products(keyword,categoryId,status,sort,page,materialId));
         model.addAttribute("categories",categories.findAll());
+        model.addAttribute("materials",materials.findAll()); model.addAttribute("materialId",materialId);
         model.addAttribute("keyword",keyword); model.addAttribute("categoryId",categoryId);
         model.addAttribute("status",status); model.addAttribute("sort",sort);
         return "admin/san-pham/danh-sach";
@@ -52,10 +56,15 @@ public class AdminProductController {
     }
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute("product") AdminProductForm product, BindingResult result, Model model, RedirectAttributes flash) {
+        if (product.getId()==null && product.getInitialSizeIds()!=null && !product.getInitialSizeIds().isEmpty()) {
+            if (product.getInitialMaterialId()==null) result.rejectValue("initialMaterialId","required","Chọn chất liệu khi chọn size ban đầu.");
+            if (product.getInitialPrice()==null) result.rejectValue("initialPrice","required","Nhập giá khi chọn size ban đầu.");
+            if (product.getInitialQuantity()==null) result.rejectValue("initialQuantity","required","Nhập tồn kho ban đầu từ 0 trở lên.");
+        }
         if (!result.hasErrors()) {
             try {
                 Product saved=catalog.saveProduct(product);
-                flash.addFlashAttribute("message","Đã lưu sản phẩm. Tiếp tục quản lý size, giá và tồn kho ở phần variant.");
+                flash.addFlashAttribute("message","Đã lưu sản phẩm và các biến thể ban đầu (nếu có).");
                 return "redirect:/admin/products-crud/view/"+saved.getId();
             } catch(CatalogValidationException ex) { result.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
               catch(DataIntegrityViolationException ex) { result.rejectValue("code","duplicate","Mã sản phẩm đã tồn tại hoặc dữ liệu liên quan vừa thay đổi."); }
@@ -73,6 +82,9 @@ public class AdminProductController {
         AdminProductForm form=(AdminProductForm)model.getAttribute("product");
         model.addAttribute("productImages", form.getId()==null ? java.util.List.of() : gallery.list(form.getId()));
         model.addAttribute("categories",categories.findAll());
+        model.addAttribute("materials",materials.findByStatusTrueOrderByNameAscIdAsc());
+        model.addAttribute("sizes",sizes.findAll());
+        model.addAttribute("existingMaterials",form.getId()==null ? java.util.List.of() : variants.materialNames(form.getId()));
         model.addAttribute("uploadMaxBytes",maxBytes);
         return "admin/san-pham/bieu-mau";
     }

@@ -6,6 +6,10 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     java.util.List<ProductVariant> findByProduct_IdInAndStatusTrueAndProduct_StatusTrue(java.util.Collection<Integer> ids);
     boolean existsByProduct_IdAndSize_IdAndMaterial_IdAndIdNot(Integer productId, Integer sizeId, Integer materialId, Integer id);
     boolean existsByMaterial_Id(Integer materialId);
+    @org.springframework.data.jpa.repository.Query("select v.material.id as materialId, count(v) as usageCount from ProductVariant v group by v.material.id")
+    java.util.List<java.util.Map<String,Object>> materialUsage();
+    @org.springframework.data.jpa.repository.Query("select distinct v.material.name from ProductVariant v where v.product.id=:productId order by v.material.name")
+    java.util.List<String> materialNames(@org.springframework.data.repository.query.Param("productId") Integer productId);
     boolean existsBySize_Id(Integer sizeId);
     boolean existsByProduct_Id(Integer productId);
     java.util.List<ProductVariant> findByProduct_IdAndStatusTrue(Integer productId);

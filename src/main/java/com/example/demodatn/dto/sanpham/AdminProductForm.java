@@ -6,6 +6,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 public class AdminProductForm {
     private Integer id;
+    private Integer initialMaterialId;
+    private java.util.List<Integer> initialSizeIds = new java.util.ArrayList<>();
+    @DecimalMin(value="0.01", message="Giá phải lớn hơn 0.")
+    @Digits(integer=16,fraction=2,message="Giá tối đa 16 chữ số và 2 số thập phân.")
+    private java.math.BigDecimal initialPrice;
+    @Min(value=0,message="Tồn kho ban đầu không được âm.")
+    private Integer initialQuantity = 0;
     @NotBlank(message="Nhập mã sản phẩm.") @Pattern(regexp="[A-Za-z0-9_-]{1,50}", message="Mã gồm 1–50 chữ, số, dấu - hoặc _.")
     private String code;
     @NotBlank(message="Nhập tên sản phẩm.") @jakarta.validation.constraints.Size(max=255,message="Tên tối đa 255 ký tự.")

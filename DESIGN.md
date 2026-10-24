@@ -31,3 +31,7 @@ Fragment `fragments/han-chuyen-khoan` dùng alert hiện có, không có CSS ri�
 ### Dashboard chưa có dữ liệu
 
 Không render khung canvas cho trạng thái đơn và sản phẩm bán chạy khi danh sách tương ứng rỗng; dùng thông báo trống hiện có. Điều này tránh kích thước canvas mặc định gây tràn ngang trên tablet sau khi dọn dữ liệu thử. Khi có dữ liệu, biểu đồ giữ hành vi cũ.
+
+### Chất liệu — Giai đoạn A
+
+Form tạo sản phẩm dùng select native và checkbox size, giữ component/error Bootstrap hiện có. Biến thể ban đầu là tùy chọn; chọn size thì bắt buộc chất liệu, giá và tồn kho. Cột chất liệu admin chỉ lấy biến thể đang bán, tối đa ba tên và +n; thẻ user dùng fragment chung. Ẩn chất liệu dùng dialog xác nhận chung, nêu số biến thể đang dùng; chỉ loại khỏi lựa chọn tạo mới, giữ tên trên dữ liệu cũ. Phân trang giữ materialId qua PaginationAdvice hiện có.

@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<!--
-  Product card DUY NHAT cua phia User. Dung o /products va trang chu.
-  Tham so p: ProductDto (gia da tinh qua PricingService trong ProductFilterService).
--->
+
 <div th:fragment="card(p)" class="card h-100 shadow-sm border-0 product-card position-relative">
     <span class="product-sale-badge position-absolute top-0 start-0 m-2 badge bg-danger"
           th:if="${p.hasPromotion}" th:text="|SALE -${p.discountPercentage}%|">SALE</span>
@@ -22,6 +19,7 @@
             <a th:href="@{/products/{id}(id=${p.id})}" class="text-decoration-none text-dark" th:text="${p.name}">Tên SP</a>
         </h6>
 
+        <p class="small text-muted mb-2" th:if="${!#strings.isEmpty(p.materialNames)}" th:text="'Chất liệu: '+${p.materialNames}"></p>
         <div class="mb-2">
             <span class="fw-bold text-danger me-2"
                   th:text="${@money.format(p.minFinalPrice)} + ' đ'">0 đ</span>
@@ -43,12 +41,12 @@
             <div class="quick-add-menu dropdown-menu p-3 shadow">
                 <form class="quick-add-form" th:action="@{/cart/add}" method="post">
                     <div class="fw-bold small mb-2">Chọn size:</div>
-                    <div class="d-flex flex-wrap gap-2 mb-2">
+                    <div class="d-flex flex-wrap gap-2 mb-2" data-material-picker>
                         <th:block th:each="v : ${p.variants}">
                             <input type="radio" class="btn-check" name="variantId"
-                                   th:id="|qa-${p.id}-${v.id}|" th:value="${v.id}" th:disabled="${v.quantity <= 0}">
+                                   th:id="|qa-${p.id}-${v.id}|" th:value="${v.id}" th:data-size-id="${v.sizeId}" th:data-size-name="${v.sizeValue}" th:data-material-id="${v.materialId}" th:data-material-name="${v.materialName}" th:disabled="${v.quantity <= 0}">
                             <label class="btn btn-outline-dark btn-sm" th:for="|qa-${p.id}-${v.id}|"
-                                   th:classappend="${v.quantity <= 0} ? 'opacity-50'" th:text="${v.sizeValue}">39</label>
+                                   th:classappend="${v.quantity <= 0} ? 'opacity-50'" th:text="${v.sizeValue}+' · '+${v.materialName}">39</label>
                         </th:block>
                     </div>
                     <input type="hidden" name="quantity" value="1">

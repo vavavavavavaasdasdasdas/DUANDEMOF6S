@@ -41,7 +41,7 @@
                                                     <a th:href="@{/products/{id}(id=${item.productId})}"
                                                        class="text-decoration-none text-dark fw-bold"
                                                        th:text="${item.productName}">Name</a>
-                                                    <div class="small text-muted mt-1">Size: <span class="badge bg-secondary" th:text="${item.size}"></span></div>
+                                                    <div class="small text-muted mt-1">Size: <span class="badge bg-secondary" th:text="${item.size}"></span> · Chất liệu: <span th:text="${item.materialName}"></span></div>
 
                                                     <div th:if="${item.warningMessage != null}" class="text-danger small mt-1 fw-bold">
                                                         <i class="bi bi-exclamation-triangle-fill"></i> <span th:text="${item.warningMessage}"></span>

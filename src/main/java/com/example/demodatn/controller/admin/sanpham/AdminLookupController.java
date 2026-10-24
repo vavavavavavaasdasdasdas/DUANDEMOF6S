@@ -24,6 +24,7 @@ public class AdminLookupController {
     private final SizeRepository sizes;
     private final MaterialRepository materials;
     private final AdminCatalogService catalog;
+    private final com.example.demodatn.repository.sanpham.ProductVariantRepository variants;
     @ModelAttribute
     public void common(@PathVariable String kind, Model model) {
         model.addAttribute("kind",kind); model.addAttribute("lookupTitle","sizes".equals(kind)?"Size":("materials".equals(kind)?"Chất liệu":"Danh mục"));
@@ -32,6 +33,8 @@ public class AdminLookupController {
 
     @GetMapping
     public String list(@PathVariable String kind, @RequestParam(defaultValue="0") String page, Model model) {
+        if ("materials".equals(kind)) model.addAttribute("materialUsage", variants.materialUsage().stream().collect(
+                java.util.stream.Collectors.toMap(r -> ((Number)r.get("materialId")).intValue(), r -> ((Number)r.get("usageCount")).longValue())));
         model.addAttribute("items","sizes".equals(kind)? pagination.load(page,org.springframework.data.domain.Sort.by("id"),sizes::findAll):("materials".equals(kind)?pagination.load(page,org.springframework.data.domain.Sort.by("id"),materials::findAll):pagination.load(page,org.springframework.data.domain.Sort.by("id"),categories::findAll))); return "admin/danh-muc-kich-co/danh-sach";
     }
     @GetMapping("/create")
@@ -52,6 +55,15 @@ public class AdminLookupController {
             catch(DataIntegrityViolationException ex) { result.rejectValue("value","duplicate","Giá trị đã tồn tại hoặc vừa được sử dụng."); }
         }
         return "admin/danh-muc-kich-co/bieu-mau";
+    }
+    @PostMapping("/toggle-status/{id}")
+    public String toggleStatus(@PathVariable String kind,@PathVariable Integer id,RedirectAttributes flash) {
+        if (!"materials".equals(kind)) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        Material material=materials.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        boolean nextStatus=!Boolean.TRUE.equals(material.getStatus());
+        material.setStatus(nextStatus); materials.saveAndFlush(material);
+        flash.addFlashAttribute("message","Đã chuyển chất liệu '"+material.getName()+"' sang trạng thái: "+(nextStatus ? "Hiển thị" : "Ẩn")+".");
+        return "redirect:/admin/materials";
     }
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable String kind,@PathVariable Integer id,RedirectAttributes flash) {

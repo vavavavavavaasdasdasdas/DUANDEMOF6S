@@ -64,6 +64,10 @@
    });
    form.addEventListener('submit',event=>{
      if(form.dataset.submitting==='true'){event.preventDefault();return;}
+     if(form.querySelector('[data-initial-variants]')) {
+       const selected=Boolean(form.querySelector('[name=initialSizeIds]:checked'));
+       ['initialMaterialId','initialPrice','initialQuantity'].forEach(name=>form.elements[name].required=selected);
+     }
      let valid=true;form.querySelectorAll('input,select,textarea').forEach(f=>{if(!validate(f))valid=false;});
      if(!valid){event.preventDefault();form.querySelector('[aria-invalid=true]')?.focus();return;}
      if(!navigator.onLine){event.preventDefault();const msg=form.querySelector('.form-message');msg.textContent='Mất kết nối. Thông tin vẫn ở đây; kết nối lại rồi lưu.';msg.hidden=false;return;}
