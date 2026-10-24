@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class CheckoutRequest {
+    private Integer shippingAddressId;
     @NotBlank(message = "Vui lòng nhập họ tên người nhận")
     private String receiverName;
 

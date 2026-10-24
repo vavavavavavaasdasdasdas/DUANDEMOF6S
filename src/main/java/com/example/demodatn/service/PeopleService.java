@@ -27,6 +27,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class PeopleService {
     private final CustomerRepository customers;
+    private final com.example.demodatn.repository.khachhang.ShippingAddressRepository shippingAddresses;
     private final EmployeeRepository employees;
     private final UserRepository users;
     private final RoleRepository roles;
@@ -64,6 +65,14 @@ public class PeopleService {
         users.save(user);
     }
     @Transactional
+    public void updateProfile(String username,String fullName,String phone,String email) {
+        Customer c=customers.findForUpdateByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        String normalizedPhone=phone(phone),normalizedEmail=email(email);
+        if(customers.existsByEmailIgnoreCaseAndIdNot(normalizedEmail,c.getId()) || customers.existsByPhoneAndIdNot(normalizedPhone,c.getId()))
+            throw new IllegalArgumentException("Email hoặc số điện thoại đã tồn tại.");
+        c.setFullName(fullName);c.setPhone(normalizedPhone);c.setEmail(normalizedEmail);customers.saveAndFlush(c);
+    }
+    @Transactional
     public Customer saveCustomer(CustomerDto form) {
         int id=form.getId()==null ? -1 : form.getId();
         if(customers.existsByCustomerCodeIgnoreCaseAndIdNot(form.getCustomerCode().trim(),id))throw new PeopleValidationException("customerCode","Mã khách hàng đã tồn tại.");
@@ -71,7 +80,9 @@ public class PeopleService {
         if(customers.existsByPhoneAndIdNot(phone(form.getPhone()),id))throw new PeopleValidationException("phone","Số điện thoại đã tồn tại.");
         Customer c=form.getId()==null ? new Customer() : customers.findForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
         c.setCustomerCode(form.getCustomerCode().trim());c.setFullName(form.getFullName().trim());
-        c.setPhone(phone(form.getPhone()));c.setEmail(email(form.getEmail()));c.setAddress(form.getAddress());
+        c.setPhone(phone(form.getPhone()));c.setEmail(email(form.getEmail()));
+        c.setAddress(form.getId()==null ? form.getAddress() : shippingAddresses.findByCustomer_IdOrderBySlotAsc(id).stream()
+                .filter(com.example.demodatn.entity.khachhang.ShippingAddress::isDefaultAddress).map(com.example.demodatn.entity.khachhang.ShippingAddress::getAddress).findFirst().orElse(form.getAddress()));
         // Status changes have a separate confirmed POST and cannot be smuggled through this form.
         return customers.saveAndFlush(c);
     }

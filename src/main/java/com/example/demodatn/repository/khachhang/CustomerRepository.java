@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     java.util.Optional<Customer> findByUser_Id(Integer userId);
     java.util.Optional<Customer> findByUser_Username(String username);
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("select c from Customer c join c.user u where u.username=:username")
+    java.util.Optional<Customer> findForUpdateByUsername(@org.springframework.data.repository.query.Param("username") String username);
     boolean existsByEmailIgnoreCaseAndIdNot(String email,Integer id);
     boolean existsByPhoneAndIdNot(String phone,Integer id);
     boolean existsByCustomerCodeIgnoreCaseAndIdNot(String code,Integer id);

@@ -35,3 +35,7 @@ Không render khung canvas cho trạng thái đơn và sản phẩm bán chạy 
 ### Chất liệu — Giai đoạn A
 
 Form tạo sản phẩm dùng select native và checkbox size, giữ component/error Bootstrap hiện có. Biến thể ban đầu là tùy chọn; chọn size thì bắt buộc chất liệu, giá và tồn kho. Cột chất liệu admin chỉ lấy biến thể đang bán, tối đa ba tên và +n; thẻ user dùng fragment chung. Ẩn chất liệu dùng dialog xác nhận chung, nêu số biến thể đang dùng; chỉ loại khỏi lựa chọn tạo mới, giữ tên trên dữ liệu cũ. Phân trang giữ materialId qua PaginationAdvice hiện có.
+
+### Sổ địa chỉ nhận hàng — Giai đoạn C
+
+Dùng select native của Bootstrap (popup do hệ điều hành sở hữu), nhãn/lỗi cạnh trường và dialog store-confirm hiện có. Tối đa ba địa chỉ, lựa chọn hiện nhãn Mặc định; admin xem danh sách, chủ tài khoản quản lý. Checkout dùng select Giao tới, điền recipient/phone/address nhưng cho sửa tạm; POST đơn giữ snapshot, không ghi ngược sổ. Dữ liệu và quyền sở hữu kiểm tra lại phía service; mọi thao tác khóa customer rồi mới đọc/ghi địa chỉ.

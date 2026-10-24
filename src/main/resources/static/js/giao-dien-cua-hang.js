@@ -9,7 +9,8 @@
   catch { throw new Error('Không thể kết nối. Giỏ hàng được giữ nguyên; vui lòng thử lại.'); }
   const result=await response.json();if(!response.ok)throw new Error(result.error||result.message||'Không thể thực hiện thao tác.');return result;
  };
- const ask=(text,trigger)=>new Promise(resolve=>{
+ const ask=(text,trigger,title='Xóa khỏi giỏ hàng?',accept='Xóa')=>new Promise(resolve=>{
+  document.getElementById('store-confirm-title').textContent=title;dialog.querySelector('[data-store-accept]').textContent=accept;
   document.getElementById('store-confirm-description').textContent=text;let accepted=false;
   const yes=()=>{accepted=true;dialog.close();};const no=()=>dialog.close();
   dialog.querySelector('[data-store-accept]').addEventListener('click',yes,{once:true});

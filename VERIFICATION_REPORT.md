@@ -279,3 +279,10 @@ $env:SHOP_UPLOAD_DIR='verify/uploads'
 Script HTTP tái nghiệm thu ở `verify/phase_a_live.py` yêu cầu `PHASE_A_ADMIN_PASSWORD`, `SQLCMDPASSWORD`, `PHASE_A_TEST_DB=shopbangiay_thu` (hoặc shop_verify); script bắt buộc kiểm tra DB_NAME và dùng curl.exe + CSRF. Nó tìm sản phẩm fixture `VERIFY-A-20261024`, tạo khách/đơn test và bán tồn kho trên bản sao. Không chạy lại script tùy tiện vì tạo thêm đơn và trừ tồn POS; xem log đã lưu để đọc bằng chứng không ghi dữ liệu.
 
 Giới hạn bổ sung: audit UI toàn project còn các mục ngoài giai đoạn, xem [ui-audit-summary.json](docs/evidence/phase-a/ui-audit-summary.json). Không kiểm thử máy in vật lý; bản PDF và CSS print đã được kiểm tra. Không triển khai hay chạy migration lên database thật.
+
+
+## Giai đoạn C — Sổ địa chỉ nhận hàng (24/10/2026)
+
+Hoàn tất tối đa 3 địa chỉ bằng service có khóa customer và ràng buộc SQL; hồ sơ/checkout dùng combo box, admin chỉ xem, snapshot đơn và Unicode đã đối chiếu SQL. Chỉ chạy shop_verify. Migration 009 chạy hai lần (thêm 1 rồi 0); 117 test PASS, 0 lỗi/bỏ qua; 23 URL chính HTTP 200; 8 ca bảo mật PASS; browser 0 lỗi JS. Audit UI toàn repo còn 90 findings, ghi rõ trong báo cáo.
+
+[Bảng nghiệm thu C, SQL trước/sau, status, ảnh và lệnh migration](docs/GIAI_DOAN_C_DIA_CHI.md). Dừng sau C.

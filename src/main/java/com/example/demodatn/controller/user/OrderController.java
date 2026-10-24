@@ -33,6 +33,7 @@ public class OrderController {
     private final VoucherService voucherService;
     private final OrderRepository orderRepository;
     private final PricingService pricingService;
+    @org.springframework.beans.factory.annotation.Autowired private com.example.demodatn.service.khachhang.ShippingAddressService shippingAddresses;
     @org.springframework.beans.factory.annotation.Autowired
     private com.example.demodatn.repository.sanpham.ProductVariantRepository productVariants;
 
@@ -77,7 +78,8 @@ public class OrderController {
         BigDecimal fee = subTotal.compareTo(freeShippingThreshold) >= 0 ? BigDecimal.ZERO : shippingFee;
         
         Customer customer = getCustomer(principal);
-        
+        var addressBook=customer==null ? java.util.List.<com.example.demodatn.entity.khachhang.ShippingAddress>of() : shippingAddresses.list(principal.getName());
+        model.addAttribute("shippingAddresses",addressBook);
         if (!model.containsAttribute("checkoutRequest")) {
             CheckoutRequest req = new CheckoutRequest();
             if (customer != null) {
@@ -85,6 +87,9 @@ public class OrderController {
                 req.setPhone(customer.getPhone());
                 req.setEmail(customer.getEmail());
                 req.setShippingAddress(customer.getAddress());
+                addressBook.stream().filter(com.example.demodatn.entity.khachhang.ShippingAddress::isDefaultAddress).findFirst().ifPresent(a -> {
+                    req.setShippingAddressId(a.getId());req.setReceiverName(a.getReceiverName());req.setPhone(a.getPhone());req.setShippingAddress(a.getAddress());
+                });
             }
             model.addAttribute("checkoutRequest", req);
         }
@@ -152,6 +157,7 @@ public class OrderController {
 
         BigDecimal fee = subTotal.compareTo(freeShippingThreshold) >= 0 ? BigDecimal.ZERO : shippingFee;
         Customer customer = getCustomer(principal);
+        if(request.getShippingAddressId()!=null)shippingAddresses.owned(principal.getName(),request.getShippingAddressId());
 
         try {
             Order order = orderService.placeOrder(request, cart, customer, fee);

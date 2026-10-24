@@ -38,10 +38,6 @@
                                 <label class="form-label fw-bold">Email</label>
                                 <input type="email" class="form-control" name="email" th:value="${customer?.email}" required>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Địa chỉ giao hàng</label>
-                                <textarea class="form-control" name="address" rows="3" th:text="${customer?.address}"></textarea>
-                            </div>
                             <button type="submit" class="btn btn-primary px-4 rounded-pill">Lưu Thông Tin</button>
                         </form>
                     </div>
@@ -74,6 +70,35 @@
                 </div>
             </div>
         </div>
+
+        <section class="card shadow-sm border-0 mt-4" aria-labelledby="address-book-title">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h4 id="address-book-title">Địa chỉ nhận hàng</h4><a th:if="${shippingAddresses.size()<3}" class="btn btn-outline-primary" data-address-create th:href="@{/profile(newAddress=true)}">Thêm địa chỉ</a></div>
+                <p th:if="${shippingAddresses.size()>=3}" class="text-muted" role="status" th:text="${addressLimit}"></p>
+                <p th:if="${shippingAddresses.empty}" class="text-muted">Bạn chưa lưu địa chỉ nhận hàng. Thêm địa chỉ để chọn nhanh khi thanh toán.</p>
+                <form th:if="${!shippingAddresses.empty}" method="get" th:action="@{/profile}" class="mb-3" novalidate data-address-selector>
+                    <label class="form-label" for="profile-address">Chọn địa chỉ để xem hoặc sửa</label>
+                    <select id="profile-address" name="addressId" class="form-select" th:data-selected="${shippingAddress.id}">
+                        <option value="" th:if="${shippingAddress.id==null}" selected>Đang thêm địa chỉ mới</option>
+                        <option th:each="a:${shippingAddresses}" th:value="${a.id}" th:selected="${a.id==shippingAddress.id}" th:text="${a.slot}+'. '+${a.receiverName}+' — '+${a.address}+(${a.defaultAddress} ? ' · Mặc định' : '')"></option>
+                    </select><button type="submit" class="btn btn-outline-secondary mt-2">Xem địa chỉ</button>
+                </form>
+                <form th:if="${shippingAddress.id!=null or shippingAddresses.size()<3}" th:action="@{/profile/addresses/save}" method="post" th:object="${shippingAddress}" data-user-form data-address-form novalidate>
+                    <input type="hidden" th:field="*{id}">
+                    <p class="text-danger" role="alert" th:if="${#fields.hasGlobalErrors()}" th:each="e:${#fields.globalErrors()}" th:text="${e}"></p>
+                    <div class="mb-3"><label class="form-label" for="address-receiver">Tên người nhận</label><input id="address-receiver" class="form-control" type="text" th:field="*{receiverName}" required maxlength="100" aria-describedby="address-receiver-error" th:attr="aria-invalid=${#fields.hasErrors('receiverName')}"><p class="user-message" id="address-receiver-error" aria-live="polite"><span th:if="${#fields.hasErrors('receiverName')}" th:errors="*{receiverName}"></span></p></div>
+                    <div class="mb-3"><label class="form-label" for="address-phone">Số điện thoại</label><input id="address-phone" class="form-control" type="tel" th:field="*{phone}" required maxlength="20" pattern="(?:0[0-9]{9}|\+84[0-9]{9})" aria-describedby="address-phone-error" th:attr="aria-invalid=${#fields.hasErrors('phone')}"><p class="user-message" id="address-phone-error" aria-live="polite"><span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span></p></div>
+                    <div class="mb-3"><label class="form-label" for="address-text">Địa chỉ nhận hàng</label><textarea id="address-text" class="resize-none form-control" th:field="*{address}" required rows="3" maxlength="255" aria-describedby="address-text-error" th:attr="aria-invalid=${#fields.hasErrors('address')}"></textarea><p class="user-message" id="address-text-error" aria-live="polite"><span th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span></p></div>
+                    <div class="form-check mb-3"><input class="form-check-input" id="address-default" type="checkbox" th:field="*{makeDefault}"><label class="form-check-label" for="address-default">Đặt làm mặc định</label></div>
+                    <button type="submit" class="btn btn-primary" th:text="${shippingAddress.id==null ? 'Lưu địa chỉ mới' : 'Lưu sửa địa chỉ'}"></button>
+                </form>
+                <div th:if="${shippingAddress.id!=null}" class="d-flex flex-wrap gap-2 mt-3">
+                    <form th:action="@{/profile/addresses/{id}/default(id=${shippingAddress.id})}" method="post" novalidate><button class="btn btn-outline-primary" type="submit">Đặt làm mặc định</button></form>
+                    <form th:action="@{/profile/addresses/{id}/delete(id=${shippingAddress.id})}" method="post" data-address-delete novalidate><button class="btn btn-outline-danger" type="submit">Xóa địa chỉ</button></form>
+                </div>
+            </div>
+        </section>
+        <script src="/js/dia-chi-nhan-hang.js" defer></script>
     </div>
 </div>
 </body>

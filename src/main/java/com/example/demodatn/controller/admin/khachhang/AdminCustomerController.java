@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminCustomerController {
     private final CustomerRepository repository;
     private final PeopleService people;
+    private final com.example.demodatn.repository.khachhang.ShippingAddressRepository shippingAddresses;
     private final com.example.demodatn.repository.donhang.OrderRepository orders;
 
     private final com.example.demodatn.util.Pagination pagination;
@@ -42,6 +43,7 @@ public class AdminCustomerController {
     public String detail(@PathVariable Integer id,@RequestParam(defaultValue="0") String page,Model model) {
         var item=people.customer(id);model.addAttribute("person",item);model.addAttribute("self",people.isSelf(item.getUser()));
         model.addAttribute("orderPage",pagination.load(page,Sort.unsorted(),request->orders.findByCustomer_IdOrderByCreatedAtDescIdDesc(id,request)));
+        model.addAttribute("shippingAddresses",shippingAddresses.findByCustomer_IdOrderBySlotAsc(id));
         return "admin/khach-hang/chi-tiet";
     }
     @PostMapping("/save")
