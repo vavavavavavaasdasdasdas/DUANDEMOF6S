@@ -14,7 +14,7 @@
 <p class="field-error" id="image-error" aria-live="polite"><span th:if="${#fields.hasErrors('image')}" th:errors="*{image}"></span></p></div>
 <div class="image-manager-list" data-image-list>
 <article class="image-manager-item" th:each="i:${productImages}" th:data-image-id="${i.id}" th:data-main="${i.main}">
-<img th:src="${i.displayPath}" alt="Ảnh sản phẩm hiện tại" width="160" height="160">
+<img th:with="resolvedImage=${@productImageUrl.source(i.displayPath)}" th:src="${resolvedImage}" alt="Ảnh sản phẩm hiện tại" width="160" height="160">
 <div class="image-manager-actions"><button type="button" class="btn btn-outline-primary btn-sm" data-main-image>Đặt ảnh chính</button><button type="button" class="btn btn-outline-secondary btn-sm" data-move-image="-1" aria-label="Đưa ảnh lên trước">↑</button><button type="button" class="btn btn-outline-secondary btn-sm" data-move-image="1" aria-label="Đưa ảnh ra sau">↓</button><button type="button" class="btn btn-outline-danger btn-sm" data-remove-image>Xóa ảnh</button></div>
 </article></div><p class="field-help" data-image-count role="status"></p><div data-image-fields></div>
 </aside></div>

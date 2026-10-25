@@ -39,3 +39,7 @@ Form tạo sản phẩm dùng select native và checkbox size, giữ component/e
 ### Sổ địa chỉ nhận hàng — Giai đoạn C
 
 Dùng select native của Bootstrap (popup do hệ điều hành sở hữu), nhãn/lỗi cạnh trường và dialog store-confirm hiện có. Tối đa ba địa chỉ, lựa chọn hiện nhãn Mặc định; admin xem danh sách, chủ tài khoản quản lý. Checkout dùng select Giao tới, điền recipient/phone/address nhưng cho sửa tạm; POST đơn giữ snapshot, không ghi ngược sổ. Dữ liệu và quyền sở hữu kiểm tra lại phía service; mọi thao tác khóa customer rồi mới đọc/ghi địa chỉ.
+
+### Kiểm tra đường dẫn — phase 1
+
+Ảnh sản phẩm dùng resolver productImageUrl chung: kiểm tra file theo shop.upload-dir hoặc classpath trước khi render URL. Thiếu file thì dùng /anh/anh-san-pham-thay-the.svg hiện có; giữ nguyên khung ảnh, alt, kích thước và màu sắc. Không sửa đường dẫn trong DB và không thay ảnh gốc bằng dữ liệu giả. ID không chuyển được sang số dùng trang 404 tiếng Việt có sẵn.

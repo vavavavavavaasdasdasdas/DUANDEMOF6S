@@ -286,3 +286,12 @@ Giới hạn bổ sung: audit UI toàn project còn các mục ngoài giai đo�
 Hoàn tất tối đa 3 địa chỉ bằng service có khóa customer và ràng buộc SQL; hồ sơ/checkout dùng combo box, admin chỉ xem, snapshot đơn và Unicode đã đối chiếu SQL. Chỉ chạy shop_verify. Migration 009 chạy hai lần (thêm 1 rồi 0); 117 test PASS, 0 lỗi/bỏ qua; 23 URL chính HTTP 200; 8 ca bảo mật PASS; browser 0 lỗi JS. Audit UI toàn repo còn 90 findings, ghi rõ trong báo cáo.
 
 [Bảng nghiệm thu C, SQL trước/sau, status, ảnh và lệnh migration](docs/GIAI_DOAN_C_DIA_CHI.md). Dừng sau C.
+
+
+## Phase 1 kiểm tra đường dẫn — hoàn tất 25/10/2026
+
+Đã restore backup có sẵn thành shopbangiay_kt, chạy migration 004–009 và app cổng 18086 có log Started. Chỉ dùng DB test; không mở shopbangiay. Bản chuẩn bị commit: 108 mapping Spring, 710 request crawl (không link render hỏng/500), 2103 form đúng route/method, 57 ID sai trả 404 thân thiện, 4800 tổ hợp thống kê HTTP 200, Playwright 232 lượt 1280/375px, 8 ca bảo mật PASS. mvnw clean test: 121 run, 0 failures/errors/skipped, BUILD SUCCESS.
+
+Đã sửa xử lý numeric path ID sai và fallback ảnh thiếu file. Hai file gốc vẫn thiếu (6 tham chiếu DB). Test job có sẵn đã tác động đơn DH000669 trên bản sao và để lại 1 log; lần fixture lỗi để lại 1 user thử. Ghi rõ trong docs/BUG_PHAT_HIEN.md, không tự xóa hoặc điều chỉnh tồn. Các trường hợp không có bằng chứng đánh NOT TESTED trong báo cáo.
+
+[Bảng URL/vai trò/status, bảng lỗi, COUNT và bằng chứng thô](docs/PHASE1_KIEM_TRA_DUONG_DAN.md). DỪNG trước phase 2/3; không merge/push.

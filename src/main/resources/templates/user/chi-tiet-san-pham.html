@@ -19,13 +19,13 @@
             <div class="col-md-6 mb-4 mb-md-0">
                 <section class="product-gallery" data-product-gallery tabindex="0" aria-label="Bộ ảnh sản phẩm. Dùng phím trái, phải để chuyển ảnh.">
                     <div class="product-gallery-frame">
-                        <img data-gallery-large th:src="${product.displayImageUrl}" th:alt="${product.name}+' — ảnh sản phẩm'" width="600" height="600">
+                        <img data-gallery-large th:with="resolvedImage=${@productImageUrl.source(product.displayImageUrl)}" th:src="${resolvedImage}" th:alt="${product.name}+' — ảnh sản phẩm'" width="600" height="600">
                         <button th:if="${#lists.size(productImages)>1}" type="button" class="gallery-arrow gallery-prev" data-gallery-prev aria-label="Xem ảnh trước"><span aria-hidden="true">&lt;</span></button>
                         <button th:if="${#lists.size(productImages)>1}" type="button" class="gallery-arrow gallery-next" data-gallery-next aria-label="Xem ảnh tiếp theo"><span aria-hidden="true">&gt;</span></button>
                     </div>
                     <div class="gallery-thumbnails" th:if="${#lists.size(productImages)>1}">
                         <button th:each="image,it:${productImages}" type="button" data-gallery-thumb th:data-main="${image.main}" th:attr="aria-label='Xem góc ảnh '+${it.count}">
-                            <img th:src="${image.displayPath}" th:alt="${product.name}+' — góc ảnh '+${it.count}" width="72" height="72" loading="lazy">
+                            <img th:with="resolvedImage=${@productImageUrl.source(image.displayPath)}" th:src="${resolvedImage}" th:alt="${product.name}+' — góc ảnh '+${it.count}" width="72" height="72" loading="lazy">
                         </button>
                     </div>
                     <p data-gallery-status class="field-help" aria-live="polite" th:if="${#lists.size(productImages)>1}"></p>
@@ -121,7 +121,7 @@
             <div class="col-6 col-md-3 mb-4" th:each="rp : ${relatedProducts}">
                 <div class="card h-100 shadow-sm border-0 product-card">
                     <a th:href="@{/products/{id}(id=${rp.id})}">
-                        <img th:src="${rp.imageUrl != null and (#strings.startsWith(rp.imageUrl,'/uploads/') or #strings.startsWith(rp.imageUrl,'/images/')) ? rp.imageUrl : '/anh/anh-san-pham-thay-the.svg'}" class="card-img-top" alt="Hình ảnh">
+                        <img th:with="resolvedImage=${@productImageUrl.source(rp.imageUrl)}" th:src="${resolvedImage}" class="card-img-top" alt="Hình ảnh">
                     </a>
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title text-truncate">

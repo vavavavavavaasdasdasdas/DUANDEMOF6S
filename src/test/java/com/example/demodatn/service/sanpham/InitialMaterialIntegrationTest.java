@@ -36,7 +36,7 @@ class InitialMaterialIntegrationTest {
     @Autowired PlatformTransactionManager transactionManager;
     MockMvc mvc;
     @BeforeEach void setup() {
-        assertTrue(Set.of("shop_verify","shopbangiay_thu").contains(jdbc.queryForObject("SELECT DB_NAME()",String.class)));
+        assertTrue(Set.of("shopbangiay_kt","shop_verify","shopbangiay_thu").contains(jdbc.queryForObject("SELECT DB_NAME()",String.class)));
         mvc=MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
     }
     AdminProductForm form() {

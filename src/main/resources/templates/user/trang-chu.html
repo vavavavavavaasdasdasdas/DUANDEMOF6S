@@ -17,7 +17,7 @@
                 </div>
                 <div class="col-lg-6">
                     <img th:if="${heroProduct != null and heroProduct.imageUrl != null}"
-                         th:src="${heroProduct.imageUrl != null and (#strings.startsWith(heroProduct.imageUrl,'/uploads/') or #strings.startsWith(heroProduct.imageUrl,'/images/')) ? heroProduct.imageUrl : '/anh/anh-san-pham-thay-the.svg'}" alt="Hero"
+                         th:with="resolvedImage=${@productImageUrl.source(heroProduct.imageUrl)}" th:src="${resolvedImage}" alt="Hero"
                          class="hero-image img-fluid rounded shadow-lg">
                     <img th:if="${heroProduct == null or heroProduct.imageUrl == null}"
                          src="/anh/anh-thay-the.svg" alt="Hero"

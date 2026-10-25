@@ -7,7 +7,7 @@
           th:if="${p.hasPromotion}" th:text="|SALE -${p.discountPercentage}%|">SALE</span>
 
     <a th:href="@{/products/{id}(id=${p.id})}">
-        <img th:src="${p.imageUrl != null and (#strings.startsWith(p.imageUrl,'/uploads/') or #strings.startsWith(p.imageUrl,'/images/')) ? p.imageUrl : '/anh/anh-san-pham-thay-the.svg'}"
+        <img th:with="resolvedImage=${@productImageUrl.source(p.imageUrl)}" th:src="${resolvedImage}"
              class="product-image card-img-top" th:alt="${p.name}" loading="lazy"
 
             >

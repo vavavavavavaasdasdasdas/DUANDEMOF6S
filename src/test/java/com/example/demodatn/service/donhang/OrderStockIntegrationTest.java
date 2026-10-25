@@ -40,7 +40,7 @@ class OrderStockIntegrationTest {
     int pid,vid;
     <T>T tx(java.util.function.Supplier<T> operation){return new TransactionTemplate(manager).execute(s->operation.get());}
     @BeforeEach void fixture(){
-        assertTrue(Set.of("shop_verify","shopbangiay_thu").contains(jdbc.queryForObject("SELECT DB_NAME()",String.class)));
+        assertTrue(Set.of("shopbangiay_kt","shop_verify","shopbangiay_thu").contains(jdbc.queryForObject("SELECT DB_NAME()",String.class)));
         tx(()->{var p=new Product();p.setCode("STOCK-"+UUID.randomUUID());p.setName("Kiểm thử luật kho");products.saveAndFlush(p);pid=p.getId();var v=new ProductVariant();v.setProduct(p);v.setSize(sizes.findAll().get(0));v.setMaterial(materials.findAll().get(0));v.setPrice(BigDecimal.valueOf(100000));v.setQuantity(5);variants.saveAndFlush(v);vid=v.getId();return null;});
     }
     @AfterEach void cleanup(){

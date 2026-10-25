@@ -34,7 +34,7 @@
                                     <tr th:each="item : ${cartItems}">
                                         <td class="ps-4 py-3">
                                             <div class="cart-product d-flex align-items-center">
-                                                <img th:src="${item.imageUrl != null and (#strings.startsWith(item.imageUrl,'/uploads/') or #strings.startsWith(item.imageUrl,'/images/')) ? item.imageUrl : '/anh/anh-san-pham-thay-the.svg'}"
+                                                <img th:with="resolvedImage=${@productImageUrl.source(item.imageUrl)}" th:src="${resolvedImage}"
                                                      alt="" class="cart-thumbnail rounded object-fit-cover shadow-sm me-3"
                                                     >
                                                 <div>

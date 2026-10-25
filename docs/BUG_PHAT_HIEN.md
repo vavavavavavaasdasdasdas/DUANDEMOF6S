@@ -1,45 +1,11 @@
-# Lỗi phát hiện trong đợt dọn dẹp
+# Lỗi ngoài phạm vi phase 1 — 24/10/2026
 
-Không sửa logic trong đợt này. Kiểm thử chỉ dùng `shop_verify`.
+Chỉ kiểm tra trên shopbangiay_kt. Các mục dưới chưa tự sửa dữ liệu/luật nghiệp vụ.
 
-| Mã | Bằng chứng mốc | Hiện trạng | Xử lý |
+| Mã | Mô tả | Bằng chứng | Trạng thái |
 |---|---|---|---|
-| BUG-01 | `PeopleIntegrationTest.employeeInsertFailureRollsBackTheAlreadyInsertedUser`: kỳ vọng `DataAccessException` nhưng không có exception; `mvnw clean test` | Lỗi có trước đợt dọn, 1 failure | Giữ nguyên, không xóa hoặc bỏ qua test |
-| BUG-02 | `UserUiIntegrationTest.historyAndOwnedDetailUseSharedLayoutAndResponsiveTables`: SELECT Order ONLINE của user trả 0 dòng | Lỗi dữ liệu kiểm thử có trước đợt dọn | Giữ nguyên, không tạo đơn trên database thật |
-| BUG-03 | `UserUiIntegrationTest.orderDetailAndSuccessRejectOtherCustomersAndMissingIds`: SELECT Order của khách khác trả 0 dòng | Lỗi dữ liệu kiểm thử có trước đợt dọn | Giữ nguyên |
+| BUG-DATA-01 | 6 tham chiếu DB tới 2 file thiếu: /images/placeholder.svg (products 4/5, product_images 4/5), /uploads/products/35e401f9-d0b7-4b5b-99fd-bc011adbd94c.png (product 24, product_image 6). Backup SQL không kèm file upload. | docs/evidence/phase1/db-image-files.json | Giao diện đã fallback; chưa phục hồi ảnh gốc, cần backup file. Không sửa URL DB/không tạo ảnh giả. |
+| BUG-TEST-02 | OrderStockIntegrationTest.timeoutJobCancelsOnlyPendingUnpaidOldBankOrders gọi expiry.cancelExpiredOrders() quét toàn DB, không giới hạn fixture. Trên bản sao đã xử lý cả DH000669. | src/test/java/com/example/demodatn/service/donhang/OrderStockIntegrationTest.java:95–98; docs/evidence/phase1/test-residuals.json; residual-order-state.json | Chưa sửa vì ngoài route/resource/500. Log 966, variant 596, tồn hiện tại 19; đơn 669 CANCELLED/UNPAID, da_tru_kho=false. Không tự điều chỉnh lại tồn. |
+| BUG-TEST-03 | Lần test đầu fixture customer_code dài hơn VARCHAR(20), owner() lỗi sau khi đã tạo user ở ca không transaction. | docs/evidence/phase1/test-residuals.json; ShippingAddressIntegrationTest.java:41–44 | Đã rút ngắn mã fixture; user thử id 829 còn trong bản sao. Chưa xóa, để giai đoạn dọn dữ liệu xét duyệt. |
 
-Log mốc: `C:/Users/ADMIN/AppData/Local/Temp/don-dep-20261008/mvn-clean-test.log`. Tổng 75 test, 1 failure, 2 errors, 0 skipped; BUILD FAILURE. Đây không phải kết quả PASS.
-
-## BUG-04 — nhóm Việt hóa gây lỗi render, đã revert
-
-Mức độ: HIGH, lỗi mới từ nhóm (d), không tồn tại ở mốc và nhóm (a)–(c).
-
-Commit phát sinh: `edc396d`. Bằng chứng `d-test.log`: 76 test, 1 failure, 9 errors, 0 skipped. Bảy errors mới là `TemplateInputException` tại view giỏ hàng, trang chủ, biến thể, hóa đơn và thống kê. Test UTF-8 nhãn riêng chạy thành công nhưng không chứng minh trang render được.
-
-Nguyên nhân thô tại `d-test.log:304`:
-
-```text
-Instantiation of new objects and access to static classes or parameters is forbidden in this context
-(template: "fragments/bo-cuc/bo-cuc-quan-tri" - line 23, col 32)
-```
-
-Nhóm này dùng method static của `NhanHienThi` trong biểu thức thuộc tính Thymeleaf có hạn chế truy cập static. Bằng chứng tương tự ở `fragments/dau-trang:7`. Không hạ hạn chế bảo mật Thymeleaf, không sửa hoặc giữ lại một phần nhóm. Đã chạy `git revert --no-edit edc396d` theo luật nghiệm thu.
-
-Crawl nhóm lỗi lưu ngoài project tại `d-fail/crawl.json`; POST đăng nhập/giỏ hàng không lấy được CSRF từ trang đăng nhập lỗi được ghi NOT TESTED, không bịa status. Các GET còn lại vẫn được curl để ghi status thực tế.
-
-Việt hóa chưa hoàn thành sau revert; không tuyên bố số từ tiếng Anh còn lại bằng 0. Nếu triển khai lại cần được chọn sửa riêng; đợt này chỉ ghi lỗi và phục hồi.
-
-## BUG-05 — dữ liệu mô tả sản phẩm bị lỗi mã hóa từ trước
-
-Mức độ: MEDIUM. Không phải lỗi mới do đổi vị trí template.
-
-Bằng chứng thô cùng URL `/products/1`, anon, HTTP 200:
-
-- Mốc `0018-anon.html:196` trong thư mục bằng chứng ngoài project.
-- Cuối `toan-site-cuoi/0018-anon.html:196`.
-
-```text
-<p>GiÃƒÂ y thÃ¡Â»Æ’ thao Nike Air Force 1 trÃ¡ÂºÂ¯ng</p>
-```
-
-Hai lần đều có chuỗi lỗi này. Bộ quét cuối phát hiện 17 lượt nghi vấn trên HTML, có lặp dữ liệu qua các trang; đây không phải 17 lỗi độc lập. Trang Tài khoản vẫn render đúng `Tài khoản`, `Số điện thoại`, không có U+FFFD. Chưa kết luận nguồn hỏng nằm trong seed hay database nếu chưa SELECT đối chiếu. Không sửa dữ liệu, DataInitializer hoặc template để che lỗi trong phạm vi dọn dẹp.
+COUNT sau migration → cuối test: users 12→13, inventory_logs 63→64. Các bảng khác giữ COUNT như báo cáo phase 1; không suy COUNT bằng nhau là nội dung không đổi. Không xóa log/tài khoản hoặc tự đoán tồn kho. Phase 2/3 chưa bắt đầu.

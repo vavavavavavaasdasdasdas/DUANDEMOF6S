@@ -19,11 +19,16 @@ class UnicodePersistenceIntegrationTest {
     @Test
     void vietnameseNamesDescriptionsAndAddressesSurviveDatabaseRoundTrip() {
         Customer customer = new Customer();
+        String fixture=java.util.UUID.randomUUID().toString().substring(0,12);
+        customer.setCustomerCode("UV-"+fixture);
+        customer.setPhone("09"+String.format("%08d",java.util.concurrent.ThreadLocalRandom.current().nextInt(100000000)));
+        customer.setEmail(fixture+"@example.test");
         customer.setFullName("Nguyễn Thị Ánh");
         customer.setAddress("Đường Nguyễn Huệ, phường Bến Nghé, Hồ Chí Minh");
         entityManager.persist(customer);
 
         Product product = new Product();
+        product.setCode("UV-"+fixture);
         product.setName("Giày dệt Đà Nẵng");
         product.setDescription("Bền, nhẹ, êm ái, chống trơn trượt");
         entityManager.persist(product);

@@ -35,13 +35,13 @@ class ShippingAddressIntegrationTest {
     static final AtomicInteger sequence=new AtomicInteger(1000);
     record Owner(int id,int userId,String username) {}
     @BeforeEach void guard() {
-        assertTrue(Set.of("shop_verify","shopbangiay_thu").contains(jdbc.queryForObject("SELECT DB_NAME()",String.class)));
+        assertTrue(Set.of("shopbangiay_kt","shop_verify","shopbangiay_thu").contains(jdbc.queryForObject("SELECT DB_NAME()",String.class)));
         mvc=MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
     }
     Owner owner() {
         String name="addr-"+UUID.randomUUID();int role=jdbc.queryForObject("SELECT id FROM roles WHERE name='ROLE_USER'",Integer.class);
         int user=jdbc.queryForObject("INSERT users(username,password,role_id,status) OUTPUT INSERTED.id VALUES(?,'mock-only',?,1)",Integer.class,name,role);
-        int id=jdbc.queryForObject("INSERT customers(customer_code,full_name,phone,email,user_id,status) OUTPUT INSERTED.id VALUES(?,N'Khách Nguyễn Huệ',?,?,?,1)",Integer.class,"C-"+name,"08"+String.format("%08d",sequence.incrementAndGet()),name+"@example.test",user);
+        int id=jdbc.queryForObject("INSERT customers(customer_code,full_name,phone,email,user_id,status) OUTPUT INSERTED.id VALUES(?,N'Khách Nguyễn Huệ',?,?,?,1)",Integer.class,"ADDR-"+UUID.randomUUID().toString().substring(0,12),"08"+String.format("%08d",sequence.incrementAndGet()),name+"@example.test",user);
         return new Owner(id,user,name);
     }
     ShippingAddressForm form(String text) {var f=new ShippingAddressForm();f.setReceiverName("Nguyễn Đà Nẵng");f.setPhone("+84901234567");f.setAddress(text);return f;}
