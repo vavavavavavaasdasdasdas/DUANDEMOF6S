@@ -27,7 +27,7 @@
    const label=field.parentElement.querySelector('label');if(label&&!label.htmlFor)label.htmlFor=field.id;
    let error=document.getElementById(field.id+'-error');
    if(!error){error=document.createElement('p');error.id=field.id+'-error';error.className='user-message';error.setAttribute('aria-live','polite');field.after(error);}
-   field.setAttribute('aria-describedby',error.id);
+   field.setAttribute('aria-describedby',[...new Set([...(field.getAttribute('aria-describedby')||'').split(/\s+/).filter(Boolean),error.id])].join(' '));
   });
   form.addEventListener('submit',event=>{
    if(form.dataset.busy){event.preventDefault();return;}

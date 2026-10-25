@@ -1,4 +1,5 @@
 package com.example.demodatn.service.nhanvien;
+import com.example.demodatn.util.PasswordPolicy;
 import com.example.demodatn.dto.nhanvien.AccountPasswordForm;
 import com.example.demodatn.dto.nhanvien.AccountProfileForm;
 import com.example.demodatn.entity.nhanvien.User;
@@ -56,7 +57,7 @@ public class AdminAccountService {
             errors.rejectValue("currentPassword","incorrect","Mật khẩu hiện tại không đúng.");
         if(!java.util.Objects.equals(form.getNewPassword(),form.getConfirmPassword()))
             errors.rejectValue("confirmPassword","mismatch","Xác nhận mật khẩu không khớp.");
-        if(newTooLong)errors.rejectValue("newPassword","length","Mật khẩu vượt quá 72 byte UTF-8.");
+        if(!PasswordPolicy.isValid(form.getNewPassword()))errors.rejectValue("newPassword","policy",PasswordPolicy.MESSAGE);
         if(!newTooLong && encoder.matches(form.getNewPassword(),user.getPassword()))
             errors.rejectValue("newPassword","same","Mật khẩu mới phải khác mật khẩu hiện tại.");
         if(!errors.hasErrors()) {user.setPassword(encoder.encode(form.getNewPassword()));users.save(user);}

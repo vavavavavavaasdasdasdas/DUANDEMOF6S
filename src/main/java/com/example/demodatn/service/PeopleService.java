@@ -1,4 +1,5 @@
 package com.example.demodatn.service;
+import com.example.demodatn.util.PasswordPolicy;
 import com.example.demodatn.dto.khachhang.CustomerDto;
 import com.example.demodatn.dto.nhanvien.EmployeeDto;
 import com.example.demodatn.entity.khachhang.Customer;
@@ -99,8 +100,8 @@ public class PeopleService {
         String password=form.getPassword();
         if(u.getId()==null && (password==null || password.isBlank()))throw new PeopleValidationException("password","Nhập mật khẩu cho tài khoản mới.");
         if(password!=null && !password.isEmpty()) {
-            if(password.length()<8 || password.getBytes(java.nio.charset.StandardCharsets.UTF_8).length>72)
-                throw new PeopleValidationException("password","Mật khẩu từ 8 ký tự, tối đa 72 byte UTF-8.");
+            if(!PasswordPolicy.isValid(password))
+                throw new PeopleValidationException("password",PasswordPolicy.MESSAGE);
             u.setPassword(encoder.encode(password));
         }
         if(u.getId()==null) {

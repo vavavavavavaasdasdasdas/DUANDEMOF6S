@@ -1,4 +1,5 @@
 package com.example.demodatn.service.nhanvien;
+import com.example.demodatn.util.PasswordPolicy;
 import com.example.demodatn.dto.nhanvien.RegisterRequest;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.entity.nhanvien.Role;
@@ -21,6 +22,7 @@ public class AuthService {
 
     @Transactional
     public void register(RegisterRequest request) {
+        PasswordPolicy.requireValid(request.getPassword());
         request.setUsername(request.getUsername().trim().toLowerCase(java.util.Locale.ROOT));
         request.setEmail(com.example.demodatn.service.PeopleService.email(request.getEmail()));
         request.setPhone(com.example.demodatn.service.PeopleService.phone(request.getPhone()));
@@ -28,7 +30,7 @@ public class AuthService {
             throw new IllegalArgumentException("Mật khẩu xác nhận không khớp");
         }
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("Username đã tồn tại");
+            throw new IllegalArgumentException("Tên đăng nhập đã tồn tại");
         }
         if (customerRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email đã tồn tại");

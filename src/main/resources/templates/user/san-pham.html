@@ -43,7 +43,7 @@
 
                                 <div class="mb-4">
                                     <label class="form-label" for="material-filter">Chất liệu</label><select id="material-filter" class="form-select mb-3" name="materialId"><option value="">Tất cả chất liệu</option><option th:each="m:${materials}" th:value="${m.id}" th:selected="${materialId==m.id}" th:text="${m.name}"></option></select>
-                                    <h6 class="fw-bold mb-2">Size</h6>
+                                    <h6 class="fw-bold mb-2">Kích cỡ</h6>
                                     <div class="d-flex flex-wrap gap-2">
                                         <th:block th:each="sz : ${sizes}">
                                             <input type="radio" class="btn-check" name="sizeId" th:id="|sz-${sz.id}|" th:value="${sz.id}" th:checked="${sizeId == sz.id}">

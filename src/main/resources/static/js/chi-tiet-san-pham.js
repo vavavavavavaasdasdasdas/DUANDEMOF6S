@@ -48,7 +48,7 @@
                                 displayOriginalPrice.classList.remove('d-none');
                             }
                             if(displayDiscount) {
-                                displayDiscount.textContent = "SALE -" + discount + "%";
+                                displayDiscount.textContent = "GIẢM -" + discount + "%";
                                 displayDiscount.classList.remove('d-none');
                             }
                         } else {

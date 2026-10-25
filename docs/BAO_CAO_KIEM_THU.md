@@ -7,7 +7,8 @@ Ngày 25/10/2026, nhánh hoan-thien-chat-lieu. Theo chỉ dẫn sau của ngư�
 | Nhóm | PASS | FAIL | NOT TESTED |
 |---|---:|---:|---:|
 | Schema, migration, test và phục hồi | 7 | 0 | 0 |
-| Playwright chức năng, bảo mật, luật kho và hiệu năng | 0 | 0 | 90 |
+| Khách/đăng ký/đăng nhập — Playwright hai viewport | 19 | 0 | 0 |
+| User/Admin/bảo mật/luật kho/hiệu năng còn lại | 0 | 0 | 71 |
 
 File [cases.json](evidence/kiem-thu/cases.json) có từng Mã / Chức năng / Vai trò / Các bước / Kết quả / Bằng chứng. Chưa dùng các kết quả cũ để đánh PASS cho đợt này. Đây chưa phải báo cáo hoàn tất toàn bộ nhiệm vụ.
 
@@ -55,3 +56,12 @@ Chưa đo; cả 8 trang yêu cầu đang NOT TESTED. Chưa sửa tối ưu truy 
 Thứ tự: 004_anh_san_pham.sql → 005_chat_lieu.sql → 006_luat_ton_kho.sql → 007_tieng_viet_unicode.sql → 008_nvarchar_con_lai.sql → 009_dia_chi_nhan_hang.sql. Runner: database/migrations/chay_tat_ca.sql, sqlcmd -b -I -d <DB_đích> -i <file>. Script không tự chuyển DB; guard giữ xác nhận session context khi triển khai DB thật. **Chưa chạy bất kỳ migration/lệnh nào trên shopbangiay hoặc shopbangiay_thu.**
 
 Đang chuyển sang nhóm chức năng. Sau mỗi nhóm phá dữ liệu sẽ dừng app, restore checkpoint sạch của bản sao do audit tạo, chạy lại schema/migration nếu cần và xác minh. Cuối toàn đợt sẽ kiểm tra không còn fixture phát sinh.
+
+## Nhóm Khách, mật khẩu và ngôn ngữ — hoàn tất
+
+- 19 mục Khách chạy ở hai viewport: 38/38 PASS. Các FAIL do locator có icon và isDisabled trên option được lưu trong guest-results-first.json, đã xác minh DOM và chạy lại đúng 8 ca; không sửa ứng dụng theo lỗi script.
+- BUG-04: form đăng ký chấp nhận password=123. Người dùng quyết định thống nhất ít nhất 8 ký tự, có chữ và số cho đăng ký/đổi mật khẩu User/Admin/tạo tài khoản nhân viên. PasswordPolicy dùng chung, giữ trần 72 byte UTF-8 của BCrypt. DTO và service/controller đều chặn; regression test gồm các entry point. Thêm hướng dẫn cạnh trường.
+- BUG-05: nhãn SALE và Size được xác nhận hiển thị trong browser; đã Việt hóa GIẢM/Kích cỡ. Người dùng xác nhận giữ tên riêng/thương hiệu. Kiểm tra lại 10 trang ở hai viewport không còn những nhãn này, không tràn ngang. Các khu vực Admin/User khác vẫn chờ kiểm thử riêng.
+- Clean test trên đúng bản commit nhóm: 127 run, 0 failures/errors/skipped; BUILD SUCCESS. Lần test mới đầu bị một assert JDBC đọc trước flush trong transaction test, đã sửa fixture kiểm tra bằng flush; không phải lỗi lưu mật khẩu production.
+- Ledger ghi đúng hai tài khoản thử mới, tên tiếng Việt đọc lại đúng. Sau nhóm đã restore checkpoint sạch; schema và COUNT bằng sau migration, không giữ lại tài khoản/sản phẩm/khuyến mãi thử hoặc tác động test job.
+- Bằng chứng: evidence/kiem-thu/guest-password. Nhóm User/Admin đang tiếp tục; chưa kết luận toàn bộ chức năng PASS.

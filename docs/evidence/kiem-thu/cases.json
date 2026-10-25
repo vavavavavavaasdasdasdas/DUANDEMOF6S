@@ -59,153 +59,153 @@
     "id": "G-01",
     "function": "Trang chủ",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-02",
     "function": "Lọc danh mục",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-03",
     "function": "Lọc size",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-04",
     "function": "Lọc chất liệu",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-05",
     "function": "Lọc giá",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-06",
     "function": "Sắp xếp",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-07",
     "function": "Tìm kiếm",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-08",
     "function": "Phân trang 12",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-09",
     "function": "Chọn size và chất liệu",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-10",
     "function": "Tồn kho sản phẩm",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-11",
     "function": "Gallery nhiều góc",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-12",
     "function": "Khuyến mãi",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-13",
     "function": "Thêm nhanh giỏ",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-14",
     "function": "Đăng ký hợp lệ",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-15",
     "function": "Đăng ký trùng username",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-16",
     "function": "Đăng ký trùng email",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-17",
     "function": "Mật khẩu yếu",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-18",
     "function": "Đăng nhập sai/đúng",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "G-19",
     "function": "Đăng xuất",
     "role": "Khách",
-    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "steps": "Tự động form/click/select trên trình duyệt, xem proof theo mã trong JSON",
+    "result": "PASS",
+    "evidence": "guest-password/guest-results.json (1280 và 375px)"
   },
   {
     "id": "U-01",

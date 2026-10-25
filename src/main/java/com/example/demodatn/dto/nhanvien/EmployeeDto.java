@@ -1,4 +1,5 @@
 package com.example.demodatn.dto.nhanvien;
+import com.example.demodatn.util.PasswordPolicy;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -19,7 +20,8 @@ public class EmployeeDto {
     @Size(max=255,message="Địa chỉ tối đa 255 ký tự.") private String address;
     @Size(max=100,message="Chức vụ tối đa 100 ký tự.") private String position;
     @NotBlank(message="Nhập tên đăng nhập.")
-    @Pattern(regexp="[A-Za-z0-9_.-]{3,50}",message="Username gồm 3–50 chữ, số, dấu chấm, gạch dưới hoặc gạch ngang.")
+    @Pattern(regexp="[A-Za-z0-9_.-]{3,50}",message="Tên đăng nhập gồm 3–50 chữ, số, dấu chấm, gạch dưới hoặc gạch ngang.")
     private String username;
-    @Size(max=72,message="Mật khẩu tối đa 72 ký tự.") private String password;
+    @jakarta.validation.constraints.Pattern(regexp="(?:|"+PasswordPolicy.REGEX+")",message=PasswordPolicy.MESSAGE)
+    @Size(max=72,message=PasswordPolicy.MESSAGE) private String password;
 }

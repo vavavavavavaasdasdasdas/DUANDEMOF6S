@@ -43,3 +43,7 @@ Dùng select native của Bootstrap (popup do hệ điều hành sở hữu), nh
 ### Kiểm tra đường dẫn — phase 1
 
 Ảnh sản phẩm dùng resolver productImageUrl chung: kiểm tra file theo shop.upload-dir hoặc classpath trước khi render URL. Thiếu file thì dùng /anh/anh-san-pham-thay-the.svg hiện có; giữ nguyên khung ảnh, alt, kích thước và màu sắc. Không sửa đường dẫn trong DB và không thay ảnh gốc bằng dữ liệu giả. ID không chuyển được sang số dùng trang 404 tiếng Việt có sẵn.
+
+### Chính sách mật khẩu và ngôn ngữ — 25/10/2026
+
+Người dùng chọn mật khẩu mới ít nhất 8 ký tự, có chữ và số; giữ trần 72 byte UTF-8 của BCrypt. PasswordPolicy là nguồn kiểm tra dùng chung cho đăng ký/đổi mật khẩu User/Admin/tài khoản nhân viên. Hiển thị hướng dẫn cạnh trường bằng primitive form-text/field-help có sẵn; giữ tham chiếu aria-describedby hiện có khi thêm lỗi. Nhãn chức năng dùng GIẢM/Kích cỡ; giữ tên riêng/thương hiệu SHOES, F6S Store, Nike, Adidas theo lựa chọn người dùng. Không đổi màu hoặc bố cục.

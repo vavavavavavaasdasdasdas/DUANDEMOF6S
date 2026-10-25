@@ -1,4 +1,5 @@
 package com.example.demodatn.dto.nhanvien;
+import com.example.demodatn.util.PasswordPolicy;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -6,11 +7,12 @@ import lombok.Data;
 
 @Data
 public class RegisterRequest {
-    @NotBlank(message = "Username không được để trống")
-    @jakarta.validation.constraints.Pattern(regexp="[A-Za-z0-9_.-]{3,50}",message="Username gồm 3–50 chữ, số hoặc dấu . _ -")
+    @NotBlank(message = "Tên đăng nhập không được để trống")
+    @jakarta.validation.constraints.Pattern(regexp="[A-Za-z0-9_.-]{3,50}",message="Tên đăng nhập gồm 3–50 chữ, số hoặc dấu . _ -")
     private String username;
     
     @NotBlank(message = "Mật khẩu không được để trống")
+    @jakarta.validation.constraints.Pattern(regexp=PasswordPolicy.REGEX,message=PasswordPolicy.MESSAGE)
     private String password;
     
     @NotBlank(message = "Xác nhận mật khẩu không được để trống")

@@ -41,13 +41,14 @@
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Mật khẩu *</label>
-                            <input type="password" class="form-control" id="password" required th:field="*{password}">
+                            <input type="password" class="form-control" id="password" required minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="password-policy" th:field="*{password}">
+                            <p id="password-policy" class="form-text">Ít nhất 8 ký tự, có chữ và số; tối đa 72 byte UTF-8.</p>
                             <div class="text-danger small" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="confirmPassword" class="form-label">Xác nhận mật khẩu *</label>
-                            <input type="password" class="form-control" id="confirmPassword" required th:field="*{confirmPassword}">
+                            <input type="password" class="form-control" id="confirmPassword" autocomplete="new-password" required th:field="*{confirmPassword}">
                             <div class="text-danger small" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
                         </div>
 

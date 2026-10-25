@@ -1,4 +1,5 @@
 package com.example.demodatn.controller.user;
+import com.example.demodatn.util.PasswordPolicy;
 import com.example.demodatn.entity.khachhang.Customer;
 import com.example.demodatn.repository.khachhang.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +84,7 @@ public class ProfileController {
         String username = auth.getName();
         var user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
-            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            if (oldPassword.getBytes(java.nio.charset.StandardCharsets.UTF_8).length>72 || !passwordEncoder.matches(oldPassword, user.getPassword())) {
                 ra.addFlashAttribute("error", "Mật khẩu cũ không chính xác!");
                 return "redirect:/profile";
             }
@@ -91,6 +92,7 @@ public class ProfileController {
                 ra.addFlashAttribute("error", "Mật khẩu xác nhận không khớp!");
                 return "redirect:/profile";
             }
+            if(!PasswordPolicy.isValid(newPassword)){ra.addFlashAttribute("error",PasswordPolicy.MESSAGE);return "redirect:/profile";}
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
             ra.addFlashAttribute("message", "Đổi mật khẩu thành công!");

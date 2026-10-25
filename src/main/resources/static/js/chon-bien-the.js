@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const select = document.createElement('select'); select.className = 'form-select'; select.required = true;
             select.add(new Option('Chọn ' + text.toLowerCase(), '')); label.append(select); choices.append(label); return select;
         };
-        const material = create('Chất liệu'), size = create('Size');
+        const material = create('Chất liệu'), size = create('Kích cỡ');
         const unique = (key, name, target) => {
             const values = new Map(); radios.forEach(r => values.set(r.dataset[key], r.dataset[name]));
             values.forEach((label, id) => target.add(new Option(label, id))); return values.size;
