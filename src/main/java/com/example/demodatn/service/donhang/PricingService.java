@@ -36,10 +36,22 @@ public class PricingService {
     }
 
     public PriceInfo calculatePrice(ProductVariant variant) {
+        return calculatePrice(variant,promotionDetailRepository.findByProductId(variant.getProduct().getId()));
+    }
+
+    public java.util.Map<Integer,PriceInfo> calculatePrices(List<ProductVariant> items) {
+        if(items.isEmpty()) return java.util.Map.of();
+        var ids=items.stream().map(v->v.getProduct().getId()).distinct().toList();
+        var details=promotionDetailRepository.findByProduct_IdIn(ids).stream()
+                .collect(java.util.stream.Collectors.groupingBy(d->d.getProduct().getId()));
+        return items.stream().collect(java.util.stream.Collectors.toMap(ProductVariant::getId,
+                v->calculatePrice(v,details.getOrDefault(v.getProduct().getId(),List.of()))));
+    }
+
+    private PriceInfo calculatePrice(ProductVariant variant,List<PromotionDetail> details) {
         BigDecimal originalPrice = variant.getPrice();
         if (originalPrice == null) originalPrice = BigDecimal.ZERO;
         
-        List<PromotionDetail> details = promotionDetailRepository.findByProductId(variant.getProduct().getId());
         
         BigDecimal maxDiscountValue = BigDecimal.ZERO;
         int maxDiscountPercent = 0;

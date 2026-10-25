@@ -212,184 +212,184 @@
     "function": "Sửa hồ sơ",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-02",
     "function": "Đổi mật khẩu",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-03",
     "function": "Thêm 3 địa chỉ",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-04",
     "function": "Địa chỉ thứ 4 bị chặn",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-05",
     "function": "Sửa địa chỉ",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-06",
     "function": "Xóa địa chỉ",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-07",
     "function": "Đặt mặc định",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-08",
     "function": "Giỏ cộng dồn",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-09",
     "function": "Giỏ sửa số lượng",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-10",
     "function": "Giỏ vượt tồn",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-11",
     "function": "Xóa giỏ và rỗng",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-12",
     "function": "Checkout chọn địa chỉ",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-13",
     "function": "Voucher hợp lệ",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-14",
     "function": "Voucher 6 lý do lỗi",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-15",
     "function": "COD",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-16",
     "function": "Chuyển khoản",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-17",
     "function": "Thiếu hàng rollback",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-18",
     "function": "Trang thành công",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-19",
     "function": "Danh sách đơn",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-20",
     "function": "Chi tiết đơn",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-21",
     "function": "Hủy đơn",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-22",
     "function": "Hủy lần hai",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "U-23",
     "function": "Chặn truy cập đơn người khác",
     "role": "User",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "A-01",
@@ -668,16 +668,16 @@
     "function": "Luật kho SQL COD",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "S-02",
     "function": "Luật kho SQL chuyển khoản",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "S-03",
@@ -692,48 +692,48 @@
     "function": "Thiếu hàng rollback",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "S-05",
     "function": "Hai request đồng thời không âm",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "S-06",
     "function": "Ma trận quyền mọi route",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "S-07",
     "function": "CSRF thiếu/sai mọi POST",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "S-08",
     "function": "Ownership dữ liệu User",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "S-09",
     "function": "Unicode ghi/đọc",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "user-security/browser-results.json; stock-before-after.json; all-route-security.json"
   },
   {
     "id": "S-10",
@@ -756,16 +756,16 @@
     "function": "SQL count 8 trang trước/sau",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "performance/before/counts.txt; performance/after/counts.txt; performance/performance-compare.json"
   },
   {
     "id": "S-13",
     "function": "HTML/giá/thứ tự không đổi",
     "role": "Hệ thống",
     "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
-    "result": "NOT TESTED",
-    "evidence": ""
+    "result": "PASS",
+    "evidence": "performance/before/counts.txt; performance/after/counts.txt; performance/performance-compare.json"
   },
   {
     "id": "S-14",

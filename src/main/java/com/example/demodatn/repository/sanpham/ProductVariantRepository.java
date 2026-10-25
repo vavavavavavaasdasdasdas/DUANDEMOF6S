@@ -3,6 +3,7 @@ import com.example.demodatn.entity.sanpham.ProductVariant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, Integer> {
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths={"product","product.category","size","material"})
     java.util.List<ProductVariant> findByProduct_IdInAndStatusTrueAndProduct_StatusTrue(java.util.Collection<Integer> ids);
     boolean existsByProduct_IdAndSize_IdAndMaterial_IdAndIdNot(Integer productId, Integer sizeId, Integer materialId, Integer id);
     boolean existsByMaterial_Id(Integer materialId);

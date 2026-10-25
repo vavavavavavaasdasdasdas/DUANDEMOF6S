@@ -152,6 +152,21 @@ class DiscountIntegrationTest {
         mvc.perform(post("/admin/vouchers/save").with(csrf())).andExpect(status().isForbidden());mvc.perform(post("/admin/promotions/1/products").with(csrf())).andExpect(status().isForbidden());
     }
     @Test @Transactional
+    void batchPricingMatchesSinglePricingAndRefreshesAfterPromotionChanges() {
+        var a=variant();var b=variant();var plain=variant();
+        var f=new PromotionDto();f.setName("Giảm giá nhiều chất liệu");f.setDiscountValue(new BigDecimal("20"));
+        f.setStartDate(LocalDateTime.now().minusDays(1));f.setEndDate(LocalDateTime.now().plusDays(1));
+        var promo=admin.savePromotion(f);admin.selectProducts(promo.getId(),List.of(a.getProduct().getId(),b.getProduct().getId()));
+        var items=List.of(a,b,plain);var prices=pricing.calculatePrices(items);
+        for(var v:items){var single=pricing.calculatePrice(v);var batch=prices.get(v.getId());
+            money(single.getFinalPrice().toPlainString(),batch.getFinalPrice());
+            assertEquals(single.getDiscountPercentage(),batch.getDiscountPercentage());assertEquals(single.isHasPromotion(),batch.isHasPromotion());}
+        promo.setStatus(false);promotions.flush();
+        var refreshed=pricing.calculatePrices(items);money("200000",refreshed.get(a.getId()).getFinalPrice());
+        assertFalse(refreshed.get(a.getId()).isHasPromotion());assertTrue(pricing.calculatePrices(List.of()).isEmpty());
+    }
+
+    @Test @Transactional
     void decimalColumnPercentageCanBeEditedButFractionalPercentageIsRejected() {
         var f=new PromotionDto();f.setName("Kiểm thử sửa đợt giảm giá");f.setDiscountValue(new BigDecimal("20.00"));f.setStartDate(LocalDateTime.now().minusDays(1));f.setEndDate(LocalDateTime.now().plusDays(1));
         assertTrue(validator.validate(f).isEmpty());var p=admin.savePromotion(f);f.setId(p.getId());f.setName("Tên đã sửa");admin.savePromotion(f);assertEquals("Tên đã sửa",p.getName());

@@ -49,7 +49,20 @@ COUNT trước migration: 17 bảng; sau: 20 bảng (chat_lieu=8, product_images
 
 ## SQL mỗi trang trước/sau
 
-Chưa đo; cả 8 trang yêu cầu đang NOT TESTED. Chưa sửa tối ưu truy vấn hoặc gán số ước lượng.
+Đo bằng proxy DataSource đếm prepareStatement, qua MockMvc render đủ Thymeleaf và Spring Security, với 14 sản phẩm fixture bổ sung. Có tính cả JPA và JdbcTemplate.
+
+| URL | Trước | Sau | Kết quả |
+|---|---:|---:|---|
+| / | 159 | 14 | PASS |
+| /products | 63 | 8 | PASS |
+| /products/949 | 22 | 22 | PASS |
+| /category/1 | 41 | 9 | PASS |
+| /cart (có một dòng) | 3 | 3 | PASS |
+| /admin/pos | 50 | 9 | PASS |
+| /admin/products-crud | 6 | 6 | PASS |
+| /admin/inventory | 6 | 6 | PASS |
+
+BUG-06: ProductFilterService truy vấn biến thể từng sản phẩm và PricingService truy vấn khuyến mãi mỗi biến thể; POS tính cùng giá hai lần. Đã nạp gộp theo danh sách ID và dùng lại bản đồ giá trong một lần render. HTML cả 8 trang giống từng ký tự sau khi thay riêng token CSRF và checkoutToken ngẫu nhiên bằng placeholder; sản phẩm/giá/thứ tự không đổi. Bằng chứng SQL, HTML đã bỏ token và phép so sánh: evidence/kiem-thu/performance. Mặc định show-sql=false, profile debug bật lại. Không thêm cache qua request.
 
 ## Migration triển khai
 
@@ -65,3 +78,13 @@ Thứ tự: 004_anh_san_pham.sql → 005_chat_lieu.sql → 006_luat_ton_kho.sql 
 - Clean test trên đúng bản commit nhóm: 127 run, 0 failures/errors/skipped; BUILD SUCCESS. Lần test mới đầu bị một assert JDBC đọc trước flush trong transaction test, đã sửa fixture kiểm tra bằng flush; không phải lỗi lưu mật khẩu production.
 - Ledger ghi đúng hai tài khoản thử mới, tên tiếng Việt đọc lại đúng. Sau nhóm đã restore checkpoint sạch; schema và COUNT bằng sau migration, không giữ lại tài khoản/sản phẩm/khuyến mãi thử hoặc tác động test job.
 - Bằng chứng: evidence/kiem-thu/guest-password. Nhóm User/Admin đang tiếp tục; chưa kết luận toàn bộ chức năng PASS.
+
+## Nhóm User và bảo mật — hoàn tất
+
+23 mục User ở hai viewport: 46/46 PASS. Hồ sơ/mật khẩu, giới hạn địa chỉ, mặc định, Unicode, giỏ, địa chỉ checkout, voucher hợp lệ và bảy lý do từ chối, COD/chuyển khoản, thành công, danh sách/chi tiết/hủy đơn và ownership đều có kết quả browser. SQL xác nhận sửa tạm tại checkout không sửa sổ địa chỉ.
+
+Luật kho cho từng viewport: COD 20→20 khi đặt→19 khi xác nhận→20 khi hủy→20 khi hủy lại; chuyển khoản 20→19 khi đặt→20 khi hủy. Thiếu hàng không đổi đơn/voucher/log/kho. Hai request xác nhận đồng thời khi còn một đôi: đúng một đơn được xác nhận, một log trừ, kho bằng 0.
+
+Ma trận GET và CSRF thiếu/sai mọi POST có 639 kết quả PASS; thêm 96 POST Admin có CSRF hợp lệ kiểm tra khách 302/User 403. Năm kiểm tra ownership địa chỉ/checkout trả 404, không đổi dữ liệu; đơn người khác trả 403. Không ghi nhận pageerror hoặc tràn ngang trong 46 ca User. Một lần mobile thiếu fixture stock do ca đồng thời trước đó đã bán hết; đã đặt lại tồn fixture và chạy lại đúng ca, không sửa ứng dụng theo lỗi chuẩn bị dữ liệu.
+
+Bằng chứng: evidence/kiem-thu/user-security. Sau nhóm đã dừng app, restore checkpoint đúng DB audit, COUNT/schema bằng baseline. Nhóm Admin/POS và kiểm tra chất lượng toàn bộ vẫn đang chạy; chưa kết luận hoàn tất toàn đợt.

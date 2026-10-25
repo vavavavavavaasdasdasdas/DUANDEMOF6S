@@ -51,6 +51,10 @@ public class ProductFilterService {
         if (page < 0) page = 0;
 
         List<Product> allProducts = productRepository.findAll();
+        var activeIds=allProducts.stream().filter(p->Boolean.TRUE.equals(p.getStatus())).map(Product::getId).toList();
+        var allVariants=activeIds.isEmpty()?List.<ProductVariant>of():productVariantRepository.findByProduct_IdInAndStatusTrueAndProduct_StatusTrue(activeIds);
+        var variantsByProduct=allVariants.stream().collect(Collectors.groupingBy(v->v.getProduct().getId()));
+        var prices=pricingService.calculatePrices(allVariants);
 
         Map<Integer, Long> variantSoldMap = orderDetailRepository.eligibleSoldQuantities().stream()
                 .collect(Collectors.toMap(row -> ((Number) row.get("variantId")).intValue(),
@@ -68,7 +72,7 @@ public class ProductFilterService {
             }
             if (categoryId != null && (p.getCategory() == null || !p.getCategory().getId().equals(categoryId))) continue;
 
-            List<ProductVariant> variants = productVariantRepository.findByProduct_IdAndStatusTrue(p.getId());
+            List<ProductVariant> variants = variantsByProduct.getOrDefault(p.getId(),List.of());
             if (variants.isEmpty()) continue;
 
             if (materialId != null) variants = variants.stream().filter(v -> v.getMaterial().getId().equals(materialId)).toList();
@@ -98,7 +102,7 @@ public class ProductFilterService {
                 vDto.setQuantity(q);
                 varDtos.add(vDto);
 
-                PriceInfo pi = pricingService.calculatePrice(v);
+                PriceInfo pi = prices.get(v.getId());
                 if (minOrig == null || pi.getOriginalPrice().compareTo(minOrig) < 0) minOrig = pi.getOriginalPrice();
                 if (maxOrig == null || pi.getOriginalPrice().compareTo(maxOrig) > 0) maxOrig = pi.getOriginalPrice();
                 if (minFinal == null || pi.getFinalPrice().compareTo(minFinal) < 0) minFinal = pi.getFinalPrice();

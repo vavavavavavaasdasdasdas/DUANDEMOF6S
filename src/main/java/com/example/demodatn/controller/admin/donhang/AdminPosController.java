@@ -69,8 +69,9 @@ public class AdminPosController {
             model.addAttribute("categories",categories.findAll(org.springframework.data.domain.Sort.by("name","id")));
             model.addAttribute("products",productPage.getContent());model.addAttribute("productPage",productPage);
             model.addAttribute("variants",available.stream().filter(v->v.getQuantity()>0).toList());
-            model.addAttribute("variantPrices", available.stream().collect(java.util.stream.Collectors.toMap(v->v.getId(), pricing::calculatePrice)));
-            model.addAttribute("productPrices", available.stream().collect(java.util.stream.Collectors.toMap(v->v.getProduct().getId(),v->pricing.calculatePrice(v).getFinalPrice(),BigDecimal::min)));
+            var prices=pricing.calculatePrices(available);
+            model.addAttribute("variantPrices", prices);
+            model.addAttribute("productPrices", available.stream().collect(java.util.stream.Collectors.toMap(v->v.getProduct().getId(),v->prices.get(v.getId()).getFinalPrice(),BigDecimal::min)));
             model.addAttribute("q", q); model.addAttribute("category", category);
             model.addAttribute("posCart", cart);
             boolean valid = true;
