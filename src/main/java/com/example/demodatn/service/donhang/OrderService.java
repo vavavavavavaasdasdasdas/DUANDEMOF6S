@@ -103,7 +103,7 @@ public class OrderService {
         invoice.setCustomerName(order.getCustomer() != null ? order.getCustomer().getFullName()
                 : order.getReceiverName() != null ? order.getReceiverName() : "Khách lẻ");
         invoice.setCustomerPhone(order.getCustomer() != null ? order.getCustomer().getPhone() : order.getPhoneNumber());
-        invoice.setEmployeeName(order.getEmployee() == null ? "Đơn online" : order.getEmployee().getFullName());
+        invoice.setEmployeeName(order.getEmployee() == null ? "Đơn trực tuyến" : order.getEmployee().getFullName());
         if ("POS".equals(order.getOrderType()) && "CASH".equals(order.getPaymentMethod())) {
             invoice.setCashReceived(cashReceived);
             invoice.setChangeAmount(cashReceived.subtract(order.getFinalAmount()));

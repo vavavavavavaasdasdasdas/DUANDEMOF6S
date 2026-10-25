@@ -14,7 +14,7 @@ public class CustomerDto {
     @NotBlank(message="Nhập số điện thoại.")
     @Pattern(regexp="(?:0[0-9]{9}|\\+84[0-9]{9})",message="SĐT gồm 10 số bắt đầu bằng 0 hoặc +84 và 9 số.")
     private String phone;
-    @NotBlank(message="Nhập email.") @Email(message="Email không hợp lệ.") @Size(max=100,message="Email tối đa 100 ký tự.")
+    @NotBlank(message="Nhập thư điện tử.") @Email(message="Thư điện tử không hợp lệ.") @Size(max=100,message="Thư điện tử tối đa 100 ký tự.")
     private String email;
     @Size(max=255,message="Địa chỉ tối đa 255 ký tự.") private String address;
 }

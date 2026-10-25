@@ -129,7 +129,7 @@ public class CartController {
         }
         int stock = variant.getQuantity() != null ? variant.getQuantity() : 0;
         if (quantity > stock) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Chỉ còn " + stock + " sản phẩm size " + variant.getSize().getSizeValue()));
+            return ResponseEntity.badRequest().body(Map.of("error", "Chỉ còn " + stock + " sản phẩm kích cỡ " + variant.getSize().getSizeValue()));
         }
 
         List<CartItemDto> cart = getCart(session);
@@ -179,7 +179,7 @@ public class CartController {
 
     private String addItem(HttpSession session, Integer variantId, Integer quantity) {
         if (variantId == null || quantity == null || quantity <= 0) {
-            return "Vui lòng chọn size và số lượng hợp lệ!";
+            return "Vui lòng chọn kích cỡ và số lượng hợp lệ!";
         }
         ProductVariant variant = productService.getVariantById(variantId);
         if (variant == null || !Boolean.TRUE.equals(variant.getStatus()) || !Boolean.TRUE.equals(variant.getProduct().getStatus())) {

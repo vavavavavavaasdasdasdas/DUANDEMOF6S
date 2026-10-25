@@ -21,9 +21,9 @@ public class RegisterRequest {
     @NotBlank(message = "Họ tên không được để trống")
     private String fullName;
     
-    @NotBlank(message="Nhập email")
+    @NotBlank(message="Nhập thư điện tử")
     @jakarta.validation.constraints.Size(max=100)
-    @Email(message = "Email không hợp lệ")
+    @Email(message = "Thư điện tử không hợp lệ")
     private String email;
     
     @NotBlank(message = "SĐT không được để trống")

@@ -65,7 +65,7 @@ public class PosHoldService {
         if(!Set.of("CASH","TRANSFER").contains(Objects.toString(request.getPaymentMethod(),"")))
             throw new IllegalArgumentException("Chọn Tiền mặt hoặc Chuyển khoản.");
         if(request.getNote()!=null && request.getNote().length()>500)throw new IllegalArgumentException("Ghi chú tối đa 500 ký tự.");
-        if(request.getVoucherCode()!=null && request.getVoucherCode().length()>50)throw new IllegalArgumentException("Mã voucher tối đa 50 ký tự.");
+        if(request.getVoucherCode()!=null && request.getVoucherCode().length()>50)throw new IllegalArgumentException("Mã phiếu giảm giá tối đa 50 ký tự.");
         PosHeldOrder hold;
         if(currentId==null) {
             if(holds.countByStaffUser_IdAndExpiresAtAfter(user.getId(),now())>=5)throw new IllegalArgumentException(LIMIT_MESSAGE);

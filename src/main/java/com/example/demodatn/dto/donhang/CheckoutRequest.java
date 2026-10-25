@@ -12,7 +12,7 @@ public class CheckoutRequest {
     @NotBlank(message = "Vui lòng nhập số điện thoại")
     private String phone;
 
-    @NotBlank(message = "Vui lòng nhập email")
+    @NotBlank(message = "Vui lòng nhập thư điện tử")
     private String email;
 
     @NotBlank(message = "Vui lòng nhập địa chỉ giao hàng")

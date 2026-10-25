@@ -50,7 +50,7 @@ public class ProfileController {
             Authentication auth,RedirectAttributes ra) {
         try {people.updateProfile(auth.getName(),fullName,phone,email);ra.addFlashAttribute("message","Cập nhật thông tin thành công!");}
         catch(IllegalArgumentException ex){ra.addFlashAttribute("error",ex.getMessage());}
-        catch(org.springframework.dao.DataIntegrityViolationException ex){ra.addFlashAttribute("error","Email hoặc số điện thoại vừa được sử dụng. Vui lòng thử lại.");}
+        catch(org.springframework.dao.DataIntegrityViolationException ex){ra.addFlashAttribute("error","Thư điện tử hoặc số điện thoại vừa được sử dụng. Vui lòng thử lại.");}
         return "redirect:/profile";
     }
     @PostMapping("/addresses/save")

@@ -39,8 +39,8 @@ public class DiscountAdminService {
     public Voucher saveVoucher(VoucherDto f) {
         dates(f.getStartDate(),f.getEndDate());
         String code=VoucherService.normalize(f.getCode());
-        if(vouchers.existsByCodeIgnoreCaseAndIdNot(code,f.getId()==null ? -1 : f.getId())) throw new DiscountValidationException("code","Mã voucher đã tồn tại.");
-        if(!Set.of("PERCENT","FIXED").contains(f.getDiscountType())) throw new DiscountValidationException("discountType","Loại voucher không hợp lệ.");
+        if(vouchers.existsByCodeIgnoreCaseAndIdNot(code,f.getId()==null ? -1 : f.getId())) throw new DiscountValidationException("code","Mã phiếu giảm giá đã tồn tại.");
+        if(!Set.of("PERCENT","FIXED").contains(f.getDiscountType())) throw new DiscountValidationException("discountType","Loại phiếu giảm giá không hợp lệ.");
         if(f.getDiscountValue()==null || f.getDiscountValue().signum()<=0 || ("PERCENT".equals(f.getDiscountType()) && (f.getDiscountValue().compareTo(BigDecimal.ONE)<0 || f.getDiscountValue().compareTo(BigDecimal.valueOf(100))>0))) throw new DiscountValidationException("discountValue","Phần trăm từ 1–100; số tiền phải lớn hơn 0.");
         if(f.getMaxDiscount()!=null && f.getMaxDiscount().signum()<=0) throw new DiscountValidationException("maxDiscount","Giảm tối đa phải lớn hơn 0.");
         Voucher v=f.getId()==null ? new Voucher() : vouchers.findForUpdate(f.getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -51,7 +51,7 @@ public class DiscountAdminService {
         v.setStartDate(f.getStartDate());v.setEndDate(f.getEndDate());v.setUsageLimit(f.getUsageLimit());v.setIsPublic(f.getIsPublic());v.setStatus(f.getStatus());
         if(Boolean.TRUE.equals(f.getIsPublic())) v.setCustomer(null);
         else {
-            if(f.getCustomerId()==null) throw new DiscountValidationException("customerId","Voucher riêng tư bắt buộc chọn khách hàng.");
+            if(f.getCustomerId()==null) throw new DiscountValidationException("customerId","Phiếu giảm giá riêng tư bắt buộc chọn khách hàng.");
             v.setCustomer(customers.findById(f.getCustomerId()).orElseThrow(()->new DiscountValidationException("customerId","Khách hàng không tồn tại.")));
         }
         // usedCount is deliberately not bindable from the Admin form.
@@ -60,8 +60,8 @@ public class DiscountAdminService {
     @Transactional
     public String deleteVoucher(Integer id) {
         Voucher v=vouchers.findForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
-        if(orders.existsByVoucher_Id(id) || (v.getUsedCount()!=null && v.getUsedCount()>0)) { v.setStatus(false);return "Voucher đã được sử dụng: đã khóa và giữ dữ liệu đơn cũ."; }
-        vouchers.delete(v);return "Đã xóa voucher.";
+        if(orders.existsByVoucher_Id(id) || (v.getUsedCount()!=null && v.getUsedCount()>0)) { v.setStatus(false);return "Phiếu giảm giá đã được sử dụng: đã khóa và giữ dữ liệu đơn cũ."; }
+        vouchers.delete(v);return "Đã xóa phiếu giảm giá.";
     }
     @Transactional
     public Promotion savePromotion(PromotionDto f) {

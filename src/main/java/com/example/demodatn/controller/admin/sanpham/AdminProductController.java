@@ -57,8 +57,8 @@ public class AdminProductController {
     @PostMapping("/save")
     public String save(@Valid @ModelAttribute("product") AdminProductForm product, BindingResult result, Model model, RedirectAttributes flash) {
         if (product.getId()==null && product.getInitialSizeIds()!=null && !product.getInitialSizeIds().isEmpty()) {
-            if (product.getInitialMaterialId()==null) result.rejectValue("initialMaterialId","required","Chọn chất liệu khi chọn size ban đầu.");
-            if (product.getInitialPrice()==null) result.rejectValue("initialPrice","required","Nhập giá khi chọn size ban đầu.");
+            if (product.getInitialMaterialId()==null) result.rejectValue("initialMaterialId","required","Chọn chất liệu khi chọn kích cỡ ban đầu.");
+            if (product.getInitialPrice()==null) result.rejectValue("initialPrice","required","Nhập giá khi chọn kích cỡ ban đầu.");
             if (product.getInitialQuantity()==null) result.rejectValue("initialQuantity","required","Nhập tồn kho ban đầu từ 0 trở lên.");
         }
         if (!result.hasErrors()) {

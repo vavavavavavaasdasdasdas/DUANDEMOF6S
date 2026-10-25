@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/bo-cuc/bo-cuc-quan-tri :: layout(~{::section})}">
 <body><section>
-<div class="admin-heading"><div><span class="eyebrow">TỔNG QUAN KINH DOANH</span><h1>Dashboard</h1><p class="admin-description">Theo dõi hoạt động cửa hàng và những việc cần xử lý.</p></div><span class="date-chip" th:text="'Ngày ' + ${dashboard.today}"></span></div>
+<div class="admin-heading"><div><span class="eyebrow">TỔNG QUAN KINH DOANH</span><h1>Bảng điều khiển</h1><p class="admin-description">Theo dõi hoạt động cửa hàng và những việc cần xử lý.</p></div><span class="date-chip" th:text="'Ngày ' + ${dashboard.today}"></span></div>
 <div class="metric-grid">
 <a class="metric-card" data-metric="todayRevenue" th:href="@{/admin/reports/revenue?period=today}">
 <span class="metric-title">Doanh thu hôm nay<span class="metric-icon" aria-hidden="true">↗</span></span>

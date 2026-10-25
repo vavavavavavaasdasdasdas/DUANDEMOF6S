@@ -9,19 +9,19 @@ import java.util.List;
 public class AdminPageAdvice {
     public record NavItem(String group, String title, String route, String key) {}
     public static final List<NavItem> NAV = List.of(
-        new NavItem("", "Dashboard", "/admin/dashboard", "dashboard"),
+        new NavItem("", "Bảng điều khiển", "/admin/dashboard", "dashboard"),
         new NavItem("BÁN HÀNG", "Bán hàng tại quầy", "/admin/pos", "pos"),
         new NavItem("", "Đơn hàng", "/admin/orders", "orders"),
         new NavItem("", "Hóa đơn", "/admin/invoices", "invoices"),
         new NavItem("SẢN PHẨM", "Sản phẩm", "/admin/products-crud", "products"),
-        new NavItem("", "Variant", "/admin/variants", "variants"),
+        new NavItem("", "Biến thể", "/admin/variants", "variants"),
         new NavItem("", "Danh mục", "/admin/categories", "categories"),
-        new NavItem("", "Size", "/admin/sizes", "sizes"),
+        new NavItem("", "Kích cỡ", "/admin/sizes", "sizes"),
         new NavItem("", "Chất liệu", "/admin/materials", "materials"),
         new NavItem("", "Tồn kho", "/admin/inventory", "inventory"),
         new NavItem("KHÁCH HÀNG", "Khách hàng", "/admin/customers", "customers"),
         new NavItem("", "Nhân viên", "/admin/employees", "employees"),
-        new NavItem("KHUYẾN MÃI", "Voucher", "/admin/vouchers", "vouchers"),
+        new NavItem("KHUYẾN MÃI", "Phiếu giảm giá", "/admin/vouchers", "vouchers"),
         new NavItem("", "Đợt giảm giá", "/admin/promotions", "promotions"),
         new NavItem("THỐNG KÊ", "Doanh thu", "/admin/statistics/revenue", "revenue"),
         new NavItem("", "Sản phẩm bán chạy", "/admin/statistics/best-sellers", "best-sellers"),

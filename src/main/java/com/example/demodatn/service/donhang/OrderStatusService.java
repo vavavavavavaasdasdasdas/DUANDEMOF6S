@@ -62,7 +62,7 @@ public class OrderStatusService {
             for(var line:quantities.entrySet()) {
                 var variant=inventory.lock(line.getKey());
                 if(!Boolean.TRUE.equals(variant.getStatus()) || !Boolean.TRUE.equals(variant.getProduct().getStatus()) || variant.getQuantity()<line.getValue())
-                    throw new IllegalArgumentException("Không đủ tồn kho hoặc sản phẩm ngừng bán: "+variant.getProduct().getName()+" / Size "+variant.getSize().getSizeValue()+" / "+variant.getMaterial().getName());
+                    throw new IllegalArgumentException("Không đủ tồn kho hoặc sản phẩm ngừng bán: "+variant.getProduct().getName()+" / Kích cỡ "+variant.getSize().getSizeValue()+" / "+variant.getMaterial().getName());
             }
         }
     }

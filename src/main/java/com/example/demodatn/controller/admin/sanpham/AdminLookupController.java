@@ -27,7 +27,7 @@ public class AdminLookupController {
     private final com.example.demodatn.repository.sanpham.ProductVariantRepository variants;
     @ModelAttribute
     public void common(@PathVariable String kind, Model model) {
-        model.addAttribute("kind",kind); model.addAttribute("lookupTitle","sizes".equals(kind)?"Size":("materials".equals(kind)?"Chất liệu":"Danh mục"));
+        model.addAttribute("kind",kind); model.addAttribute("lookupTitle","sizes".equals(kind)?"Kích cỡ":("materials".equals(kind)?"Chất liệu":"Danh mục"));
     }
     private final com.example.demodatn.util.Pagination pagination;
 
@@ -50,7 +50,7 @@ public class AdminLookupController {
     @PostMapping("/save")
     public String save(@PathVariable String kind,@Valid @ModelAttribute("lookup") LookupForm form,BindingResult result,Model model,RedirectAttributes flash) {
         if(!result.hasErrors()) {
-            try { catalog.saveLookup(kind,form); flash.addFlashAttribute("message","Đã lưu "+("sizes".equals(kind)?"size.":("materials".equals(kind)?"chất liệu.":"danh mục."))); return "redirect:/admin/"+kind; }
+            try { catalog.saveLookup(kind,form); flash.addFlashAttribute("message","Đã lưu "+("sizes".equals(kind)?"kích cỡ.":("materials".equals(kind)?"chất liệu.":"danh mục."))); return "redirect:/admin/"+kind; }
             catch(CatalogValidationException ex) { result.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
             catch(DataIntegrityViolationException ex) { result.rejectValue("value","duplicate","Giá trị đã tồn tại hoặc vừa được sử dụng."); }
         }

@@ -33,7 +33,7 @@ public class AuthService {
             throw new IllegalArgumentException("Tên đăng nhập đã tồn tại");
         }
         if (customerRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email đã tồn tại");
+            throw new IllegalArgumentException("Thư điện tử đã tồn tại");
         }
         if (customerRepository.findByPhone(request.getPhone()).isPresent()) {
             throw new IllegalArgumentException("SĐT đã tồn tại");

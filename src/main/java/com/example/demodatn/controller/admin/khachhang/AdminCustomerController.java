@@ -53,7 +53,7 @@ public class AdminCustomerController {
                 var saved=people.saveCustomer(form);flash.addFlashAttribute("message","Đã lưu thông tin.");
                 return "redirect:/admin/customers/detail/"+saved.getId();
             } catch(PeopleValidationException ex) { errors.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
-            catch(DataIntegrityViolationException ex) { errors.reject("duplicate","Dữ liệu mã/email/SĐT/tài khoản vừa được sử dụng. Kiểm tra lại trước khi lưu."); }
+            catch(DataIntegrityViolationException ex) { errors.reject("duplicate","Dữ liệu mã/thư điện tử/SĐT/tài khoản vừa được sử dụng. Kiểm tra lại trước khi lưu."); }
         }
         return "admin/khach-hang/bieu-mau";
     }

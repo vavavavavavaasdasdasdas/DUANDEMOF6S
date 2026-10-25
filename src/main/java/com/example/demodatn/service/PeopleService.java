@@ -70,14 +70,14 @@ public class PeopleService {
         Customer c=customers.findForUpdateByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         String normalizedPhone=phone(phone),normalizedEmail=email(email);
         if(customers.existsByEmailIgnoreCaseAndIdNot(normalizedEmail,c.getId()) || customers.existsByPhoneAndIdNot(normalizedPhone,c.getId()))
-            throw new IllegalArgumentException("Email hoặc số điện thoại đã tồn tại.");
+            throw new IllegalArgumentException("Thư điện tử hoặc số điện thoại đã tồn tại.");
         c.setFullName(fullName);c.setPhone(normalizedPhone);c.setEmail(normalizedEmail);customers.saveAndFlush(c);
     }
     @Transactional
     public Customer saveCustomer(CustomerDto form) {
         int id=form.getId()==null ? -1 : form.getId();
         if(customers.existsByCustomerCodeIgnoreCaseAndIdNot(form.getCustomerCode().trim(),id))throw new PeopleValidationException("customerCode","Mã khách hàng đã tồn tại.");
-        if(customers.existsByEmailIgnoreCaseAndIdNot(email(form.getEmail()),id))throw new PeopleValidationException("email","Email đã tồn tại.");
+        if(customers.existsByEmailIgnoreCaseAndIdNot(email(form.getEmail()),id))throw new PeopleValidationException("email","Thư điện tử đã tồn tại.");
         if(customers.existsByPhoneAndIdNot(phone(form.getPhone()),id))throw new PeopleValidationException("phone","Số điện thoại đã tồn tại.");
         Customer c=form.getId()==null ? new Customer() : customers.findForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
         c.setCustomerCode(form.getCustomerCode().trim());c.setFullName(form.getFullName().trim());
@@ -91,7 +91,7 @@ public class PeopleService {
     public Employee saveEmployee(EmployeeDto form) {
         int id=form.getId()==null ? -1 : form.getId();
         if(employees.existsByEmployeeCodeIgnoreCaseAndIdNot(form.getEmployeeCode().trim(),id))throw new PeopleValidationException("employeeCode","Mã nhân viên đã tồn tại.");
-        if(employees.existsByEmailIgnoreCaseAndIdNot(email(form.getEmail()),id))throw new PeopleValidationException("email","Email đã tồn tại.");
+        if(employees.existsByEmailIgnoreCaseAndIdNot(email(form.getEmail()),id))throw new PeopleValidationException("email","Thư điện tử đã tồn tại.");
         if(employees.existsByPhoneAndIdNot(phone(form.getPhone()),id))throw new PeopleValidationException("phone","Số điện thoại đã tồn tại.");
         Employee e=form.getId()==null ? new Employee() : employees.findForUpdate(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
         User u=e.getUser()==null ? new User() : e.getUser();

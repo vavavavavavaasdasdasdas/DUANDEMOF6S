@@ -7,9 +7,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Data
 public class VoucherDto {
     private Integer id;
-    @NotBlank(message="Nhập mã voucher.") @Pattern(regexp="[A-Za-z0-9_-]{1,50}",message="Mã gồm 1–50 chữ, số, _ hoặc -.")
+    @NotBlank(message="Nhập mã phiếu giảm giá.") @Pattern(regexp="[A-Za-z0-9_-]{1,50}",message="Mã gồm 1–50 chữ, số, _ hoặc -.")
     private String code;
-    @NotBlank(message="Nhập tên voucher.") @Size(max=100,message="Tên tối đa 100 ký tự.") private String name;
+    @NotBlank(message="Nhập tên phiếu giảm giá.") @Size(max=100,message="Tên tối đa 100 ký tự.") private String name;
     @NotBlank @Pattern(regexp="PERCENT|FIXED",message="Chọn loại giảm hợp lệ.") private String discountType="PERCENT";
     @NotNull(message="Nhập giá trị giảm.") @DecimalMin(value="0",inclusive=false,message="Giá trị giảm phải lớn hơn 0.") @Digits(integer=16,fraction=2)
     private BigDecimal discountValue;

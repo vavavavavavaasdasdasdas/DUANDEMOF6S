@@ -63,7 +63,7 @@ class InitialMaterialIntegrationTest {
         var f=form();mvc.perform(multipart("/admin/products-crud/save").with(csrf()).param("code",f.getCode()).param("name",f.getName())
             .param("categoryId",f.getCategoryId().toString()).param("status","false").param("initialSizeIds",f.getInitialSizeIds().get(0).toString()))
             .andExpect(status().isOk()).andExpect(model().attributeHasFieldErrors("product","initialMaterialId","initialPrice"))
-            .andExpect(content().string(containsString("Chọn chất liệu khi chọn size ban đầu.")));
+            .andExpect(content().string(containsString("Chọn chất liệu khi chọn kích cỡ ban đầu.")));
         assertFalse(products.existsByCodeIgnoreCaseAndIdNot(f.getCode(),-1));
     }
     @Test @org.springframework.transaction.annotation.Transactional
@@ -87,7 +87,7 @@ class InitialMaterialIntegrationTest {
         var f=form();int id=catalog.saveProduct(f).getId();String name=materials.findById(f.getInitialMaterialId()).orElseThrow().getName();
         mvc.perform(get("/admin/products-crud").param("keyword",f.getCode()).param("materialId",f.getInitialMaterialId().toString()))
             .andExpect(status().isOk()).andExpect(content().string(containsString(name))).andExpect(content().string(containsString(f.getName())));
-        mvc.perform(get("/admin/products-crud/edit/"+id)).andExpect(status().isOk()).andExpect(content().string(containsString(name))).andExpect(content().string(containsString("Quản lý variant")));
+        mvc.perform(get("/admin/products-crud/edit/"+id)).andExpect(status().isOk()).andExpect(content().string(containsString(name))).andExpect(content().string(containsString("Quản lý biến thể")));
         mvc.perform(get("/admin/materials")).andExpect(status().isOk()).andExpect(content().string(containsString("Đang dùng")));
         var r=mvc.perform(get("/admin/variants/create").param("productId",""+id)).andExpect(status().isOk()).andReturn();
         assertEquals(id,((com.example.demodatn.dto.sanpham.VariantForm)r.getModelAndView().getModel().get("variant")).getProductId());

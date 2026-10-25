@@ -41,7 +41,7 @@ public class AdminCatalogService {
         return products.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy sản phẩm."));
     }
     public ProductVariant variant(Integer id) {
-        return variants.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy variant."));
+        return variants.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy biến thể."));
     }
     @Transactional
     public Product saveProduct(AdminProductForm form) {
@@ -50,7 +50,7 @@ public class AdminCatalogService {
         java.util.List<Size> initialSizes = new java.util.ArrayList<>();
         if (initialize) {
             if (form.getInitialMaterialId() == null)
-                throw new CatalogValidationException("initialMaterialId","Chọn chất liệu khi chọn size ban đầu.");
+                throw new CatalogValidationException("initialMaterialId","Chọn chất liệu khi chọn kích cỡ ban đầu.");
             initialMaterial = materials.findById(form.getInitialMaterialId()).filter(m -> Boolean.TRUE.equals(m.getStatus()))
                     .orElseThrow(() -> new CatalogValidationException("initialMaterialId","Chọn chất liệu đang hiển thị."));
             if (form.getInitialPrice() == null || form.getInitialPrice().signum() <= 0 || form.getInitialPrice().scale() > 2
@@ -59,8 +59,8 @@ public class AdminCatalogService {
             if (form.getInitialQuantity() == null || form.getInitialQuantity() < 0)
                 throw new CatalogValidationException("initialQuantity","Nhập tồn kho ban đầu từ 0 trở lên.");
             for (Integer sizeId : new java.util.LinkedHashSet<>(form.getInitialSizeIds())) {
-                if (sizeId == null) throw new CatalogValidationException("initialSizeIds","Size không hợp lệ.");
-                initialSizes.add(sizes.findById(sizeId).orElseThrow(() -> new CatalogValidationException("initialSizeIds","Size không tồn tại.")));
+                if (sizeId == null) throw new CatalogValidationException("initialSizeIds","Kích cỡ không hợp lệ.");
+                initialSizes.add(sizes.findById(sizeId).orElseThrow(() -> new CatalogValidationException("initialSizeIds","Kích cỡ không tồn tại.")));
             }
         }
         String code = form.getCode().trim();
@@ -92,7 +92,7 @@ public class AdminCatalogService {
         }
         if (variants.existsByProduct_Id(id) || inventoryLogs.existsByVariant_Product_Id(id) || !promotions.findByProductId(id).isEmpty()) {
             product.setStatus(false);
-            return "Sản phẩm có variant/lịch sử liên quan: đã chuyển sang ngừng bán để bảo toàn tồn kho và lịch sử.";
+            return "Sản phẩm có biến thể/lịch sử liên quan: đã chuyển sang ngừng bán để bảo toàn tồn kho và lịch sử.";
         }
         gallery.removeForProduct(id);
         products.delete(product);
@@ -102,16 +102,16 @@ public class AdminCatalogService {
     @Transactional
     public ProductVariant saveVariant(VariantForm form) {
         Product product = product(form.getProductId());
-        Size size = sizes.findById(form.getSizeId()).orElseThrow(() -> new CatalogValidationException("sizeId","Size không tồn tại."));
+        Size size = sizes.findById(form.getSizeId()).orElseThrow(() -> new CatalogValidationException("sizeId","Kích cỡ không tồn tại."));
         ProductVariant current = form.getId() == null ? null : inventory.lock(form.getId());
         Material material = materials.findById(form.getMaterialId()).filter(m -> Boolean.TRUE.equals(m.getStatus())
                 || (current != null && current.getMaterial().getId().equals(m.getId())))
                 .orElseThrow(() -> new CatalogValidationException("materialId","Chọn chất liệu đang hiển thị."));
         if (variants.existsByProduct_IdAndSize_IdAndMaterial_IdAndIdNot(product.getId(),size.getId(),material.getId(),form.getId()==null ? -1 : form.getId()))
-            throw new CatalogValidationException("materialId","Bộ ba sản phẩm, size và chất liệu đã tồn tại.");
+            throw new CatalogValidationException("materialId","Bộ ba sản phẩm, kích cỡ và chất liệu đã tồn tại.");
         ProductVariant variant = form.getId() == null ? new ProductVariant() : current;
         if (form.getId() != null && !variant.getProduct().getId().equals(product.getId()))
-            throw new CatalogValidationException("productId","Không thể chuyển variant sang sản phẩm khác.");
+            throw new CatalogValidationException("productId","Không thể chuyển biến thể sang sản phẩm khác.");
         int before = variant.getQuantity();
         if (form.getId() != null && !java.util.Objects.equals(form.getExpectedQuantity(),before))
             throw new CatalogValidationException("quantity","Tồn kho đã thay đổi. Tải lại trang trước khi lưu.");
@@ -119,16 +119,16 @@ public class AdminCatalogService {
             throw new CatalogValidationException("reason","Nhập lý do khi thay đổi số lượng.");
         variant.setProduct(product); variant.setSize(size); variant.setMaterial(material); variant.setPrice(form.getPrice()); variant.setStatus(form.getStatus());
         variants.saveAndFlush(variant);
-        inventory.change(variant, form.getQuantity(), form.getId() == null ? "Khởi tạo variant" : (form.getReason()==null || form.getReason().isBlank() ? "Lưu variant không đổi tồn" : form.getReason()));
+        inventory.change(variant, form.getQuantity(), form.getId() == null ? "Khởi tạo biến thể" : (form.getReason()==null || form.getReason().isBlank() ? "Lưu biến thể không đổi tồn" : form.getReason()));
         return variant;
     }
     @Transactional
     public void saveLookup(String kind, LookupForm form) {
         String value = form.getValue().trim();
         if ("sizes".equals(kind)) {
-            if (value.length()>10) throw new CatalogValidationException("value","Size tối đa 10 ký tự.");
+            if (value.length()>10) throw new CatalogValidationException("value","Kích cỡ tối đa 10 ký tự.");
             if (sizes.existsBySizeValueIgnoreCaseAndIdNot(value,form.getId()==null ? -1 : form.getId()))
-                throw new CatalogValidationException("value","Size đã tồn tại.");
+                throw new CatalogValidationException("value","Kích cỡ đã tồn tại.");
             Size size = form.getId()==null ? new Size() : sizes.findById(form.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
             size.setSizeValue(value); sizes.saveAndFlush(size);
         } else if ("materials".equals(kind)) {
@@ -146,8 +146,8 @@ public class AdminCatalogService {
     @Transactional
     public String deleteLookup(String kind, Integer id) {
         if ("sizes".equals(kind)) {
-            if (variants.existsBySize_Id(id)) return "Không thể xóa size đang được variant tham chiếu.";
-            sizes.deleteById(id); sizes.flush(); return "Đã xóa size.";
+            if (variants.existsBySize_Id(id)) return "Không thể xóa kích cỡ đang được biến thể tham chiếu.";
+            sizes.deleteById(id); sizes.flush(); return "Đã xóa kích cỡ.";
         }
         if ("materials".equals(kind)) {
             if (variants.existsByMaterial_Id(id)) return "Không thể xóa chất liệu đang được biến thể tham chiếu.";

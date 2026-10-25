@@ -235,7 +235,7 @@ public class AdminPosController {
                     var customer=checkout.getCustomerId()==null ? null : customers.findById(checkout.getCustomerId()).orElse(null);
                     var subtotal=loaded.cart().stream().map(CartItemDto::getTotalPrice).reduce(BigDecimal.ZERO,BigDecimal::add);
                     var result=vouchers.validateAndCalculate(checkout.getVoucherCode(),customer,subtotal);
-                    if(!result.valid){checkout.setVoucherCode(null);flash.addFlashAttribute("error","Đã bỏ voucher: "+result.message);}
+                    if(!result.valid){checkout.setVoucherCode(null);flash.addFlashAttribute("error","Đã bỏ phiếu giảm giá: "+result.message);}
                 }
                 flash.addFlashAttribute("success","Đã mở "+loaded.code()+". Giá và tồn kho đã được tính lại.");
             } catch(IllegalArgumentException ex) {flash.addFlashAttribute("error",ex.getMessage());}

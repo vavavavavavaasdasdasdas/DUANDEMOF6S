@@ -11,7 +11,7 @@ import java.util.function.Function;
 public class Pagination {
     private final int size;
     public Pagination(@Value("${shop.page-size}") int size) {
-        if (size < 1) throw new IllegalArgumentException("shop.page-size phải lớn hơn 0");
+        if (size < 1) throw new IllegalArgumentException("shop.page-kích cỡ phải lớn hơn 0");
         this.size = size;
     }
     public int getSize() { return size; }

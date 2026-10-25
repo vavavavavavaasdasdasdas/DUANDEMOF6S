@@ -23,7 +23,7 @@ public class InventoryService {
     @org.springframework.beans.factory.annotation.Value("${shop.time-zone:Asia/Ho_Chi_Minh}") private String timeZone;
 
     public ProductVariant lock(Integer id) {
-        ProductVariant variant = variants.findForUpdate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy variant."));
+        ProductVariant variant = variants.findForUpdate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Không tìm thấy biến thể."));
         // A request may have read this entity before the sale transaction acquired its lock.
         entityManager.refresh(variant);
         return variant;

@@ -36,7 +36,7 @@ public class AuthController {
             redirectAttributes.addFlashAttribute("message", "Đăng ký thành công! Vui lòng đăng nhập.");
             return "redirect:/login";
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            model.addAttribute("error", "Username, email hoặc số điện thoại vừa được sử dụng. Vui lòng kiểm tra lại.");
+            model.addAttribute("error", "Username, thư điện tử hoặc số điện thoại vừa được sử dụng. Vui lòng kiểm tra lại.");
             return "auth/dang-ky";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());

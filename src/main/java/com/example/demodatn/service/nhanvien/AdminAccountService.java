@@ -35,7 +35,7 @@ public class AdminAccountService {
         var user=users.lockByUsername(username).orElseThrow();
         String email=form.getEmail()==null ? "" : form.getEmail().trim();
         if(users.otherAccountsWithEmail(email,user.getId())>0)
-            errors.rejectValue("email","duplicate","Email đã được tài khoản khác sử dụng.");
+            errors.rejectValue("email","duplicate","Thư điện tử đã được tài khoản khác sử dụng.");
         var employee=employees.findByUser_Id(user.getId()).orElse(null);
         if(employee!=null && employees.existsByPhoneAndIdNot(form.getPhone(),employee.getId()))
             errors.rejectValue("phone","duplicate","SĐT đã được nhân viên khác sử dụng.");

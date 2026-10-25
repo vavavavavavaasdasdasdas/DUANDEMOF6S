@@ -28,9 +28,9 @@ public class AdminVoucherController {
         if(v.getCustomer()!=null) f.setCustomerId(v.getCustomer().getId());model.addAttribute("voucher",f);model.addAttribute("usedCount",v.getUsedCount());return form(model);
     }
     @PostMapping("/save") public String save(@Valid @ModelAttribute("voucher") VoucherDto f,BindingResult errors,Model model,RedirectAttributes flash) {
-        if(!errors.hasErrors()) try { discounts.saveVoucher(f);flash.addFlashAttribute("message","Đã lưu voucher.");return "redirect:/admin/vouchers"; }
+        if(!errors.hasErrors()) try { discounts.saveVoucher(f);flash.addFlashAttribute("message","Đã lưu phiếu giảm giá.");return "redirect:/admin/vouchers"; }
         catch(DiscountValidationException ex) { errors.rejectValue(ex.getField(),"invalid",ex.getMessage()); }
-        catch(DataIntegrityViolationException ex) { errors.rejectValue("code","duplicate","Mã voucher đã tồn tại hoặc dữ liệu đã thay đổi. Kiểm tra rồi lưu lại."); }
+        catch(DataIntegrityViolationException ex) { errors.rejectValue("code","duplicate","Mã phiếu giảm giá đã tồn tại hoặc dữ liệu đã thay đổi. Kiểm tra rồi lưu lại."); }
         return form(model);
     }
     @PostMapping("/delete/{id}") public String delete(@PathVariable Integer id,RedirectAttributes flash) { flash.addFlashAttribute("message",discounts.deleteVoucher(id));return "redirect:/admin/vouchers"; }
