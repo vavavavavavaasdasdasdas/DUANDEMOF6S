@@ -1,6 +1,7 @@
 -- Chỉ chạy trên database test; triển khai thật phải bật session context rõ ràng.
 IF DB_NAME() NOT IN (N'shopbangiay_kt',N'shop_verify',N'shop_fresh',N'shopbangiay_thu')
    AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
+    AND DB_NAME() NOT LIKE N'shopbangiay[_]kt[_]%'
     THROW 51000,N'Database không được phép chạy migration.',1;
 SET XACT_ABORT ON;
 BEGIN TRY
@@ -15,7 +16,9 @@ BEGIN TRY
       AND c.name NOT IN (N'code',N'customer_code',N'employee_code',N'invoice_code',N'order_code',
           N'voucher_code',N'order_type',N'status',N'payment_method',N'payment_status',N'discount_type',
           N'username',N'password',N'actor')
-      AND NOT (t.name=N'roles' AND c.name=N'name');
+      AND NOT (t.name=N'roles' AND c.name=N'name')
+      -- Migration 009 quy định số điện thoại sổ địa chỉ là VARCHAR(20).
+      AND NOT (t.name=N'dia_chi_nhan_hang' AND c.name=N'so_dien_thoai');
 
     -- Giữ nguyên tính duy nhất, thứ tự khóa, INCLUDE và bộ lọc của index phụ thuộc.
     SELECT DISTINCT i.object_id,i.index_id,t.name table_name,i.name index_name,

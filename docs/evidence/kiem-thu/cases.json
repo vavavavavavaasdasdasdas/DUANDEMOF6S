@@ -1,0 +1,778 @@
+[
+  {
+    "id": "SC-01",
+    "function": "Restore bản sao mới, không ghi đè DB cũ",
+    "role": "Hệ thống",
+    "steps": "RESTORE file backup chính có sẵn sang shopbangiay_kt_20261025",
+    "result": "PASS",
+    "evidence": "schema/restore-initial.log"
+  },
+  {
+    "id": "SC-02",
+    "function": "Validate trước migration",
+    "role": "Hệ thống",
+    "steps": "Khởi động ddl-auto=validate trước schema update",
+    "result": "PASS",
+    "evidence": "schema/validate-before.log; schema-check-before.log"
+  },
+  {
+    "id": "SC-03",
+    "function": "Migration gộp chạy hai lần",
+    "role": "Hệ thống",
+    "steps": "sqlcmd -b -I chạy chay_tat_ca.sql hai lần, so COUNT và schema",
+    "result": "PASS",
+    "evidence": "schema/migrations-first.log; migrations-second.log; after-first.json; after-second.json"
+  },
+  {
+    "id": "SC-04",
+    "function": "SchemaCheck và validate sau migration",
+    "role": "Hệ thống",
+    "steps": "Khởi động app cổng 18100, ddl-auto=validate; chờ Started",
+    "result": "PASS",
+    "evidence": "schema/validate-after.log"
+  },
+  {
+    "id": "SC-05",
+    "function": "Checkout không còn thiếu bảng 009",
+    "role": "User",
+    "steps": "Đăng nhập, thêm giỏ session, GET /checkout có địa chỉ",
+    "result": "PASS",
+    "evidence": "schema/schema-checkout-http.json"
+  },
+  {
+    "id": "SC-06",
+    "function": "Clean test nhóm schema",
+    "role": "Hệ thống",
+    "steps": "mvnw clean test không skip trên bản commit riêng",
+    "result": "PASS",
+    "evidence": "schema/schema-clean-test.log:123 tests"
+  },
+  {
+    "id": "SC-07",
+    "function": "Phục hồi sau test phá dữ liệu",
+    "role": "Hệ thống",
+    "steps": "Restore checkpoint sạch của DB audit; so COUNT/schema",
+    "result": "PASS",
+    "evidence": "schema/reset-schema-tests.log; after-schema-tests-reset.json"
+  },
+  {
+    "id": "G-01",
+    "function": "Trang chủ",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-02",
+    "function": "Lọc danh mục",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-03",
+    "function": "Lọc size",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-04",
+    "function": "Lọc chất liệu",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-05",
+    "function": "Lọc giá",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-06",
+    "function": "Sắp xếp",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-07",
+    "function": "Tìm kiếm",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-08",
+    "function": "Phân trang 12",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-09",
+    "function": "Chọn size và chất liệu",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-10",
+    "function": "Tồn kho sản phẩm",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-11",
+    "function": "Gallery nhiều góc",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-12",
+    "function": "Khuyến mãi",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-13",
+    "function": "Thêm nhanh giỏ",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-14",
+    "function": "Đăng ký hợp lệ",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-15",
+    "function": "Đăng ký trùng username",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-16",
+    "function": "Đăng ký trùng email",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-17",
+    "function": "Mật khẩu yếu",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-18",
+    "function": "Đăng nhập sai/đúng",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "G-19",
+    "function": "Đăng xuất",
+    "role": "Khách",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-01",
+    "function": "Sửa hồ sơ",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-02",
+    "function": "Đổi mật khẩu",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-03",
+    "function": "Thêm 3 địa chỉ",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-04",
+    "function": "Địa chỉ thứ 4 bị chặn",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-05",
+    "function": "Sửa địa chỉ",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-06",
+    "function": "Xóa địa chỉ",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-07",
+    "function": "Đặt mặc định",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-08",
+    "function": "Giỏ cộng dồn",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-09",
+    "function": "Giỏ sửa số lượng",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-10",
+    "function": "Giỏ vượt tồn",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-11",
+    "function": "Xóa giỏ và rỗng",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-12",
+    "function": "Checkout chọn địa chỉ",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-13",
+    "function": "Voucher hợp lệ",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-14",
+    "function": "Voucher 6 lý do lỗi",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-15",
+    "function": "COD",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-16",
+    "function": "Chuyển khoản",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-17",
+    "function": "Thiếu hàng rollback",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-18",
+    "function": "Trang thành công",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-19",
+    "function": "Danh sách đơn",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-20",
+    "function": "Chi tiết đơn",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-21",
+    "function": "Hủy đơn",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-22",
+    "function": "Hủy lần hai",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "U-23",
+    "function": "Chặn truy cập đơn người khác",
+    "role": "User",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-01",
+    "function": "Dashboard khớp SELECT",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-02",
+    "function": "Tạo sản phẩm và biến thể ban đầu",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-03",
+    "function": "Upload 3 ảnh",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-04",
+    "function": "Đổi ảnh chính",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-05",
+    "function": "Sửa sản phẩm",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-06",
+    "function": "Xóa sản phẩm có/không đơn",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-07",
+    "function": "Chặn trùng bộ ba biến thể",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-08",
+    "function": "Danh mục",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-09",
+    "function": "Size",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-10",
+    "function": "Chất liệu ẩn/xóa",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-11",
+    "function": "Điều chỉnh tồn",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-12",
+    "function": "Lịch sử kho",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-13",
+    "function": "Khách hàng CRUD",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-14",
+    "function": "Vô hiệu hóa khách",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-15",
+    "function": "Sổ địa chỉ admin",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-16",
+    "function": "Nhân viên CRUD và liên kết tài khoản",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-17",
+    "function": "Chặn tự khóa",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-18",
+    "function": "Voucher",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-19",
+    "function": "Đợt giảm giá và chọn sản phẩm",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-20",
+    "function": "Luồng đơn đến hoàn tất",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-21",
+    "function": "Hủy đơn",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-22",
+    "function": "Giao thất bại",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-23",
+    "function": "Xác nhận chuyển khoản",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-24",
+    "function": "Hóa đơn xem/in",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-25",
+    "function": "POS tìm và chọn biến thể",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-26",
+    "function": "POS khách lẻ/có tài khoản",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-27",
+    "function": "POS voucher",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-28",
+    "function": "POS tiền mặt/chuyển khoản",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-29",
+    "function": "POS thanh toán",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-30",
+    "function": "Hóa đơn chờ lưu/mở/xóa",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-31",
+    "function": "Tối đa 5 hóa đơn chờ",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-32",
+    "function": "Hóa đơn chờ hết hạn",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-33",
+    "function": "Thống kê mọi kênh/ngày/trang",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "A-34",
+    "function": "Tài khoản admin hồ sơ/mật khẩu",
+    "role": "Admin",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-01",
+    "function": "Luật kho SQL COD",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-02",
+    "function": "Luật kho SQL chuyển khoản",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-03",
+    "function": "Luật kho SQL POS",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-04",
+    "function": "Thiếu hàng rollback",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-05",
+    "function": "Hai request đồng thời không âm",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-06",
+    "function": "Ma trận quyền mọi route",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-07",
+    "function": "CSRF thiếu/sai mọi POST",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-08",
+    "function": "Ownership dữ liệu User",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-09",
+    "function": "Unicode ghi/đọc",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-10",
+    "function": "Không lỗi JS/404/trắng/tràn375",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-11",
+    "function": "Không tiếng Anh ngoài tên riêng",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-12",
+    "function": "SQL count 8 trang trước/sau",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-13",
+    "function": "HTML/giá/thứ tự không đổi",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  },
+  {
+    "id": "S-14",
+    "function": "Cleanup dữ liệu kiểm thử cuối",
+    "role": "Hệ thống",
+    "steps": "Playwright 1280px và 375px / SQL theo kịch bản",
+    "result": "NOT TESTED",
+    "evidence": ""
+  }
+]

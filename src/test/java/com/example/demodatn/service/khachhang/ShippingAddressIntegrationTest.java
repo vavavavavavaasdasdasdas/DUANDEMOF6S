@@ -35,7 +35,7 @@ class ShippingAddressIntegrationTest {
     static final AtomicInteger sequence=new AtomicInteger(1000);
     record Owner(int id,int userId,String username) {}
     @BeforeEach void guard() {
-        assertTrue(Set.of("shopbangiay_kt","shop_verify","shopbangiay_thu").contains(jdbc.queryForObject("SELECT DB_NAME()",String.class)));
+        assertTrue((Set.of("shopbangiay_kt","shop_verify","shopbangiay_thu").contains(jdbc.queryForObject("SELECT DB_NAME()",String.class)) || jdbc.queryForObject("SELECT DB_NAME()",String.class).startsWith("shopbangiay_kt_")));
         mvc=MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
     }
     Owner owner() {

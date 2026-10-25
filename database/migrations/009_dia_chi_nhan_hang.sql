@@ -1,6 +1,7 @@
 -- SQL Server. Chọn database bằng sqlcmd -d; không tự chuyển database.
 IF DB_NAME() NOT IN (N'shopbangiay_kt',N'shop_verify',N'shopbangiay_thu')
     AND NOT (DB_NAME()=N'shopbangiay' AND COALESCE(TRY_CONVERT(INT,SESSION_CONTEXT(N'shop.allow-production-migration')),0)=1)
+    AND DB_NAME() NOT LIKE N'shopbangiay[_]kt[_]%'
     THROW 51000,N'Database không được phép chạy migration.',1;
 SET QUOTED_IDENTIFIER ON;
 SET ANSI_NULLS ON;
